@@ -1,5 +1,5 @@
 {
-  "name": "RushBoTT Ros2 Container",
+  "name": "RushBoTT ROS2 Container",
   "dockerFile": "Dockerfile",
   "runArgs": [
     "--privileged",

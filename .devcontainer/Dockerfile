@@ -36,3 +36,13 @@ RUN echo "source /opt/ros/${ROS_DISTRO}/setup.bash" >> ~/.bashrc
 ################################
 ## ADD ANY CUSTOM SETUP BELOW ##
 ################################
+
+# ROS2 Packages
+RUN sudo apt-get install -y ros-jazzy-webots-ros2
+
+# Webots
+RUN curl -L -o /tmp/webots.deb \
+    'https://github.com/cyberbotics/webots/releases/download/R2023b/webots_2023b_amd64.deb' && \
+    apt-get install -y /tmp/webots.deb && \
+    rm -f /tmp/webots.deb && \
+    mkdir -p /memristor/.config/Cyberbotics

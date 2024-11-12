@@ -1,6 +1,11 @@
 {
   "name": "RushBoTT ROS2 Container",
-  "dockerFile": "Dockerfile",
+  "build": {
+        "dockerfile": "Dockerfile",
+        "args": {
+            "USERNAME": "ttpidelta"
+        }
+      },
   "runArgs": [
     "--privileged",
     "--network=host"
@@ -9,5 +14,14 @@
   "workspaceFolder": "/${localWorkspaceFolderBasename}",
   "mounts": [
     "source=${localEnv:HOME}${localEnv:USERPROFILE}/.bash_history,target=/home/vscode/.bash_history,type=bind"
-  ]
+  ],
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "ms-iot.vscode-ros",
+        "ms-python.python",
+        "ms-azuretools.vscode-docker"
+      ]
+    }
+  }
 }

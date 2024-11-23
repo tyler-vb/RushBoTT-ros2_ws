@@ -1,2 +1,1 @@
-export WEBOTS_HOME=/usr/local/webots
 source /opt/ros/${ROS_DISTRO}/setup.bash

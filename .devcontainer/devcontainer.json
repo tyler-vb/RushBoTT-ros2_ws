@@ -10,10 +10,10 @@
     "--privileged",
     "--network=host"
   ],
-  "workspaceMount": "source=${localWorkspaceFolder},target=/${localWorkspaceFolderBasename},type=bind",
-  "workspaceFolder": "/${localWorkspaceFolderBasename}",
+  "workspaceMount": "source=${localWorkspaceFolder},target=/home/ttpidelta/${localWorkspaceFolderBasename},type=bind",
+  "workspaceFolder": "/home/ttpidelta/${localWorkspaceFolderBasename}",
   "mounts": [
-    "source=${localEnv:HOME}${localEnv:USERPROFILE}/.bash_history,target=/home/vscode/.bash_history,type=bind"
+    "source=${localEnv:HOME}${localEnv:USERPROFILE}/.bash_history,target=/home/ttpidelta/.bash_history,type=bind"
   ],
   "customizations": {
     "vscode": {

@@ -8,7 +8,9 @@
       },
   "runArgs": [
     "--privileged",
-    "--network=host"
+    "--network=host",
+    "--gpus",
+    "all"
   ],
   "workspaceMount": "source=${localWorkspaceFolder},target=/home/ttpidelta/${localWorkspaceFolderBasename},type=bind",
   "workspaceFolder": "/home/ttpidelta/${localWorkspaceFolderBasename}",
@@ -20,7 +22,8 @@
       "extensions": [
         "ms-iot.vscode-ros",
         "ms-python.python",
-        "ms-azuretools.vscode-docker"
+        "ms-azuretools.vscode-docker",
+        "ms-vscode.cmake-tools"
       ]
     }
   }

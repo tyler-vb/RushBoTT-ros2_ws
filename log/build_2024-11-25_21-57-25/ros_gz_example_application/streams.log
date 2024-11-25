@@ -1,0 +1,39 @@
+[0.015s] Invoking command in '/home/ttpidelta/RushBoTT-ros2_ws/build/ros_gz_example_application': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/opt/ros/jazzy /usr/bin/cmake /home/ttpidelta/RushBoTT-ros2_ws/src/rushbott/ros_gz_example_application -DBUILD_TESTING=ON -DCMAKE_INSTALL_PREFIX=/home/ttpidelta/RushBoTT-ros2_ws/install/ros_gz_example_application
+[0.071s] -- The C compiler identification is GNU 13.2.0
+[0.130s] -- The CXX compiler identification is GNU 13.2.0
+[0.146s] -- Detecting C compiler ABI info
+[0.245s] -- Detecting C compiler ABI info - done
+[0.256s] -- Check for working C compiler: /usr/bin/cc - skipped
+[0.256s] -- Detecting C compile features
+[0.257s] -- Detecting C compile features - done
+[0.267s] -- Detecting CXX compiler ABI info
+[0.378s] -- Detecting CXX compiler ABI info - done
+[0.390s] -- Check for working CXX compiler: /usr/bin/c++ - skipped
+[0.390s] -- Detecting CXX compile features
+[0.391s] -- Detecting CXX compile features - done
+[0.401s] -- Found ament_cmake: 2.5.2 (/opt/ros/jazzy/share/ament_cmake/cmake)
+[0.587s] -- Found Python3: /usr/bin/python3 (found version "3.12.3") found components: Interpreter 
+[0.854s] -- Configuring done (0.8s)
+[0.860s] -- Generating done (0.0s)
+[0.860s] -- Build files have been written to: /home/ttpidelta/RushBoTT-ros2_ws/build/ros_gz_example_application
+[0.868s] Invoked command in '/home/ttpidelta/RushBoTT-ros2_ws/build/ros_gz_example_application' returned '0': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/opt/ros/jazzy /usr/bin/cmake /home/ttpidelta/RushBoTT-ros2_ws/src/rushbott/ros_gz_example_application -DBUILD_TESTING=ON -DCMAKE_INSTALL_PREFIX=/home/ttpidelta/RushBoTT-ros2_ws/install/ros_gz_example_application
+[0.869s] Invoking command in '/home/ttpidelta/RushBoTT-ros2_ws/build/ros_gz_example_application': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/opt/ros/jazzy /usr/bin/cmake --build /home/ttpidelta/RushBoTT-ros2_ws/build/ros_gz_example_application -- -j12 -l12
+[0.917s] Invoked command in '/home/ttpidelta/RushBoTT-ros2_ws/build/ros_gz_example_application' returned '0': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/opt/ros/jazzy /usr/bin/cmake --build /home/ttpidelta/RushBoTT-ros2_ws/build/ros_gz_example_application -- -j12 -l12
+[0.955s] Invoking command in '/home/ttpidelta/RushBoTT-ros2_ws/build/ros_gz_example_application': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/opt/ros/jazzy /usr/bin/cmake --install /home/ttpidelta/RushBoTT-ros2_ws/build/ros_gz_example_application
+[0.964s] -- Install configuration: ""
+[0.966s] -- Installing: /home/ttpidelta/RushBoTT-ros2_ws/install/ros_gz_example_application/share/ament_index/resource_index/package_run_dependencies/ros_gz_example_application
+[0.967s] -- Installing: /home/ttpidelta/RushBoTT-ros2_ws/install/ros_gz_example_application/share/ament_index/resource_index/parent_prefix_path/ros_gz_example_application
+[0.970s] -- Installing: /home/ttpidelta/RushBoTT-ros2_ws/install/ros_gz_example_application/share/ros_gz_example_application/environment/ament_prefix_path.sh
+[0.970s] -- Installing: /home/ttpidelta/RushBoTT-ros2_ws/install/ros_gz_example_application/share/ros_gz_example_application/environment/ament_prefix_path.dsv
+[0.972s] -- Installing: /home/ttpidelta/RushBoTT-ros2_ws/install/ros_gz_example_application/share/ros_gz_example_application/environment/path.sh
+[0.972s] -- Installing: /home/ttpidelta/RushBoTT-ros2_ws/install/ros_gz_example_application/share/ros_gz_example_application/environment/path.dsv
+[0.972s] -- Installing: /home/ttpidelta/RushBoTT-ros2_ws/install/ros_gz_example_application/share/ros_gz_example_application/local_setup.bash
+[0.972s] -- Installing: /home/ttpidelta/RushBoTT-ros2_ws/install/ros_gz_example_application/share/ros_gz_example_application/local_setup.sh
+[0.973s] -- Installing: /home/ttpidelta/RushBoTT-ros2_ws/install/ros_gz_example_application/share/ros_gz_example_application/local_setup.zsh
+[0.973s] -- Installing: /home/ttpidelta/RushBoTT-ros2_ws/install/ros_gz_example_application/share/ros_gz_example_application/local_setup.dsv
+[0.974s] -- Installing: /home/ttpidelta/RushBoTT-ros2_ws/install/ros_gz_example_application/share/ros_gz_example_application/package.dsv
+[0.975s] -- Installing: /home/ttpidelta/RushBoTT-ros2_ws/install/ros_gz_example_application/share/ament_index/resource_index/packages/ros_gz_example_application
+[0.975s] -- Installing: /home/ttpidelta/RushBoTT-ros2_ws/install/ros_gz_example_application/share/ros_gz_example_application/cmake/ros_gz_example_applicationConfig.cmake
+[0.975s] -- Installing: /home/ttpidelta/RushBoTT-ros2_ws/install/ros_gz_example_application/share/ros_gz_example_application/cmake/ros_gz_example_applicationConfig-version.cmake
+[0.976s] -- Installing: /home/ttpidelta/RushBoTT-ros2_ws/install/ros_gz_example_application/share/ros_gz_example_application/package.xml
+[0.995s] Invoked command in '/home/ttpidelta/RushBoTT-ros2_ws/build/ros_gz_example_application' returned '0': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/opt/ros/jazzy /usr/bin/cmake --install /home/ttpidelta/RushBoTT-ros2_ws/build/ros_gz_example_application

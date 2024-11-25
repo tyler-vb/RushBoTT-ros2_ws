@@ -1,4 +1,4 @@
-ARG BASE_IMAGE=osrf/ros:humble-desktop-full
+ARG BASE_IMAGE=osrf/ros:jazzy-desktop-full
 FROM $BASE_IMAGE
 
 ARG DEBIAN_FRONTEND=noninteractive
@@ -25,7 +25,8 @@ RUN sudo apt update && sudo apt upgrade -y
 
 # Install essential packages
 RUN apt-get update && apt-get install --no-install-recommends -y -o Dpkg::Options::="--force-overwrite" \
-    ros-humble-gazebo-* \
+    ros-jazzy-ros-gz \
+    ros-jazzy-joint-state-publisher-gui \
     python3-pip \
     python-is-python3 \
     nano \

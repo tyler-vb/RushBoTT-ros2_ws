@@ -17,3 +17,8 @@ You will know you were successful if you see "Dev Container: RushBoTT ROS2 Conta
 
 If you are interested in adding any new packages to the container, I HIGHLY recommend watching this video beforehand:
 https://www.youtube.com/watch?v=RbP5cARP-SM&list=PLunhqkrRNRhaqt0UfFxxC_oj7jscss2qe&index=3&ab_channel=ArticulatedRobotics
+
+rosdep install --from-paths src --ignore-src -r -i -y --rosdistro jazzy
+colcon build --cmake-args -DBUILD_TESTING=ON
+. ~/RushBoTT-ros2_ws/install/setup.sh
+ros2 launch ros_gz_example_bringup diff_drive.launch.py

@@ -1,21 +1,28 @@
 {
   "name": "RushBoTT ROS2 Container",
   "build": {
-        "dockerfile": "Dockerfile",
-        "args": {
-            "USERNAME": "ttpidelta"
-        }
-      },
+    "dockerfile": "Dockerfile",
+    "args": {
+        "USERNAME": "ttpidelta"
+    }
+  },
+  "containerEnv": { 
+    "DISPLAY": "${localEnv:DISPLAY}",
+    "WAYLAND_DISPLAY": "${localEnv:WAYLAND_DISPLAY}",
+    "XDG_RUNTIME_DIR": "${localEnv:XDG_RUNTIME_DIR}",
+    "PULSE_SERVER": "${localEnv:PULSE_SERVER}"
+  },
   "runArgs": [
     "--privileged",
     "--network=host",
-    "--gpus",
-    "all"
+    "--gpus=all"
   ],
   "workspaceMount": "source=${localWorkspaceFolder},target=/home/ttpidelta/${localWorkspaceFolderBasename},type=bind",
   "workspaceFolder": "/home/ttpidelta/${localWorkspaceFolderBasename}",
   "mounts": [
-    "source=${localEnv:HOME}${localEnv:USERPROFILE}/.bash_history,target=/home/ttpidelta/.bash_history,type=bind"
+    "source=${localEnv:HOME}${localEnv:USERPROFILE}/.bash_history,target=/home/ttpidelta/.bash_history,type=bind",
+    "source=/mnt/wslg,target=/mnt/wslg,type=bind",
+    "source=/tmp/.X11-unix,target=/tmp/.X11-unix,type=bind"
   ],
   "customizations": {
     "vscode": {

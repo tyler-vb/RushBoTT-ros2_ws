@@ -8,5 +8,6 @@
         "/RushBoTT-ros2_ws/install/my_package/lib/python3.10/site-packages",
         "/opt/ros/humble/lib/python3.10/site-packages",
         "/opt/ros/humble/local/lib/python3.10/dist-packages"
-    ]
+    ],
+    "cmake.sourceDirectory": "/home/ttpidelta/RushBoTT-ros2_ws/src/rushbott/ros_gz_example_application"
 }

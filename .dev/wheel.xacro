@@ -1,0 +1,33 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro">
+
+    <xacro:include filename="materials.xacro" />
+    <xacro:include filename="inertial_calcs.xacro" />
+
+    <xacro:property name="radius" value="1" />
+    <xacro:property name="length" value="0.5" />
+
+    <xacro:property name="geometry">
+        <geometry>
+            <cylinder length="${length}" radius="${radius}" />
+        </geometry>
+    </xacro:property>
+
+    <xacro:macro name="wheel" params="link_name *origin" >
+        <link name="${link_name}">
+            <visual>
+                <xacro:insert_block name="origin" />
+                <xacro:insert_block name="geometry" />
+                <material name="blue" />
+            </visual>
+            <collision>
+                <xacro:insert_block name="origin" />
+                <xacro:insert_block name="geometry" />
+            </collision>
+            <xacro:intertial_cylinder mass="1" length="length" radius="radius">
+                <xacro:insert_block name="origin"/>
+            </xacro:intertial_cylinder>
+        </link>
+    </xacro:macro>
+        
+</robot>

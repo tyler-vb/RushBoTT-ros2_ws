@@ -1,0 +1,416 @@
+[0.150s] DEBUG:colcon:Command line arguments: ['/usr/bin/colcon', 'build']
+[0.150s] DEBUG:colcon:Parsed command line arguments: Namespace(log_base=None, log_level=None, verb_name='build', build_base='build', install_base='install', merge_install=False, symlink_install=False, test_result_base=None, continue_on_error=False, executor='parallel', parallel_workers=12, event_handlers=None, ignore_user_meta=False, metas=['./colcon.meta'], base_paths=['.'], packages_ignore=None, packages_ignore_regex=None, paths=None, packages_up_to=None, packages_up_to_regex=None, packages_above=None, packages_above_and_dependencies=None, packages_above_depth=None, packages_select_by_dep=None, packages_skip_by_dep=None, packages_skip_up_to=None, packages_select_build_failed=False, packages_skip_build_finished=False, packages_select_test_failures=False, packages_skip_test_passed=False, packages_select=None, packages_skip=None, packages_select_regex=None, packages_skip_regex=None, packages_start=None, packages_end=None, cmake_args=None, cmake_target=None, cmake_target_skip_unavailable=False, cmake_clean_cache=False, cmake_clean_first=False, cmake_force_configure=False, ament_cmake_args=None, catkin_cmake_args=None, catkin_skip_building_tests=False, mixin_files=None, mixin=None, verb_parser=<colcon_mixin.mixin.mixin_argument.MixinArgumentDecorator object at 0x7f8e909e30b0>, verb_extension=<colcon_core.verb.build.BuildVerb object at 0x7f8e909e2de0>, main=<bound method BuildVerb.main of <colcon_core.verb.build.BuildVerb object at 0x7f8e909e2de0>>, mixin_verb=('build',))
+[0.216s] Level 1:colcon.colcon_core.package_discovery:discover_packages(colcon_meta) check parameters
+[0.216s] Level 1:colcon.colcon_core.package_discovery:discover_packages(recursive) check parameters
+[0.216s] Level 1:colcon.colcon_core.package_discovery:discover_packages(ignore) check parameters
+[0.216s] Level 1:colcon.colcon_core.package_discovery:discover_packages(path) check parameters
+[0.216s] Level 1:colcon.colcon_core.package_discovery:discover_packages(colcon_meta) discover
+[0.216s] Level 1:colcon.colcon_core.package_discovery:discover_packages(recursive) discover
+[0.216s] INFO:colcon.colcon_core.package_discovery:Crawling recursively for packages in '/home/ttpidelta/RushBoTT-ros2_ws'
+[0.216s] Level 1:colcon.colcon_core.package_identification:_identify(.) by extensions ['ignore', 'ignore_ament_install']
+[0.216s] Level 1:colcon.colcon_core.package_identification:_identify(.) by extension 'ignore'
+[0.216s] Level 1:colcon.colcon_core.package_identification:_identify(.) by extension 'ignore_ament_install'
+[0.216s] Level 1:colcon.colcon_core.package_identification:_identify(.) by extensions ['colcon_pkg']
+[0.216s] Level 1:colcon.colcon_core.package_identification:_identify(.) by extension 'colcon_pkg'
+[0.216s] Level 1:colcon.colcon_core.package_identification:_identify(.) by extensions ['colcon_meta']
+[0.216s] Level 1:colcon.colcon_core.package_identification:_identify(.) by extension 'colcon_meta'
+[0.216s] Level 1:colcon.colcon_core.package_identification:_identify(.) by extensions ['ros']
+[0.217s] Level 1:colcon.colcon_core.package_identification:_identify(.) by extension 'ros'
+[0.247s] Level 1:colcon.colcon_core.package_identification:_identify(.) by extensions ['cmake', 'python']
+[0.247s] Level 1:colcon.colcon_core.package_identification:_identify(.) by extension 'cmake'
+[0.247s] Level 1:colcon.colcon_core.package_identification:_identify(.) by extension 'python'
+[0.247s] Level 1:colcon.colcon_core.package_identification:_identify(.) by extensions ['python_setup_py']
+[0.247s] Level 1:colcon.colcon_core.package_identification:_identify(.) by extension 'python_setup_py'
+[0.247s] Level 1:colcon.colcon_core.package_identification:_identify(build) by extensions ['ignore', 'ignore_ament_install']
+[0.247s] Level 1:colcon.colcon_core.package_identification:_identify(build) by extension 'ignore'
+[0.247s] Level 1:colcon.colcon_core.package_identification:_identify(build) ignored
+[0.248s] Level 1:colcon.colcon_core.package_identification:_identify(install) by extensions ['ignore', 'ignore_ament_install']
+[0.248s] Level 1:colcon.colcon_core.package_identification:_identify(install) by extension 'ignore'
+[0.248s] Level 1:colcon.colcon_core.package_identification:_identify(install) ignored
+[0.248s] Level 1:colcon.colcon_core.package_identification:_identify(log) by extensions ['ignore', 'ignore_ament_install']
+[0.248s] Level 1:colcon.colcon_core.package_identification:_identify(log) by extension 'ignore'
+[0.248s] Level 1:colcon.colcon_core.package_identification:_identify(log) ignored
+[0.248s] Level 1:colcon.colcon_core.package_identification:_identify(src) by extensions ['ignore', 'ignore_ament_install']
+[0.248s] Level 1:colcon.colcon_core.package_identification:_identify(src) by extension 'ignore'
+[0.248s] Level 1:colcon.colcon_core.package_identification:_identify(src) by extension 'ignore_ament_install'
+[0.248s] Level 1:colcon.colcon_core.package_identification:_identify(src) by extensions ['colcon_pkg']
+[0.249s] Level 1:colcon.colcon_core.package_identification:_identify(src) by extension 'colcon_pkg'
+[0.249s] Level 1:colcon.colcon_core.package_identification:_identify(src) by extensions ['colcon_meta']
+[0.249s] Level 1:colcon.colcon_core.package_identification:_identify(src) by extension 'colcon_meta'
+[0.249s] Level 1:colcon.colcon_core.package_identification:_identify(src) by extensions ['ros']
+[0.249s] Level 1:colcon.colcon_core.package_identification:_identify(src) by extension 'ros'
+[0.249s] Level 1:colcon.colcon_core.package_identification:_identify(src) by extensions ['cmake', 'python']
+[0.249s] Level 1:colcon.colcon_core.package_identification:_identify(src) by extension 'cmake'
+[0.249s] Level 1:colcon.colcon_core.package_identification:_identify(src) by extension 'python'
+[0.249s] Level 1:colcon.colcon_core.package_identification:_identify(src) by extensions ['python_setup_py']
+[0.249s] Level 1:colcon.colcon_core.package_identification:_identify(src) by extension 'python_setup_py'
+[0.249s] Level 1:colcon.colcon_core.package_identification:_identify(src/rushbott) by extensions ['ignore', 'ignore_ament_install']
+[0.249s] Level 1:colcon.colcon_core.package_identification:_identify(src/rushbott) by extension 'ignore'
+[0.249s] Level 1:colcon.colcon_core.package_identification:_identify(src/rushbott) by extension 'ignore_ament_install'
+[0.249s] Level 1:colcon.colcon_core.package_identification:_identify(src/rushbott) by extensions ['colcon_pkg']
+[0.249s] Level 1:colcon.colcon_core.package_identification:_identify(src/rushbott) by extension 'colcon_pkg'
+[0.250s] Level 1:colcon.colcon_core.package_identification:_identify(src/rushbott) by extensions ['colcon_meta']
+[0.250s] Level 1:colcon.colcon_core.package_identification:_identify(src/rushbott) by extension 'colcon_meta'
+[0.250s] Level 1:colcon.colcon_core.package_identification:_identify(src/rushbott) by extensions ['ros']
+[0.250s] Level 1:colcon.colcon_core.package_identification:_identify(src/rushbott) by extension 'ros'
+[0.250s] Level 1:colcon.colcon_core.package_identification:_identify(src/rushbott) by extensions ['cmake', 'python']
+[0.250s] Level 1:colcon.colcon_core.package_identification:_identify(src/rushbott) by extension 'cmake'
+[0.250s] Level 1:colcon.colcon_core.package_identification:_identify(src/rushbott) by extension 'python'
+[0.250s] Level 1:colcon.colcon_core.package_identification:_identify(src/rushbott) by extensions ['python_setup_py']
+[0.250s] Level 1:colcon.colcon_core.package_identification:_identify(src/rushbott) by extension 'python_setup_py'
+[0.250s] Level 1:colcon.colcon_core.package_identification:_identify(src/rushbott/rushbott_description) by extensions ['ignore', 'ignore_ament_install']
+[0.250s] Level 1:colcon.colcon_core.package_identification:_identify(src/rushbott/rushbott_description) by extension 'ignore'
+[0.250s] Level 1:colcon.colcon_core.package_identification:_identify(src/rushbott/rushbott_description) by extension 'ignore_ament_install'
+[0.250s] Level 1:colcon.colcon_core.package_identification:_identify(src/rushbott/rushbott_description) by extensions ['colcon_pkg']
+[0.250s] Level 1:colcon.colcon_core.package_identification:_identify(src/rushbott/rushbott_description) by extension 'colcon_pkg'
+[0.250s] Level 1:colcon.colcon_core.package_identification:_identify(src/rushbott/rushbott_description) by extensions ['colcon_meta']
+[0.250s] Level 1:colcon.colcon_core.package_identification:_identify(src/rushbott/rushbott_description) by extension 'colcon_meta'
+[0.250s] Level 1:colcon.colcon_core.package_identification:_identify(src/rushbott/rushbott_description) by extensions ['ros']
+[0.250s] Level 1:colcon.colcon_core.package_identification:_identify(src/rushbott/rushbott_description) by extension 'ros'
+[0.253s] DEBUG:colcon.colcon_core.package_identification:Package 'src/rushbott/rushbott_description' with type 'ros.ament_cmake' and name 'rushbott_description'
+[0.253s] Level 1:colcon.colcon_core.package_identification:_identify(src/rushbott_gz) by extensions ['ignore', 'ignore_ament_install']
+[0.253s] Level 1:colcon.colcon_core.package_identification:_identify(src/rushbott_gz) by extension 'ignore'
+[0.254s] Level 1:colcon.colcon_core.package_identification:_identify(src/rushbott_gz) by extension 'ignore_ament_install'
+[0.254s] Level 1:colcon.colcon_core.package_identification:_identify(src/rushbott_gz) by extensions ['colcon_pkg']
+[0.254s] Level 1:colcon.colcon_core.package_identification:_identify(src/rushbott_gz) by extension 'colcon_pkg'
+[0.254s] Level 1:colcon.colcon_core.package_identification:_identify(src/rushbott_gz) by extensions ['colcon_meta']
+[0.254s] Level 1:colcon.colcon_core.package_identification:_identify(src/rushbott_gz) by extension 'colcon_meta'
+[0.254s] Level 1:colcon.colcon_core.package_identification:_identify(src/rushbott_gz) by extensions ['ros']
+[0.254s] Level 1:colcon.colcon_core.package_identification:_identify(src/rushbott_gz) by extension 'ros'
+[0.254s] Level 1:colcon.colcon_core.package_identification:_identify(src/rushbott_gz) by extensions ['cmake', 'python']
+[0.254s] Level 1:colcon.colcon_core.package_identification:_identify(src/rushbott_gz) by extension 'cmake'
+[0.254s] Level 1:colcon.colcon_core.package_identification:_identify(src/rushbott_gz) by extension 'python'
+[0.254s] Level 1:colcon.colcon_core.package_identification:_identify(src/rushbott_gz) by extensions ['python_setup_py']
+[0.254s] Level 1:colcon.colcon_core.package_identification:_identify(src/rushbott_gz) by extension 'python_setup_py'
+[0.254s] Level 1:colcon.colcon_core.package_identification:_identify(src/rushbott_gz/rushbott_gz_application) by extensions ['ignore', 'ignore_ament_install']
+[0.254s] Level 1:colcon.colcon_core.package_identification:_identify(src/rushbott_gz/rushbott_gz_application) by extension 'ignore'
+[0.254s] Level 1:colcon.colcon_core.package_identification:_identify(src/rushbott_gz/rushbott_gz_application) by extension 'ignore_ament_install'
+[0.255s] Level 1:colcon.colcon_core.package_identification:_identify(src/rushbott_gz/rushbott_gz_application) by extensions ['colcon_pkg']
+[0.255s] Level 1:colcon.colcon_core.package_identification:_identify(src/rushbott_gz/rushbott_gz_application) by extension 'colcon_pkg'
+[0.255s] Level 1:colcon.colcon_core.package_identification:_identify(src/rushbott_gz/rushbott_gz_application) by extensions ['colcon_meta']
+[0.255s] Level 1:colcon.colcon_core.package_identification:_identify(src/rushbott_gz/rushbott_gz_application) by extension 'colcon_meta'
+[0.255s] Level 1:colcon.colcon_core.package_identification:_identify(src/rushbott_gz/rushbott_gz_application) by extensions ['ros']
+[0.255s] Level 1:colcon.colcon_core.package_identification:_identify(src/rushbott_gz/rushbott_gz_application) by extension 'ros'
+[0.255s] DEBUG:colcon.colcon_core.package_identification:Package 'src/rushbott_gz/rushbott_gz_application' with type 'ros.ament_cmake' and name 'ros_gz_example_application'
+[0.256s] Level 1:colcon.colcon_core.package_identification:_identify(src/rushbott_gz/rushbott_gz_bringup) by extensions ['ignore', 'ignore_ament_install']
+[0.256s] Level 1:colcon.colcon_core.package_identification:_identify(src/rushbott_gz/rushbott_gz_bringup) by extension 'ignore'
+[0.256s] Level 1:colcon.colcon_core.package_identification:_identify(src/rushbott_gz/rushbott_gz_bringup) by extension 'ignore_ament_install'
+[0.256s] Level 1:colcon.colcon_core.package_identification:_identify(src/rushbott_gz/rushbott_gz_bringup) by extensions ['colcon_pkg']
+[0.256s] Level 1:colcon.colcon_core.package_identification:_identify(src/rushbott_gz/rushbott_gz_bringup) by extension 'colcon_pkg'
+[0.256s] Level 1:colcon.colcon_core.package_identification:_identify(src/rushbott_gz/rushbott_gz_bringup) by extensions ['colcon_meta']
+[0.256s] Level 1:colcon.colcon_core.package_identification:_identify(src/rushbott_gz/rushbott_gz_bringup) by extension 'colcon_meta'
+[0.257s] Level 1:colcon.colcon_core.package_identification:_identify(src/rushbott_gz/rushbott_gz_bringup) by extensions ['ros']
+[0.257s] Level 1:colcon.colcon_core.package_identification:_identify(src/rushbott_gz/rushbott_gz_bringup) by extension 'ros'
+[0.257s] DEBUG:colcon.colcon_core.package_identification:Package 'src/rushbott_gz/rushbott_gz_bringup' with type 'ros.ament_cmake' and name 'ros_gz_example_bringup'
+[0.258s] Level 1:colcon.colcon_core.package_identification:_identify(src/rushbott_gz/rushbott_gz_description) by extensions ['ignore', 'ignore_ament_install']
+[0.258s] Level 1:colcon.colcon_core.package_identification:_identify(src/rushbott_gz/rushbott_gz_description) by extension 'ignore'
+[0.258s] Level 1:colcon.colcon_core.package_identification:_identify(src/rushbott_gz/rushbott_gz_description) by extension 'ignore_ament_install'
+[0.258s] Level 1:colcon.colcon_core.package_identification:_identify(src/rushbott_gz/rushbott_gz_description) by extensions ['colcon_pkg']
+[0.258s] Level 1:colcon.colcon_core.package_identification:_identify(src/rushbott_gz/rushbott_gz_description) by extension 'colcon_pkg'
+[0.258s] Level 1:colcon.colcon_core.package_identification:_identify(src/rushbott_gz/rushbott_gz_description) by extensions ['colcon_meta']
+[0.258s] Level 1:colcon.colcon_core.package_identification:_identify(src/rushbott_gz/rushbott_gz_description) by extension 'colcon_meta'
+[0.258s] Level 1:colcon.colcon_core.package_identification:_identify(src/rushbott_gz/rushbott_gz_description) by extensions ['ros']
+[0.258s] Level 1:colcon.colcon_core.package_identification:_identify(src/rushbott_gz/rushbott_gz_description) by extension 'ros'
+[0.259s] DEBUG:colcon.colcon_core.package_identification:Package 'src/rushbott_gz/rushbott_gz_description' with type 'ros.ament_cmake' and name 'ros_gz_example_description'
+[0.259s] Level 1:colcon.colcon_core.package_identification:_identify(src/rushbott_gz/rushbott_gz_gazebo) by extensions ['ignore', 'ignore_ament_install']
+[0.259s] Level 1:colcon.colcon_core.package_identification:_identify(src/rushbott_gz/rushbott_gz_gazebo) by extension 'ignore'
+[0.259s] Level 1:colcon.colcon_core.package_identification:_identify(src/rushbott_gz/rushbott_gz_gazebo) by extension 'ignore_ament_install'
+[0.259s] Level 1:colcon.colcon_core.package_identification:_identify(src/rushbott_gz/rushbott_gz_gazebo) by extensions ['colcon_pkg']
+[0.259s] Level 1:colcon.colcon_core.package_identification:_identify(src/rushbott_gz/rushbott_gz_gazebo) by extension 'colcon_pkg'
+[0.259s] Level 1:colcon.colcon_core.package_identification:_identify(src/rushbott_gz/rushbott_gz_gazebo) by extensions ['colcon_meta']
+[0.259s] Level 1:colcon.colcon_core.package_identification:_identify(src/rushbott_gz/rushbott_gz_gazebo) by extension 'colcon_meta'
+[0.259s] Level 1:colcon.colcon_core.package_identification:_identify(src/rushbott_gz/rushbott_gz_gazebo) by extensions ['ros']
+[0.259s] Level 1:colcon.colcon_core.package_identification:_identify(src/rushbott_gz/rushbott_gz_gazebo) by extension 'ros'
+[0.260s] DEBUG:colcon.colcon_core.package_identification:Package 'src/rushbott_gz/rushbott_gz_gazebo' with type 'ros.ament_cmake' and name 'ros_gz_example_gazebo'
+[0.260s] Level 1:colcon.colcon_core.package_discovery:discover_packages(recursive) using defaults
+[0.260s] Level 1:colcon.colcon_core.package_discovery:discover_packages(ignore) discover
+[0.260s] Level 1:colcon.colcon_core.package_discovery:discover_packages(ignore) using defaults
+[0.260s] Level 1:colcon.colcon_core.package_discovery:discover_packages(path) discover
+[0.260s] Level 1:colcon.colcon_core.package_discovery:discover_packages(path) using defaults
+[0.283s] Level 5:colcon.colcon_core.verb:set package 'ros_gz_example_application' build argument 'cmake_args' from command line to 'None'
+[0.283s] Level 5:colcon.colcon_core.verb:set package 'ros_gz_example_application' build argument 'cmake_target' from command line to 'None'
+[0.283s] Level 5:colcon.colcon_core.verb:set package 'ros_gz_example_application' build argument 'cmake_target_skip_unavailable' from command line to 'False'
+[0.283s] Level 5:colcon.colcon_core.verb:set package 'ros_gz_example_application' build argument 'cmake_clean_cache' from command line to 'False'
+[0.283s] Level 5:colcon.colcon_core.verb:set package 'ros_gz_example_application' build argument 'cmake_clean_first' from command line to 'False'
+[0.284s] Level 5:colcon.colcon_core.verb:set package 'ros_gz_example_application' build argument 'cmake_force_configure' from command line to 'False'
+[0.284s] Level 5:colcon.colcon_core.verb:set package 'ros_gz_example_application' build argument 'ament_cmake_args' from command line to 'None'
+[0.284s] Level 5:colcon.colcon_core.verb:set package 'ros_gz_example_application' build argument 'catkin_cmake_args' from command line to 'None'
+[0.284s] Level 5:colcon.colcon_core.verb:set package 'ros_gz_example_application' build argument 'catkin_skip_building_tests' from command line to 'False'
+[0.284s] DEBUG:colcon.colcon_core.verb:Building package 'ros_gz_example_application' with the following arguments: {'ament_cmake_args': None, 'build_base': '/home/ttpidelta/RushBoTT-ros2_ws/build/ros_gz_example_application', 'catkin_cmake_args': None, 'catkin_skip_building_tests': False, 'cmake_args': None, 'cmake_clean_cache': False, 'cmake_clean_first': False, 'cmake_force_configure': False, 'cmake_target': None, 'cmake_target_skip_unavailable': False, 'install_base': '/home/ttpidelta/RushBoTT-ros2_ws/install/ros_gz_example_application', 'merge_install': False, 'path': '/home/ttpidelta/RushBoTT-ros2_ws/src/rushbott_gz/rushbott_gz_application', 'symlink_install': False, 'test_result_base': None}
+[0.284s] Level 5:colcon.colcon_core.verb:set package 'ros_gz_example_description' build argument 'cmake_args' from command line to 'None'
+[0.284s] Level 5:colcon.colcon_core.verb:set package 'ros_gz_example_description' build argument 'cmake_target' from command line to 'None'
+[0.284s] Level 5:colcon.colcon_core.verb:set package 'ros_gz_example_description' build argument 'cmake_target_skip_unavailable' from command line to 'False'
+[0.284s] Level 5:colcon.colcon_core.verb:set package 'ros_gz_example_description' build argument 'cmake_clean_cache' from command line to 'False'
+[0.284s] Level 5:colcon.colcon_core.verb:set package 'ros_gz_example_description' build argument 'cmake_clean_first' from command line to 'False'
+[0.284s] Level 5:colcon.colcon_core.verb:set package 'ros_gz_example_description' build argument 'cmake_force_configure' from command line to 'False'
+[0.284s] Level 5:colcon.colcon_core.verb:set package 'ros_gz_example_description' build argument 'ament_cmake_args' from command line to 'None'
+[0.284s] Level 5:colcon.colcon_core.verb:set package 'ros_gz_example_description' build argument 'catkin_cmake_args' from command line to 'None'
+[0.284s] Level 5:colcon.colcon_core.verb:set package 'ros_gz_example_description' build argument 'catkin_skip_building_tests' from command line to 'False'
+[0.284s] DEBUG:colcon.colcon_core.verb:Building package 'ros_gz_example_description' with the following arguments: {'ament_cmake_args': None, 'build_base': '/home/ttpidelta/RushBoTT-ros2_ws/build/ros_gz_example_description', 'catkin_cmake_args': None, 'catkin_skip_building_tests': False, 'cmake_args': None, 'cmake_clean_cache': False, 'cmake_clean_first': False, 'cmake_force_configure': False, 'cmake_target': None, 'cmake_target_skip_unavailable': False, 'install_base': '/home/ttpidelta/RushBoTT-ros2_ws/install/ros_gz_example_description', 'merge_install': False, 'path': '/home/ttpidelta/RushBoTT-ros2_ws/src/rushbott_gz/rushbott_gz_description', 'symlink_install': False, 'test_result_base': None}
+[0.284s] Level 5:colcon.colcon_core.verb:set package 'rushbott_description' build argument 'cmake_args' from command line to 'None'
+[0.284s] Level 5:colcon.colcon_core.verb:set package 'rushbott_description' build argument 'cmake_target' from command line to 'None'
+[0.284s] Level 5:colcon.colcon_core.verb:set package 'rushbott_description' build argument 'cmake_target_skip_unavailable' from command line to 'False'
+[0.284s] Level 5:colcon.colcon_core.verb:set package 'rushbott_description' build argument 'cmake_clean_cache' from command line to 'False'
+[0.284s] Level 5:colcon.colcon_core.verb:set package 'rushbott_description' build argument 'cmake_clean_first' from command line to 'False'
+[0.284s] Level 5:colcon.colcon_core.verb:set package 'rushbott_description' build argument 'cmake_force_configure' from command line to 'False'
+[0.285s] Level 5:colcon.colcon_core.verb:set package 'rushbott_description' build argument 'ament_cmake_args' from command line to 'None'
+[0.285s] Level 5:colcon.colcon_core.verb:set package 'rushbott_description' build argument 'catkin_cmake_args' from command line to 'None'
+[0.285s] Level 5:colcon.colcon_core.verb:set package 'rushbott_description' build argument 'catkin_skip_building_tests' from command line to 'False'
+[0.285s] DEBUG:colcon.colcon_core.verb:Building package 'rushbott_description' with the following arguments: {'ament_cmake_args': None, 'build_base': '/home/ttpidelta/RushBoTT-ros2_ws/build/rushbott_description', 'catkin_cmake_args': None, 'catkin_skip_building_tests': False, 'cmake_args': None, 'cmake_clean_cache': False, 'cmake_clean_first': False, 'cmake_force_configure': False, 'cmake_target': None, 'cmake_target_skip_unavailable': False, 'install_base': '/home/ttpidelta/RushBoTT-ros2_ws/install/rushbott_description', 'merge_install': False, 'path': '/home/ttpidelta/RushBoTT-ros2_ws/src/rushbott/rushbott_description', 'symlink_install': False, 'test_result_base': None}
+[0.285s] Level 5:colcon.colcon_core.verb:set package 'ros_gz_example_gazebo' build argument 'cmake_args' from command line to 'None'
+[0.285s] Level 5:colcon.colcon_core.verb:set package 'ros_gz_example_gazebo' build argument 'cmake_target' from command line to 'None'
+[0.285s] Level 5:colcon.colcon_core.verb:set package 'ros_gz_example_gazebo' build argument 'cmake_target_skip_unavailable' from command line to 'False'
+[0.285s] Level 5:colcon.colcon_core.verb:set package 'ros_gz_example_gazebo' build argument 'cmake_clean_cache' from command line to 'False'
+[0.285s] Level 5:colcon.colcon_core.verb:set package 'ros_gz_example_gazebo' build argument 'cmake_clean_first' from command line to 'False'
+[0.285s] Level 5:colcon.colcon_core.verb:set package 'ros_gz_example_gazebo' build argument 'cmake_force_configure' from command line to 'False'
+[0.285s] Level 5:colcon.colcon_core.verb:set package 'ros_gz_example_gazebo' build argument 'ament_cmake_args' from command line to 'None'
+[0.285s] Level 5:colcon.colcon_core.verb:set package 'ros_gz_example_gazebo' build argument 'catkin_cmake_args' from command line to 'None'
+[0.285s] Level 5:colcon.colcon_core.verb:set package 'ros_gz_example_gazebo' build argument 'catkin_skip_building_tests' from command line to 'False'
+[0.285s] DEBUG:colcon.colcon_core.verb:Building package 'ros_gz_example_gazebo' with the following arguments: {'ament_cmake_args': None, 'build_base': '/home/ttpidelta/RushBoTT-ros2_ws/build/ros_gz_example_gazebo', 'catkin_cmake_args': None, 'catkin_skip_building_tests': False, 'cmake_args': None, 'cmake_clean_cache': False, 'cmake_clean_first': False, 'cmake_force_configure': False, 'cmake_target': None, 'cmake_target_skip_unavailable': False, 'install_base': '/home/ttpidelta/RushBoTT-ros2_ws/install/ros_gz_example_gazebo', 'merge_install': False, 'path': '/home/ttpidelta/RushBoTT-ros2_ws/src/rushbott_gz/rushbott_gz_gazebo', 'symlink_install': False, 'test_result_base': None}
+[0.285s] Level 5:colcon.colcon_core.verb:set package 'ros_gz_example_bringup' build argument 'cmake_args' from command line to 'None'
+[0.285s] Level 5:colcon.colcon_core.verb:set package 'ros_gz_example_bringup' build argument 'cmake_target' from command line to 'None'
+[0.285s] Level 5:colcon.colcon_core.verb:set package 'ros_gz_example_bringup' build argument 'cmake_target_skip_unavailable' from command line to 'False'
+[0.286s] Level 5:colcon.colcon_core.verb:set package 'ros_gz_example_bringup' build argument 'cmake_clean_cache' from command line to 'False'
+[0.286s] Level 5:colcon.colcon_core.verb:set package 'ros_gz_example_bringup' build argument 'cmake_clean_first' from command line to 'False'
+[0.286s] Level 5:colcon.colcon_core.verb:set package 'ros_gz_example_bringup' build argument 'cmake_force_configure' from command line to 'False'
+[0.286s] Level 5:colcon.colcon_core.verb:set package 'ros_gz_example_bringup' build argument 'ament_cmake_args' from command line to 'None'
+[0.286s] Level 5:colcon.colcon_core.verb:set package 'ros_gz_example_bringup' build argument 'catkin_cmake_args' from command line to 'None'
+[0.286s] Level 5:colcon.colcon_core.verb:set package 'ros_gz_example_bringup' build argument 'catkin_skip_building_tests' from command line to 'False'
+[0.286s] DEBUG:colcon.colcon_core.verb:Building package 'ros_gz_example_bringup' with the following arguments: {'ament_cmake_args': None, 'build_base': '/home/ttpidelta/RushBoTT-ros2_ws/build/ros_gz_example_bringup', 'catkin_cmake_args': None, 'catkin_skip_building_tests': False, 'cmake_args': None, 'cmake_clean_cache': False, 'cmake_clean_first': False, 'cmake_force_configure': False, 'cmake_target': None, 'cmake_target_skip_unavailable': False, 'install_base': '/home/ttpidelta/RushBoTT-ros2_ws/install/ros_gz_example_bringup', 'merge_install': False, 'path': '/home/ttpidelta/RushBoTT-ros2_ws/src/rushbott_gz/rushbott_gz_bringup', 'symlink_install': False, 'test_result_base': None}
+[0.286s] INFO:colcon.colcon_core.executor:Executing jobs using 'parallel' executor
+[0.287s] DEBUG:colcon.colcon_parallel_executor.executor.parallel:run_until_complete
+[0.287s] INFO:colcon.colcon_ros.task.ament_cmake.build:Building ROS package in '/home/ttpidelta/RushBoTT-ros2_ws/src/rushbott_gz/rushbott_gz_description' with build type 'ament_cmake'
+[0.287s] INFO:colcon.colcon_cmake.task.cmake.build:Building CMake package in '/home/ttpidelta/RushBoTT-ros2_ws/src/rushbott_gz/rushbott_gz_description'
+[0.292s] INFO:colcon.colcon_core.plugin_system:Skipping extension 'colcon_core.shell.bat': Not used on non-Windows systems
+[0.292s] INFO:colcon.colcon_core.shell:Skip shell extension 'powershell' for command environment: Not usable outside of PowerShell
+[0.292s] DEBUG:colcon.colcon_core.shell:Skip shell extension 'dsv' for command environment
+[0.303s] INFO:colcon.colcon_ros.task.ament_cmake.build:Building ROS package in '/home/ttpidelta/RushBoTT-ros2_ws/src/rushbott_gz/rushbott_gz_application' with build type 'ament_cmake'
+[0.303s] INFO:colcon.colcon_cmake.task.cmake.build:Building CMake package in '/home/ttpidelta/RushBoTT-ros2_ws/src/rushbott_gz/rushbott_gz_application'
+[0.304s] INFO:colcon.colcon_core.shell:Skip shell extension 'powershell' for command environment: Not usable outside of PowerShell
+[0.304s] DEBUG:colcon.colcon_core.shell:Skip shell extension 'dsv' for command environment
+[0.308s] INFO:colcon.colcon_ros.task.ament_cmake.build:Building ROS package in '/home/ttpidelta/RushBoTT-ros2_ws/src/rushbott/rushbott_description' with build type 'ament_cmake'
+[0.308s] INFO:colcon.colcon_cmake.task.cmake.build:Building CMake package in '/home/ttpidelta/RushBoTT-ros2_ws/src/rushbott/rushbott_description'
+[0.308s] INFO:colcon.colcon_core.shell:Skip shell extension 'powershell' for command environment: Not usable outside of PowerShell
+[0.308s] DEBUG:colcon.colcon_core.shell:Skip shell extension 'dsv' for command environment
+[0.318s] DEBUG:colcon.colcon_core.event_handler.log_command:Invoking command in '/home/ttpidelta/RushBoTT-ros2_ws/build/ros_gz_example_description': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/opt/ros/jazzy /usr/bin/cmake --build /home/ttpidelta/RushBoTT-ros2_ws/build/ros_gz_example_description -- -j12 -l12
+[0.326s] DEBUG:colcon.colcon_core.event_handler.log_command:Invoking command in '/home/ttpidelta/RushBoTT-ros2_ws/build/ros_gz_example_application': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/opt/ros/jazzy /usr/bin/cmake --build /home/ttpidelta/RushBoTT-ros2_ws/build/ros_gz_example_application -- -j12 -l12
+[0.330s] DEBUG:colcon.colcon_core.event_handler.log_command:Invoking command in '/home/ttpidelta/RushBoTT-ros2_ws/build/rushbott_description': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/opt/ros/jazzy /usr/bin/cmake /home/ttpidelta/RushBoTT-ros2_ws/src/rushbott/rushbott_description -DCMAKE_INSTALL_PREFIX=/home/ttpidelta/RushBoTT-ros2_ws/install/rushbott_description
+[0.430s] DEBUG:colcon.colcon_core.event_handler.log_command:Invoked command in '/home/ttpidelta/RushBoTT-ros2_ws/build/ros_gz_example_application' returned '0': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/opt/ros/jazzy /usr/bin/cmake --build /home/ttpidelta/RushBoTT-ros2_ws/build/ros_gz_example_application -- -j12 -l12
+[0.432s] DEBUG:colcon.colcon_core.event_handler.log_command:Invoked command in '/home/ttpidelta/RushBoTT-ros2_ws/build/ros_gz_example_description' returned '0': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/opt/ros/jazzy /usr/bin/cmake --build /home/ttpidelta/RushBoTT-ros2_ws/build/ros_gz_example_description -- -j12 -l12
+[0.468s] DEBUG:colcon.colcon_core.event_handler.log_command:Invoking command in '/home/ttpidelta/RushBoTT-ros2_ws/build/ros_gz_example_application': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/opt/ros/jazzy /usr/bin/cmake --install /home/ttpidelta/RushBoTT-ros2_ws/build/ros_gz_example_application
+[0.471s] DEBUG:colcon.colcon_core.event_handler.log_command:Invoking command in '/home/ttpidelta/RushBoTT-ros2_ws/build/ros_gz_example_description': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/opt/ros/jazzy /usr/bin/cmake --install /home/ttpidelta/RushBoTT-ros2_ws/build/ros_gz_example_description
+[0.482s] Level 1:colcon.colcon_core.environment:create_environment_scripts_only(ros_gz_example_application)
+[0.484s] DEBUG:colcon.colcon_core.event_handler.log_command:Invoked command in '/home/ttpidelta/RushBoTT-ros2_ws/build/ros_gz_example_application' returned '0': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/opt/ros/jazzy /usr/bin/cmake --install /home/ttpidelta/RushBoTT-ros2_ws/build/ros_gz_example_application
+[0.494s] Level 1:colcon.colcon_core.environment:checking '/home/ttpidelta/RushBoTT-ros2_ws/install/ros_gz_example_application' for CMake module files
+[0.495s] Level 1:colcon.colcon_core.environment:checking '/home/ttpidelta/RushBoTT-ros2_ws/install/ros_gz_example_application' for CMake config files
+[0.495s] Level 1:colcon.colcon_core.shell:create_environment_hook('ros_gz_example_application', 'cmake_prefix_path')
+[0.495s] INFO:colcon.colcon_core.shell:Creating environment hook '/home/ttpidelta/RushBoTT-ros2_ws/install/ros_gz_example_application/share/ros_gz_example_application/hook/cmake_prefix_path.ps1'
+[0.496s] INFO:colcon.colcon_core.shell:Creating environment descriptor '/home/ttpidelta/RushBoTT-ros2_ws/install/ros_gz_example_application/share/ros_gz_example_application/hook/cmake_prefix_path.dsv'
+[0.497s] INFO:colcon.colcon_core.shell:Creating environment hook '/home/ttpidelta/RushBoTT-ros2_ws/install/ros_gz_example_application/share/ros_gz_example_application/hook/cmake_prefix_path.sh'
+[0.498s] Level 1:colcon.colcon_core.environment:checking '/home/ttpidelta/RushBoTT-ros2_ws/install/ros_gz_example_application/bin'
+[0.498s] Level 1:colcon.colcon_core.environment:checking '/home/ttpidelta/RushBoTT-ros2_ws/install/ros_gz_example_application/lib/pkgconfig/ros_gz_example_application.pc'
+[0.501s] Level 1:colcon.colcon_core.environment:checking '/home/ttpidelta/RushBoTT-ros2_ws/install/ros_gz_example_application/lib/python3.12/site-packages'
+[0.501s] Level 1:colcon.colcon_core.environment:checking '/home/ttpidelta/RushBoTT-ros2_ws/install/ros_gz_example_application/bin'
+[0.501s] INFO:colcon.colcon_core.shell:Creating package script '/home/ttpidelta/RushBoTT-ros2_ws/install/ros_gz_example_application/share/ros_gz_example_application/package.ps1'
+[0.502s] INFO:colcon.colcon_core.shell:Creating package descriptor '/home/ttpidelta/RushBoTT-ros2_ws/install/ros_gz_example_application/share/ros_gz_example_application/package.dsv'
+[0.503s] INFO:colcon.colcon_core.shell:Creating package script '/home/ttpidelta/RushBoTT-ros2_ws/install/ros_gz_example_application/share/ros_gz_example_application/package.sh'
+[0.504s] INFO:colcon.colcon_core.shell:Creating package script '/home/ttpidelta/RushBoTT-ros2_ws/install/ros_gz_example_application/share/ros_gz_example_application/package.bash'
+[0.505s] INFO:colcon.colcon_core.shell:Creating package script '/home/ttpidelta/RushBoTT-ros2_ws/install/ros_gz_example_application/share/ros_gz_example_application/package.zsh'
+[0.506s] Level 1:colcon.colcon_core.environment:create_file_with_runtime_dependencies(/home/ttpidelta/RushBoTT-ros2_ws/install/ros_gz_example_application/share/colcon-core/packages/ros_gz_example_application)
+[0.508s] Level 1:colcon.colcon_core.environment:create_environment_scripts_only(ros_gz_example_description)
+[0.508s] Level 1:colcon.colcon_core.environment:checking '/home/ttpidelta/RushBoTT-ros2_ws/install/ros_gz_example_description' for CMake module files
+[0.509s] DEBUG:colcon.colcon_core.event_handler.log_command:Invoked command in '/home/ttpidelta/RushBoTT-ros2_ws/build/ros_gz_example_description' returned '0': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/opt/ros/jazzy /usr/bin/cmake --install /home/ttpidelta/RushBoTT-ros2_ws/build/ros_gz_example_description
+[0.509s] Level 1:colcon.colcon_core.environment:checking '/home/ttpidelta/RushBoTT-ros2_ws/install/ros_gz_example_description' for CMake config files
+[0.510s] Level 1:colcon.colcon_core.shell:create_environment_hook('ros_gz_example_description', 'cmake_prefix_path')
+[0.510s] INFO:colcon.colcon_core.shell:Creating environment hook '/home/ttpidelta/RushBoTT-ros2_ws/install/ros_gz_example_description/share/ros_gz_example_description/hook/cmake_prefix_path.ps1'
+[0.510s] INFO:colcon.colcon_core.shell:Creating environment descriptor '/home/ttpidelta/RushBoTT-ros2_ws/install/ros_gz_example_description/share/ros_gz_example_description/hook/cmake_prefix_path.dsv'
+[0.511s] INFO:colcon.colcon_core.shell:Creating environment hook '/home/ttpidelta/RushBoTT-ros2_ws/install/ros_gz_example_description/share/ros_gz_example_description/hook/cmake_prefix_path.sh'
+[0.511s] Level 1:colcon.colcon_core.environment:checking '/home/ttpidelta/RushBoTT-ros2_ws/install/ros_gz_example_description/bin'
+[0.511s] Level 1:colcon.colcon_core.environment:checking '/home/ttpidelta/RushBoTT-ros2_ws/install/ros_gz_example_description/lib/pkgconfig/ros_gz_example_description.pc'
+[0.511s] Level 1:colcon.colcon_core.environment:checking '/home/ttpidelta/RushBoTT-ros2_ws/install/ros_gz_example_description/lib/python3.12/site-packages'
+[0.512s] Level 1:colcon.colcon_core.environment:checking '/home/ttpidelta/RushBoTT-ros2_ws/install/ros_gz_example_description/bin'
+[0.512s] INFO:colcon.colcon_core.shell:Creating package script '/home/ttpidelta/RushBoTT-ros2_ws/install/ros_gz_example_description/share/ros_gz_example_description/package.ps1'
+[0.512s] INFO:colcon.colcon_core.shell:Creating package descriptor '/home/ttpidelta/RushBoTT-ros2_ws/install/ros_gz_example_description/share/ros_gz_example_description/package.dsv'
+[0.513s] INFO:colcon.colcon_core.shell:Creating package script '/home/ttpidelta/RushBoTT-ros2_ws/install/ros_gz_example_description/share/ros_gz_example_description/package.sh'
+[0.514s] INFO:colcon.colcon_core.shell:Creating package script '/home/ttpidelta/RushBoTT-ros2_ws/install/ros_gz_example_description/share/ros_gz_example_description/package.bash'
+[0.515s] INFO:colcon.colcon_core.shell:Creating package script '/home/ttpidelta/RushBoTT-ros2_ws/install/ros_gz_example_description/share/ros_gz_example_description/package.zsh'
+[0.515s] Level 1:colcon.colcon_core.environment:create_file_with_runtime_dependencies(/home/ttpidelta/RushBoTT-ros2_ws/install/ros_gz_example_description/share/colcon-core/packages/ros_gz_example_description)
+[0.533s] Level 1:colcon.colcon_core.environment:create_environment_scripts_only(ros_gz_example_application)
+[0.533s] Level 1:colcon.colcon_core.environment:checking '/home/ttpidelta/RushBoTT-ros2_ws/install/ros_gz_example_application' for CMake module files
+[0.534s] Level 1:colcon.colcon_core.environment:checking '/home/ttpidelta/RushBoTT-ros2_ws/install/ros_gz_example_application' for CMake config files
+[0.534s] Level 1:colcon.colcon_core.shell:create_environment_hook('ros_gz_example_application', 'cmake_prefix_path')
+[0.534s] INFO:colcon.colcon_core.shell:Creating environment hook '/home/ttpidelta/RushBoTT-ros2_ws/install/ros_gz_example_application/share/ros_gz_example_application/hook/cmake_prefix_path.ps1'
+[0.535s] INFO:colcon.colcon_core.shell:Creating environment descriptor '/home/ttpidelta/RushBoTT-ros2_ws/install/ros_gz_example_application/share/ros_gz_example_application/hook/cmake_prefix_path.dsv'
+[0.535s] INFO:colcon.colcon_core.shell:Creating environment hook '/home/ttpidelta/RushBoTT-ros2_ws/install/ros_gz_example_application/share/ros_gz_example_application/hook/cmake_prefix_path.sh'
+[0.536s] Level 1:colcon.colcon_core.environment:checking '/home/ttpidelta/RushBoTT-ros2_ws/install/ros_gz_example_application/bin'
+[0.536s] Level 1:colcon.colcon_core.environment:checking '/home/ttpidelta/RushBoTT-ros2_ws/install/ros_gz_example_application/lib/pkgconfig/ros_gz_example_application.pc'
+[0.536s] Level 1:colcon.colcon_core.environment:checking '/home/ttpidelta/RushBoTT-ros2_ws/install/ros_gz_example_application/lib/python3.12/site-packages'
+[0.537s] Level 1:colcon.colcon_core.environment:checking '/home/ttpidelta/RushBoTT-ros2_ws/install/ros_gz_example_application/bin'
+[0.537s] INFO:colcon.colcon_core.shell:Creating package script '/home/ttpidelta/RushBoTT-ros2_ws/install/ros_gz_example_application/share/ros_gz_example_application/package.ps1'
+[0.538s] INFO:colcon.colcon_core.shell:Creating package descriptor '/home/ttpidelta/RushBoTT-ros2_ws/install/ros_gz_example_application/share/ros_gz_example_application/package.dsv'
+[0.538s] INFO:colcon.colcon_core.shell:Creating package script '/home/ttpidelta/RushBoTT-ros2_ws/install/ros_gz_example_application/share/ros_gz_example_application/package.sh'
+[0.539s] INFO:colcon.colcon_core.shell:Creating package script '/home/ttpidelta/RushBoTT-ros2_ws/install/ros_gz_example_application/share/ros_gz_example_application/package.bash'
+[0.539s] INFO:colcon.colcon_core.shell:Creating package script '/home/ttpidelta/RushBoTT-ros2_ws/install/ros_gz_example_application/share/ros_gz_example_application/package.zsh'
+[0.540s] Level 1:colcon.colcon_core.environment:create_file_with_runtime_dependencies(/home/ttpidelta/RushBoTT-ros2_ws/install/ros_gz_example_application/share/colcon-core/packages/ros_gz_example_application)
+[0.544s] Level 1:colcon.colcon_core.environment:create_environment_scripts_only(ros_gz_example_description)
+[0.544s] Level 1:colcon.colcon_core.environment:checking '/home/ttpidelta/RushBoTT-ros2_ws/install/ros_gz_example_description' for CMake module files
+[0.545s] Level 1:colcon.colcon_core.environment:checking '/home/ttpidelta/RushBoTT-ros2_ws/install/ros_gz_example_description' for CMake config files
+[0.545s] Level 1:colcon.colcon_core.shell:create_environment_hook('ros_gz_example_description', 'cmake_prefix_path')
+[0.545s] INFO:colcon.colcon_core.shell:Creating environment hook '/home/ttpidelta/RushBoTT-ros2_ws/install/ros_gz_example_description/share/ros_gz_example_description/hook/cmake_prefix_path.ps1'
+[0.545s] INFO:colcon.colcon_core.shell:Creating environment descriptor '/home/ttpidelta/RushBoTT-ros2_ws/install/ros_gz_example_description/share/ros_gz_example_description/hook/cmake_prefix_path.dsv'
+[0.546s] INFO:colcon.colcon_core.shell:Creating environment hook '/home/ttpidelta/RushBoTT-ros2_ws/install/ros_gz_example_description/share/ros_gz_example_description/hook/cmake_prefix_path.sh'
+[0.546s] Level 1:colcon.colcon_core.environment:checking '/home/ttpidelta/RushBoTT-ros2_ws/install/ros_gz_example_description/bin'
+[0.546s] Level 1:colcon.colcon_core.environment:checking '/home/ttpidelta/RushBoTT-ros2_ws/install/ros_gz_example_description/lib/pkgconfig/ros_gz_example_description.pc'
+[0.547s] Level 1:colcon.colcon_core.environment:checking '/home/ttpidelta/RushBoTT-ros2_ws/install/ros_gz_example_description/lib/python3.12/site-packages'
+[0.547s] Level 1:colcon.colcon_core.environment:checking '/home/ttpidelta/RushBoTT-ros2_ws/install/ros_gz_example_description/bin'
+[0.547s] INFO:colcon.colcon_core.shell:Creating package script '/home/ttpidelta/RushBoTT-ros2_ws/install/ros_gz_example_description/share/ros_gz_example_description/package.ps1'
+[0.547s] INFO:colcon.colcon_core.shell:Creating package descriptor '/home/ttpidelta/RushBoTT-ros2_ws/install/ros_gz_example_description/share/ros_gz_example_description/package.dsv'
+[0.548s] INFO:colcon.colcon_core.shell:Creating package script '/home/ttpidelta/RushBoTT-ros2_ws/install/ros_gz_example_description/share/ros_gz_example_description/package.sh'
+[0.548s] INFO:colcon.colcon_core.shell:Creating package script '/home/ttpidelta/RushBoTT-ros2_ws/install/ros_gz_example_description/share/ros_gz_example_description/package.bash'
+[0.549s] INFO:colcon.colcon_core.shell:Creating package script '/home/ttpidelta/RushBoTT-ros2_ws/install/ros_gz_example_description/share/ros_gz_example_description/package.zsh'
+[0.549s] Level 1:colcon.colcon_core.environment:create_file_with_runtime_dependencies(/home/ttpidelta/RushBoTT-ros2_ws/install/ros_gz_example_description/share/colcon-core/packages/ros_gz_example_description)
+[0.550s] INFO:colcon.colcon_ros.task.ament_cmake.build:Building ROS package in '/home/ttpidelta/RushBoTT-ros2_ws/src/rushbott_gz/rushbott_gz_gazebo' with build type 'ament_cmake'
+[0.550s] INFO:colcon.colcon_cmake.task.cmake.build:Building CMake package in '/home/ttpidelta/RushBoTT-ros2_ws/src/rushbott_gz/rushbott_gz_gazebo'
+[0.550s] INFO:colcon.colcon_core.shell:Skip shell extension 'powershell' for command environment: Not usable outside of PowerShell
+[0.550s] DEBUG:colcon.colcon_core.shell:Skip shell extension 'dsv' for command environment
+[0.565s] DEBUG:colcon.colcon_core.event_handler.log_command:Invoking command in '/home/ttpidelta/RushBoTT-ros2_ws/build/ros_gz_example_gazebo': CMAKE_PREFIX_PATH=/home/ttpidelta/RushBoTT-ros2_ws/install/ros_gz_example_description:/home/ttpidelta/RushBoTT-ros2_ws/install/rushbott_description:/home/ttpidelta/RushBoTT-ros2_ws/install/ros_gz_example_bringup:/home/ttpidelta/RushBoTT-ros2_ws/install/ros_gz_example_gazebo:/home/ttpidelta/RushBoTT-ros2_ws/install/ros_gz_example_application:/opt/ros/jazzy/opt/gz_sim_vendor:/opt/ros/jazzy/opt/gz_sensors_vendor:/opt/ros/jazzy/opt/gz_physics_vendor:/opt/ros/jazzy/opt/sdformat_vendor:/opt/ros/jazzy/opt/gz_gui_vendor:/opt/ros/jazzy/opt/gz_transport_vendor:/opt/ros/jazzy/opt/gz_rendering_vendor:/opt/ros/jazzy/opt/gz_plugin_vendor:/opt/ros/jazzy/opt/gz_fuel_tools_vendor:/opt/ros/jazzy/opt/gz_msgs_vendor:/opt/ros/jazzy/opt/gz_common_vendor:/opt/ros/jazzy/opt/gz_math_vendor:/opt/ros/jazzy/opt/gz_utils_vendor:/opt/ros/jazzy/opt/gz_tools_vendor:/opt/ros/jazzy/opt/gz_ogre_next_vendor:/opt/ros/jazzy/opt/gz_dartsim_vendor:/opt/ros/jazzy/opt/gz_cmake_vendor:/opt/ros/jazzy GZ_SIM_RESOURCE_PATH=/home/ttpidelta/RushBoTT-ros2_ws/install/ros_gz_example_description/share/ros_gz_example_description/models:${GZ_SIM_RESOURCE_PATH} /usr/bin/cmake --build /home/ttpidelta/RushBoTT-ros2_ws/build/ros_gz_example_gazebo -- -j12 -l12
+[0.657s] DEBUG:colcon.colcon_core.event_handler.log_command:Invoked command in '/home/ttpidelta/RushBoTT-ros2_ws/build/ros_gz_example_gazebo' returned '0': CMAKE_PREFIX_PATH=/home/ttpidelta/RushBoTT-ros2_ws/install/ros_gz_example_description:/home/ttpidelta/RushBoTT-ros2_ws/install/rushbott_description:/home/ttpidelta/RushBoTT-ros2_ws/install/ros_gz_example_bringup:/home/ttpidelta/RushBoTT-ros2_ws/install/ros_gz_example_gazebo:/home/ttpidelta/RushBoTT-ros2_ws/install/ros_gz_example_application:/opt/ros/jazzy/opt/gz_sim_vendor:/opt/ros/jazzy/opt/gz_sensors_vendor:/opt/ros/jazzy/opt/gz_physics_vendor:/opt/ros/jazzy/opt/sdformat_vendor:/opt/ros/jazzy/opt/gz_gui_vendor:/opt/ros/jazzy/opt/gz_transport_vendor:/opt/ros/jazzy/opt/gz_rendering_vendor:/opt/ros/jazzy/opt/gz_plugin_vendor:/opt/ros/jazzy/opt/gz_fuel_tools_vendor:/opt/ros/jazzy/opt/gz_msgs_vendor:/opt/ros/jazzy/opt/gz_common_vendor:/opt/ros/jazzy/opt/gz_math_vendor:/opt/ros/jazzy/opt/gz_utils_vendor:/opt/ros/jazzy/opt/gz_tools_vendor:/opt/ros/jazzy/opt/gz_ogre_next_vendor:/opt/ros/jazzy/opt/gz_dartsim_vendor:/opt/ros/jazzy/opt/gz_cmake_vendor:/opt/ros/jazzy GZ_SIM_RESOURCE_PATH=/home/ttpidelta/RushBoTT-ros2_ws/install/ros_gz_example_description/share/ros_gz_example_description/models:${GZ_SIM_RESOURCE_PATH} /usr/bin/cmake --build /home/ttpidelta/RushBoTT-ros2_ws/build/ros_gz_example_gazebo -- -j12 -l12
+[0.695s] DEBUG:colcon.colcon_core.event_handler.log_command:Invoking command in '/home/ttpidelta/RushBoTT-ros2_ws/build/ros_gz_example_gazebo': CMAKE_PREFIX_PATH=/home/ttpidelta/RushBoTT-ros2_ws/install/ros_gz_example_description:/home/ttpidelta/RushBoTT-ros2_ws/install/rushbott_description:/home/ttpidelta/RushBoTT-ros2_ws/install/ros_gz_example_bringup:/home/ttpidelta/RushBoTT-ros2_ws/install/ros_gz_example_gazebo:/home/ttpidelta/RushBoTT-ros2_ws/install/ros_gz_example_application:/opt/ros/jazzy/opt/gz_sim_vendor:/opt/ros/jazzy/opt/gz_sensors_vendor:/opt/ros/jazzy/opt/gz_physics_vendor:/opt/ros/jazzy/opt/sdformat_vendor:/opt/ros/jazzy/opt/gz_gui_vendor:/opt/ros/jazzy/opt/gz_transport_vendor:/opt/ros/jazzy/opt/gz_rendering_vendor:/opt/ros/jazzy/opt/gz_plugin_vendor:/opt/ros/jazzy/opt/gz_fuel_tools_vendor:/opt/ros/jazzy/opt/gz_msgs_vendor:/opt/ros/jazzy/opt/gz_common_vendor:/opt/ros/jazzy/opt/gz_math_vendor:/opt/ros/jazzy/opt/gz_utils_vendor:/opt/ros/jazzy/opt/gz_tools_vendor:/opt/ros/jazzy/opt/gz_ogre_next_vendor:/opt/ros/jazzy/opt/gz_dartsim_vendor:/opt/ros/jazzy/opt/gz_cmake_vendor:/opt/ros/jazzy GZ_SIM_RESOURCE_PATH=/home/ttpidelta/RushBoTT-ros2_ws/install/ros_gz_example_description/share/ros_gz_example_description/models:${GZ_SIM_RESOURCE_PATH} /usr/bin/cmake --install /home/ttpidelta/RushBoTT-ros2_ws/build/ros_gz_example_gazebo
+[0.710s] Level 1:colcon.colcon_core.environment:create_environment_scripts_only(ros_gz_example_gazebo)
+[0.711s] Level 1:colcon.colcon_core.environment:checking '/home/ttpidelta/RushBoTT-ros2_ws/install/ros_gz_example_gazebo' for CMake module files
+[0.712s] DEBUG:colcon.colcon_core.event_handler.log_command:Invoked command in '/home/ttpidelta/RushBoTT-ros2_ws/build/ros_gz_example_gazebo' returned '0': CMAKE_PREFIX_PATH=/home/ttpidelta/RushBoTT-ros2_ws/install/ros_gz_example_description:/home/ttpidelta/RushBoTT-ros2_ws/install/rushbott_description:/home/ttpidelta/RushBoTT-ros2_ws/install/ros_gz_example_bringup:/home/ttpidelta/RushBoTT-ros2_ws/install/ros_gz_example_gazebo:/home/ttpidelta/RushBoTT-ros2_ws/install/ros_gz_example_application:/opt/ros/jazzy/opt/gz_sim_vendor:/opt/ros/jazzy/opt/gz_sensors_vendor:/opt/ros/jazzy/opt/gz_physics_vendor:/opt/ros/jazzy/opt/sdformat_vendor:/opt/ros/jazzy/opt/gz_gui_vendor:/opt/ros/jazzy/opt/gz_transport_vendor:/opt/ros/jazzy/opt/gz_rendering_vendor:/opt/ros/jazzy/opt/gz_plugin_vendor:/opt/ros/jazzy/opt/gz_fuel_tools_vendor:/opt/ros/jazzy/opt/gz_msgs_vendor:/opt/ros/jazzy/opt/gz_common_vendor:/opt/ros/jazzy/opt/gz_math_vendor:/opt/ros/jazzy/opt/gz_utils_vendor:/opt/ros/jazzy/opt/gz_tools_vendor:/opt/ros/jazzy/opt/gz_ogre_next_vendor:/opt/ros/jazzy/opt/gz_dartsim_vendor:/opt/ros/jazzy/opt/gz_cmake_vendor:/opt/ros/jazzy GZ_SIM_RESOURCE_PATH=/home/ttpidelta/RushBoTT-ros2_ws/install/ros_gz_example_description/share/ros_gz_example_description/models:${GZ_SIM_RESOURCE_PATH} /usr/bin/cmake --install /home/ttpidelta/RushBoTT-ros2_ws/build/ros_gz_example_gazebo
+[0.712s] Level 1:colcon.colcon_core.environment:checking '/home/ttpidelta/RushBoTT-ros2_ws/install/ros_gz_example_gazebo' for CMake config files
+[0.713s] Level 1:colcon.colcon_core.shell:create_environment_hook('ros_gz_example_gazebo', 'cmake_prefix_path')
+[0.713s] INFO:colcon.colcon_core.shell:Creating environment hook '/home/ttpidelta/RushBoTT-ros2_ws/install/ros_gz_example_gazebo/share/ros_gz_example_gazebo/hook/cmake_prefix_path.ps1'
+[0.713s] INFO:colcon.colcon_core.shell:Creating environment descriptor '/home/ttpidelta/RushBoTT-ros2_ws/install/ros_gz_example_gazebo/share/ros_gz_example_gazebo/hook/cmake_prefix_path.dsv'
+[0.713s] INFO:colcon.colcon_core.shell:Creating environment hook '/home/ttpidelta/RushBoTT-ros2_ws/install/ros_gz_example_gazebo/share/ros_gz_example_gazebo/hook/cmake_prefix_path.sh'
+[0.714s] Level 1:colcon.colcon_core.environment:checking '/home/ttpidelta/RushBoTT-ros2_ws/install/ros_gz_example_gazebo/lib'
+[0.714s] Level 1:colcon.colcon_core.environment:checking '/home/ttpidelta/RushBoTT-ros2_ws/install/ros_gz_example_gazebo/bin'
+[0.714s] Level 1:colcon.colcon_core.environment:checking '/home/ttpidelta/RushBoTT-ros2_ws/install/ros_gz_example_gazebo/lib/pkgconfig/ros_gz_example_gazebo.pc'
+[0.715s] Level 1:colcon.colcon_core.environment:checking '/home/ttpidelta/RushBoTT-ros2_ws/install/ros_gz_example_gazebo/lib/python3.12/site-packages'
+[0.715s] Level 1:colcon.colcon_core.environment:checking '/home/ttpidelta/RushBoTT-ros2_ws/install/ros_gz_example_gazebo/bin'
+[0.715s] INFO:colcon.colcon_core.shell:Creating package script '/home/ttpidelta/RushBoTT-ros2_ws/install/ros_gz_example_gazebo/share/ros_gz_example_gazebo/package.ps1'
+[0.715s] INFO:colcon.colcon_core.shell:Creating package descriptor '/home/ttpidelta/RushBoTT-ros2_ws/install/ros_gz_example_gazebo/share/ros_gz_example_gazebo/package.dsv'
+[0.716s] INFO:colcon.colcon_core.shell:Creating package script '/home/ttpidelta/RushBoTT-ros2_ws/install/ros_gz_example_gazebo/share/ros_gz_example_gazebo/package.sh'
+[0.716s] INFO:colcon.colcon_core.shell:Creating package script '/home/ttpidelta/RushBoTT-ros2_ws/install/ros_gz_example_gazebo/share/ros_gz_example_gazebo/package.bash'
+[0.716s] INFO:colcon.colcon_core.shell:Creating package script '/home/ttpidelta/RushBoTT-ros2_ws/install/ros_gz_example_gazebo/share/ros_gz_example_gazebo/package.zsh'
+[0.716s] Level 1:colcon.colcon_core.environment:create_file_with_runtime_dependencies(/home/ttpidelta/RushBoTT-ros2_ws/install/ros_gz_example_gazebo/share/colcon-core/packages/ros_gz_example_gazebo)
+[0.755s] Level 1:colcon.colcon_core.environment:create_environment_scripts_only(ros_gz_example_gazebo)
+[0.756s] Level 1:colcon.colcon_core.environment:checking '/home/ttpidelta/RushBoTT-ros2_ws/install/ros_gz_example_gazebo' for CMake module files
+[0.756s] Level 1:colcon.colcon_core.environment:checking '/home/ttpidelta/RushBoTT-ros2_ws/install/ros_gz_example_gazebo' for CMake config files
+[0.756s] Level 1:colcon.colcon_core.shell:create_environment_hook('ros_gz_example_gazebo', 'cmake_prefix_path')
+[0.756s] INFO:colcon.colcon_core.shell:Creating environment hook '/home/ttpidelta/RushBoTT-ros2_ws/install/ros_gz_example_gazebo/share/ros_gz_example_gazebo/hook/cmake_prefix_path.ps1'
+[0.757s] INFO:colcon.colcon_core.shell:Creating environment descriptor '/home/ttpidelta/RushBoTT-ros2_ws/install/ros_gz_example_gazebo/share/ros_gz_example_gazebo/hook/cmake_prefix_path.dsv'
+[0.757s] INFO:colcon.colcon_core.shell:Creating environment hook '/home/ttpidelta/RushBoTT-ros2_ws/install/ros_gz_example_gazebo/share/ros_gz_example_gazebo/hook/cmake_prefix_path.sh'
+[0.758s] Level 1:colcon.colcon_core.environment:checking '/home/ttpidelta/RushBoTT-ros2_ws/install/ros_gz_example_gazebo/lib'
+[0.758s] Level 1:colcon.colcon_core.environment:checking '/home/ttpidelta/RushBoTT-ros2_ws/install/ros_gz_example_gazebo/bin'
+[0.758s] Level 1:colcon.colcon_core.environment:checking '/home/ttpidelta/RushBoTT-ros2_ws/install/ros_gz_example_gazebo/lib/pkgconfig/ros_gz_example_gazebo.pc'
+[0.758s] Level 1:colcon.colcon_core.environment:checking '/home/ttpidelta/RushBoTT-ros2_ws/install/ros_gz_example_gazebo/lib/python3.12/site-packages'
+[0.758s] Level 1:colcon.colcon_core.environment:checking '/home/ttpidelta/RushBoTT-ros2_ws/install/ros_gz_example_gazebo/bin'
+[0.758s] INFO:colcon.colcon_core.shell:Creating package script '/home/ttpidelta/RushBoTT-ros2_ws/install/ros_gz_example_gazebo/share/ros_gz_example_gazebo/package.ps1'
+[0.759s] INFO:colcon.colcon_core.shell:Creating package descriptor '/home/ttpidelta/RushBoTT-ros2_ws/install/ros_gz_example_gazebo/share/ros_gz_example_gazebo/package.dsv'
+[0.759s] INFO:colcon.colcon_core.shell:Creating package script '/home/ttpidelta/RushBoTT-ros2_ws/install/ros_gz_example_gazebo/share/ros_gz_example_gazebo/package.sh'
+[0.760s] INFO:colcon.colcon_core.shell:Creating package script '/home/ttpidelta/RushBoTT-ros2_ws/install/ros_gz_example_gazebo/share/ros_gz_example_gazebo/package.bash'
+[0.760s] INFO:colcon.colcon_core.shell:Creating package script '/home/ttpidelta/RushBoTT-ros2_ws/install/ros_gz_example_gazebo/share/ros_gz_example_gazebo/package.zsh'
+[0.760s] Level 1:colcon.colcon_core.environment:create_file_with_runtime_dependencies(/home/ttpidelta/RushBoTT-ros2_ws/install/ros_gz_example_gazebo/share/colcon-core/packages/ros_gz_example_gazebo)
+[0.761s] INFO:colcon.colcon_ros.task.ament_cmake.build:Building ROS package in '/home/ttpidelta/RushBoTT-ros2_ws/src/rushbott_gz/rushbott_gz_bringup' with build type 'ament_cmake'
+[0.761s] INFO:colcon.colcon_cmake.task.cmake.build:Building CMake package in '/home/ttpidelta/RushBoTT-ros2_ws/src/rushbott_gz/rushbott_gz_bringup'
+[0.762s] INFO:colcon.colcon_core.shell:Skip shell extension 'powershell' for command environment: Not usable outside of PowerShell
+[0.762s] DEBUG:colcon.colcon_core.shell:Skip shell extension 'dsv' for command environment
+[0.778s] DEBUG:colcon.colcon_core.event_handler.log_command:Invoking command in '/home/ttpidelta/RushBoTT-ros2_ws/build/ros_gz_example_bringup': CMAKE_PREFIX_PATH=/home/ttpidelta/RushBoTT-ros2_ws/install/ros_gz_example_gazebo:/home/ttpidelta/RushBoTT-ros2_ws/install/ros_gz_example_description:/home/ttpidelta/RushBoTT-ros2_ws/install/rushbott_description:/home/ttpidelta/RushBoTT-ros2_ws/install/ros_gz_example_bringup:/home/ttpidelta/RushBoTT-ros2_ws/install/ros_gz_example_application:/opt/ros/jazzy/opt/gz_sim_vendor:/opt/ros/jazzy/opt/gz_sensors_vendor:/opt/ros/jazzy/opt/gz_physics_vendor:/opt/ros/jazzy/opt/sdformat_vendor:/opt/ros/jazzy/opt/gz_gui_vendor:/opt/ros/jazzy/opt/gz_transport_vendor:/opt/ros/jazzy/opt/gz_rendering_vendor:/opt/ros/jazzy/opt/gz_plugin_vendor:/opt/ros/jazzy/opt/gz_fuel_tools_vendor:/opt/ros/jazzy/opt/gz_msgs_vendor:/opt/ros/jazzy/opt/gz_common_vendor:/opt/ros/jazzy/opt/gz_math_vendor:/opt/ros/jazzy/opt/gz_utils_vendor:/opt/ros/jazzy/opt/gz_tools_vendor:/opt/ros/jazzy/opt/gz_ogre_next_vendor:/opt/ros/jazzy/opt/gz_dartsim_vendor:/opt/ros/jazzy/opt/gz_cmake_vendor:/opt/ros/jazzy GZ_SIM_PLUGIN_PATH=/home/ttpidelta/RushBoTT-ros2_ws/install/ros_gz_example_gazebo/lib/ros_gz_example_gazebo GZ_SIM_RESOURCE_PATH=/home/ttpidelta/RushBoTT-ros2_ws/install/ros_gz_example_description/share/ros_gz_example_description/models:${GZ_SIM_RESOURCE_PATH} /usr/bin/cmake --build /home/ttpidelta/RushBoTT-ros2_ws/build/ros_gz_example_bringup -- -j12 -l12
+[0.791s] DEBUG:colcon.colcon_core.event_handler.log_command:Invoked command in '/home/ttpidelta/RushBoTT-ros2_ws/build/rushbott_description' returned '0': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/opt/ros/jazzy /usr/bin/cmake /home/ttpidelta/RushBoTT-ros2_ws/src/rushbott/rushbott_description -DCMAKE_INSTALL_PREFIX=/home/ttpidelta/RushBoTT-ros2_ws/install/rushbott_description
+[0.792s] DEBUG:colcon.colcon_core.event_handler.log_command:Invoking command in '/home/ttpidelta/RushBoTT-ros2_ws/build/rushbott_description': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/opt/ros/jazzy /usr/bin/cmake --build /home/ttpidelta/RushBoTT-ros2_ws/build/rushbott_description -- -j12 -l12
+[0.844s] DEBUG:colcon.colcon_core.event_handler.log_command:Invoked command in '/home/ttpidelta/RushBoTT-ros2_ws/build/ros_gz_example_bringup' returned '0': CMAKE_PREFIX_PATH=/home/ttpidelta/RushBoTT-ros2_ws/install/ros_gz_example_gazebo:/home/ttpidelta/RushBoTT-ros2_ws/install/ros_gz_example_description:/home/ttpidelta/RushBoTT-ros2_ws/install/rushbott_description:/home/ttpidelta/RushBoTT-ros2_ws/install/ros_gz_example_bringup:/home/ttpidelta/RushBoTT-ros2_ws/install/ros_gz_example_application:/opt/ros/jazzy/opt/gz_sim_vendor:/opt/ros/jazzy/opt/gz_sensors_vendor:/opt/ros/jazzy/opt/gz_physics_vendor:/opt/ros/jazzy/opt/sdformat_vendor:/opt/ros/jazzy/opt/gz_gui_vendor:/opt/ros/jazzy/opt/gz_transport_vendor:/opt/ros/jazzy/opt/gz_rendering_vendor:/opt/ros/jazzy/opt/gz_plugin_vendor:/opt/ros/jazzy/opt/gz_fuel_tools_vendor:/opt/ros/jazzy/opt/gz_msgs_vendor:/opt/ros/jazzy/opt/gz_common_vendor:/opt/ros/jazzy/opt/gz_math_vendor:/opt/ros/jazzy/opt/gz_utils_vendor:/opt/ros/jazzy/opt/gz_tools_vendor:/opt/ros/jazzy/opt/gz_ogre_next_vendor:/opt/ros/jazzy/opt/gz_dartsim_vendor:/opt/ros/jazzy/opt/gz_cmake_vendor:/opt/ros/jazzy GZ_SIM_PLUGIN_PATH=/home/ttpidelta/RushBoTT-ros2_ws/install/ros_gz_example_gazebo/lib/ros_gz_example_gazebo GZ_SIM_RESOURCE_PATH=/home/ttpidelta/RushBoTT-ros2_ws/install/ros_gz_example_description/share/ros_gz_example_description/models:${GZ_SIM_RESOURCE_PATH} /usr/bin/cmake --build /home/ttpidelta/RushBoTT-ros2_ws/build/ros_gz_example_bringup -- -j12 -l12
+[0.864s] DEBUG:colcon.colcon_core.event_handler.log_command:Invoked command in '/home/ttpidelta/RushBoTT-ros2_ws/build/rushbott_description' returned '0': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/opt/ros/jazzy /usr/bin/cmake --build /home/ttpidelta/RushBoTT-ros2_ws/build/rushbott_description -- -j12 -l12
+[0.876s] DEBUG:colcon.colcon_core.event_handler.log_command:Invoking command in '/home/ttpidelta/RushBoTT-ros2_ws/build/ros_gz_example_bringup': CMAKE_PREFIX_PATH=/home/ttpidelta/RushBoTT-ros2_ws/install/ros_gz_example_gazebo:/home/ttpidelta/RushBoTT-ros2_ws/install/ros_gz_example_description:/home/ttpidelta/RushBoTT-ros2_ws/install/rushbott_description:/home/ttpidelta/RushBoTT-ros2_ws/install/ros_gz_example_bringup:/home/ttpidelta/RushBoTT-ros2_ws/install/ros_gz_example_application:/opt/ros/jazzy/opt/gz_sim_vendor:/opt/ros/jazzy/opt/gz_sensors_vendor:/opt/ros/jazzy/opt/gz_physics_vendor:/opt/ros/jazzy/opt/sdformat_vendor:/opt/ros/jazzy/opt/gz_gui_vendor:/opt/ros/jazzy/opt/gz_transport_vendor:/opt/ros/jazzy/opt/gz_rendering_vendor:/opt/ros/jazzy/opt/gz_plugin_vendor:/opt/ros/jazzy/opt/gz_fuel_tools_vendor:/opt/ros/jazzy/opt/gz_msgs_vendor:/opt/ros/jazzy/opt/gz_common_vendor:/opt/ros/jazzy/opt/gz_math_vendor:/opt/ros/jazzy/opt/gz_utils_vendor:/opt/ros/jazzy/opt/gz_tools_vendor:/opt/ros/jazzy/opt/gz_ogre_next_vendor:/opt/ros/jazzy/opt/gz_dartsim_vendor:/opt/ros/jazzy/opt/gz_cmake_vendor:/opt/ros/jazzy GZ_SIM_PLUGIN_PATH=/home/ttpidelta/RushBoTT-ros2_ws/install/ros_gz_example_gazebo/lib/ros_gz_example_gazebo GZ_SIM_RESOURCE_PATH=/home/ttpidelta/RushBoTT-ros2_ws/install/ros_gz_example_description/share/ros_gz_example_description/models:${GZ_SIM_RESOURCE_PATH} /usr/bin/cmake --install /home/ttpidelta/RushBoTT-ros2_ws/build/ros_gz_example_bringup
+[0.889s] Level 1:colcon.colcon_core.environment:create_environment_scripts_only(ros_gz_example_bringup)
+[0.890s] Level 1:colcon.colcon_core.environment:checking '/home/ttpidelta/RushBoTT-ros2_ws/install/ros_gz_example_bringup' for CMake module files
+[0.892s] Level 1:colcon.colcon_core.environment:checking '/home/ttpidelta/RushBoTT-ros2_ws/install/ros_gz_example_bringup' for CMake config files
+[0.896s] Level 1:colcon.colcon_core.shell:create_environment_hook('ros_gz_example_bringup', 'cmake_prefix_path')
+[0.897s] INFO:colcon.colcon_core.shell:Creating environment hook '/home/ttpidelta/RushBoTT-ros2_ws/install/ros_gz_example_bringup/share/ros_gz_example_bringup/hook/cmake_prefix_path.ps1'
+[0.897s] DEBUG:colcon.colcon_core.event_handler.log_command:Invoked command in '/home/ttpidelta/RushBoTT-ros2_ws/build/ros_gz_example_bringup' returned '0': CMAKE_PREFIX_PATH=/home/ttpidelta/RushBoTT-ros2_ws/install/ros_gz_example_gazebo:/home/ttpidelta/RushBoTT-ros2_ws/install/ros_gz_example_description:/home/ttpidelta/RushBoTT-ros2_ws/install/rushbott_description:/home/ttpidelta/RushBoTT-ros2_ws/install/ros_gz_example_bringup:/home/ttpidelta/RushBoTT-ros2_ws/install/ros_gz_example_application:/opt/ros/jazzy/opt/gz_sim_vendor:/opt/ros/jazzy/opt/gz_sensors_vendor:/opt/ros/jazzy/opt/gz_physics_vendor:/opt/ros/jazzy/opt/sdformat_vendor:/opt/ros/jazzy/opt/gz_gui_vendor:/opt/ros/jazzy/opt/gz_transport_vendor:/opt/ros/jazzy/opt/gz_rendering_vendor:/opt/ros/jazzy/opt/gz_plugin_vendor:/opt/ros/jazzy/opt/gz_fuel_tools_vendor:/opt/ros/jazzy/opt/gz_msgs_vendor:/opt/ros/jazzy/opt/gz_common_vendor:/opt/ros/jazzy/opt/gz_math_vendor:/opt/ros/jazzy/opt/gz_utils_vendor:/opt/ros/jazzy/opt/gz_tools_vendor:/opt/ros/jazzy/opt/gz_ogre_next_vendor:/opt/ros/jazzy/opt/gz_dartsim_vendor:/opt/ros/jazzy/opt/gz_cmake_vendor:/opt/ros/jazzy GZ_SIM_PLUGIN_PATH=/home/ttpidelta/RushBoTT-ros2_ws/install/ros_gz_example_gazebo/lib/ros_gz_example_gazebo GZ_SIM_RESOURCE_PATH=/home/ttpidelta/RushBoTT-ros2_ws/install/ros_gz_example_description/share/ros_gz_example_description/models:${GZ_SIM_RESOURCE_PATH} /usr/bin/cmake --install /home/ttpidelta/RushBoTT-ros2_ws/build/ros_gz_example_bringup
+[0.898s] INFO:colcon.colcon_core.shell:Creating environment descriptor '/home/ttpidelta/RushBoTT-ros2_ws/install/ros_gz_example_bringup/share/ros_gz_example_bringup/hook/cmake_prefix_path.dsv'
+[0.898s] INFO:colcon.colcon_core.shell:Creating environment hook '/home/ttpidelta/RushBoTT-ros2_ws/install/ros_gz_example_bringup/share/ros_gz_example_bringup/hook/cmake_prefix_path.sh'
+[0.898s] Level 1:colcon.colcon_core.environment:checking '/home/ttpidelta/RushBoTT-ros2_ws/install/ros_gz_example_bringup/bin'
+[0.899s] Level 1:colcon.colcon_core.environment:checking '/home/ttpidelta/RushBoTT-ros2_ws/install/ros_gz_example_bringup/lib/pkgconfig/ros_gz_example_bringup.pc'
+[0.899s] Level 1:colcon.colcon_core.environment:checking '/home/ttpidelta/RushBoTT-ros2_ws/install/ros_gz_example_bringup/lib/python3.12/site-packages'
+[0.899s] Level 1:colcon.colcon_core.environment:checking '/home/ttpidelta/RushBoTT-ros2_ws/install/ros_gz_example_bringup/bin'
+[0.899s] INFO:colcon.colcon_core.shell:Creating package script '/home/ttpidelta/RushBoTT-ros2_ws/install/ros_gz_example_bringup/share/ros_gz_example_bringup/package.ps1'
+[0.900s] INFO:colcon.colcon_core.shell:Creating package descriptor '/home/ttpidelta/RushBoTT-ros2_ws/install/ros_gz_example_bringup/share/ros_gz_example_bringup/package.dsv'
+[0.900s] INFO:colcon.colcon_core.shell:Creating package script '/home/ttpidelta/RushBoTT-ros2_ws/install/ros_gz_example_bringup/share/ros_gz_example_bringup/package.sh'
+[0.900s] INFO:colcon.colcon_core.shell:Creating package script '/home/ttpidelta/RushBoTT-ros2_ws/install/ros_gz_example_bringup/share/ros_gz_example_bringup/package.bash'
+[0.901s] INFO:colcon.colcon_core.shell:Creating package script '/home/ttpidelta/RushBoTT-ros2_ws/install/ros_gz_example_bringup/share/ros_gz_example_bringup/package.zsh'
+[0.901s] Level 1:colcon.colcon_core.environment:create_file_with_runtime_dependencies(/home/ttpidelta/RushBoTT-ros2_ws/install/ros_gz_example_bringup/share/colcon-core/packages/ros_gz_example_bringup)
+[0.904s] DEBUG:colcon.colcon_core.event_handler.log_command:Invoking command in '/home/ttpidelta/RushBoTT-ros2_ws/build/rushbott_description': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/opt/ros/jazzy /usr/bin/cmake --install /home/ttpidelta/RushBoTT-ros2_ws/build/rushbott_description
+[0.930s] Level 1:colcon.colcon_core.environment:create_environment_scripts_only(ros_gz_example_bringup)
+[0.931s] Level 1:colcon.colcon_core.environment:checking '/home/ttpidelta/RushBoTT-ros2_ws/install/ros_gz_example_bringup' for CMake module files
+[0.931s] Level 1:colcon.colcon_core.environment:checking '/home/ttpidelta/RushBoTT-ros2_ws/install/ros_gz_example_bringup' for CMake config files
+[0.931s] Level 1:colcon.colcon_core.shell:create_environment_hook('ros_gz_example_bringup', 'cmake_prefix_path')
+[0.932s] INFO:colcon.colcon_core.shell:Creating environment hook '/home/ttpidelta/RushBoTT-ros2_ws/install/ros_gz_example_bringup/share/ros_gz_example_bringup/hook/cmake_prefix_path.ps1'
+[0.932s] INFO:colcon.colcon_core.shell:Creating environment descriptor '/home/ttpidelta/RushBoTT-ros2_ws/install/ros_gz_example_bringup/share/ros_gz_example_bringup/hook/cmake_prefix_path.dsv'
+[0.932s] INFO:colcon.colcon_core.shell:Creating environment hook '/home/ttpidelta/RushBoTT-ros2_ws/install/ros_gz_example_bringup/share/ros_gz_example_bringup/hook/cmake_prefix_path.sh'
+[0.933s] Level 1:colcon.colcon_core.environment:checking '/home/ttpidelta/RushBoTT-ros2_ws/install/ros_gz_example_bringup/bin'
+[0.933s] Level 1:colcon.colcon_core.environment:checking '/home/ttpidelta/RushBoTT-ros2_ws/install/ros_gz_example_bringup/lib/pkgconfig/ros_gz_example_bringup.pc'
+[0.933s] Level 1:colcon.colcon_core.environment:checking '/home/ttpidelta/RushBoTT-ros2_ws/install/ros_gz_example_bringup/lib/python3.12/site-packages'
+[0.933s] Level 1:colcon.colcon_core.environment:checking '/home/ttpidelta/RushBoTT-ros2_ws/install/ros_gz_example_bringup/bin'
+[0.934s] INFO:colcon.colcon_core.shell:Creating package script '/home/ttpidelta/RushBoTT-ros2_ws/install/ros_gz_example_bringup/share/ros_gz_example_bringup/package.ps1'
+[0.934s] INFO:colcon.colcon_core.shell:Creating package descriptor '/home/ttpidelta/RushBoTT-ros2_ws/install/ros_gz_example_bringup/share/ros_gz_example_bringup/package.dsv'
+[0.935s] INFO:colcon.colcon_core.shell:Creating package script '/home/ttpidelta/RushBoTT-ros2_ws/install/ros_gz_example_bringup/share/ros_gz_example_bringup/package.sh'
+[0.935s] INFO:colcon.colcon_core.shell:Creating package script '/home/ttpidelta/RushBoTT-ros2_ws/install/ros_gz_example_bringup/share/ros_gz_example_bringup/package.bash'
+[0.936s] INFO:colcon.colcon_core.shell:Creating package script '/home/ttpidelta/RushBoTT-ros2_ws/install/ros_gz_example_bringup/share/ros_gz_example_bringup/package.zsh'
+[0.936s] Level 1:colcon.colcon_core.environment:create_file_with_runtime_dependencies(/home/ttpidelta/RushBoTT-ros2_ws/install/ros_gz_example_bringup/share/colcon-core/packages/ros_gz_example_bringup)
+[0.960s] Level 1:colcon.colcon_core.environment:create_environment_scripts_only(rushbott_description)
+[0.960s] Level 1:colcon.colcon_core.environment:checking '/home/ttpidelta/RushBoTT-ros2_ws/install/rushbott_description' for CMake module files
+[0.961s] DEBUG:colcon.colcon_core.event_handler.log_command:Invoked command in '/home/ttpidelta/RushBoTT-ros2_ws/build/rushbott_description' returned '0': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/opt/ros/jazzy /usr/bin/cmake --install /home/ttpidelta/RushBoTT-ros2_ws/build/rushbott_description
+[0.961s] Level 1:colcon.colcon_core.environment:checking '/home/ttpidelta/RushBoTT-ros2_ws/install/rushbott_description' for CMake config files
+[0.961s] Level 1:colcon.colcon_core.shell:create_environment_hook('rushbott_description', 'cmake_prefix_path')
+[0.962s] INFO:colcon.colcon_core.shell:Creating environment hook '/home/ttpidelta/RushBoTT-ros2_ws/install/rushbott_description/share/rushbott_description/hook/cmake_prefix_path.ps1'
+[0.962s] INFO:colcon.colcon_core.shell:Creating environment descriptor '/home/ttpidelta/RushBoTT-ros2_ws/install/rushbott_description/share/rushbott_description/hook/cmake_prefix_path.dsv'
+[0.962s] INFO:colcon.colcon_core.shell:Creating environment hook '/home/ttpidelta/RushBoTT-ros2_ws/install/rushbott_description/share/rushbott_description/hook/cmake_prefix_path.sh'
+[0.963s] Level 1:colcon.colcon_core.environment:checking '/home/ttpidelta/RushBoTT-ros2_ws/install/rushbott_description/bin'
+[0.963s] Level 1:colcon.colcon_core.environment:checking '/home/ttpidelta/RushBoTT-ros2_ws/install/rushbott_description/lib/pkgconfig/rushbott_description.pc'
+[0.963s] Level 1:colcon.colcon_core.environment:checking '/home/ttpidelta/RushBoTT-ros2_ws/install/rushbott_description/lib/python3.12/site-packages'
+[0.964s] Level 1:colcon.colcon_core.environment:checking '/home/ttpidelta/RushBoTT-ros2_ws/install/rushbott_description/bin'
+[0.964s] INFO:colcon.colcon_core.shell:Creating package script '/home/ttpidelta/RushBoTT-ros2_ws/install/rushbott_description/share/rushbott_description/package.ps1'
+[0.964s] INFO:colcon.colcon_core.shell:Creating package descriptor '/home/ttpidelta/RushBoTT-ros2_ws/install/rushbott_description/share/rushbott_description/package.dsv'
+[0.965s] INFO:colcon.colcon_core.shell:Creating package script '/home/ttpidelta/RushBoTT-ros2_ws/install/rushbott_description/share/rushbott_description/package.sh'
+[0.965s] INFO:colcon.colcon_core.shell:Creating package script '/home/ttpidelta/RushBoTT-ros2_ws/install/rushbott_description/share/rushbott_description/package.bash'
+[0.965s] INFO:colcon.colcon_core.shell:Creating package script '/home/ttpidelta/RushBoTT-ros2_ws/install/rushbott_description/share/rushbott_description/package.zsh'
+[0.966s] Level 1:colcon.colcon_core.environment:create_file_with_runtime_dependencies(/home/ttpidelta/RushBoTT-ros2_ws/install/rushbott_description/share/colcon-core/packages/rushbott_description)
+[0.991s] Level 1:colcon.colcon_core.environment:create_environment_scripts_only(rushbott_description)
+[0.991s] Level 1:colcon.colcon_core.environment:checking '/home/ttpidelta/RushBoTT-ros2_ws/install/rushbott_description' for CMake module files
+[0.992s] Level 1:colcon.colcon_core.environment:checking '/home/ttpidelta/RushBoTT-ros2_ws/install/rushbott_description' for CMake config files
+[0.992s] Level 1:colcon.colcon_core.shell:create_environment_hook('rushbott_description', 'cmake_prefix_path')
+[0.992s] INFO:colcon.colcon_core.shell:Creating environment hook '/home/ttpidelta/RushBoTT-ros2_ws/install/rushbott_description/share/rushbott_description/hook/cmake_prefix_path.ps1'
+[0.993s] INFO:colcon.colcon_core.shell:Creating environment descriptor '/home/ttpidelta/RushBoTT-ros2_ws/install/rushbott_description/share/rushbott_description/hook/cmake_prefix_path.dsv'
+[0.993s] INFO:colcon.colcon_core.shell:Creating environment hook '/home/ttpidelta/RushBoTT-ros2_ws/install/rushbott_description/share/rushbott_description/hook/cmake_prefix_path.sh'
+[0.993s] Level 1:colcon.colcon_core.environment:checking '/home/ttpidelta/RushBoTT-ros2_ws/install/rushbott_description/bin'
+[0.994s] Level 1:colcon.colcon_core.environment:checking '/home/ttpidelta/RushBoTT-ros2_ws/install/rushbott_description/lib/pkgconfig/rushbott_description.pc'
+[0.994s] Level 1:colcon.colcon_core.environment:checking '/home/ttpidelta/RushBoTT-ros2_ws/install/rushbott_description/lib/python3.12/site-packages'
+[0.994s] Level 1:colcon.colcon_core.environment:checking '/home/ttpidelta/RushBoTT-ros2_ws/install/rushbott_description/bin'
+[0.994s] INFO:colcon.colcon_core.shell:Creating package script '/home/ttpidelta/RushBoTT-ros2_ws/install/rushbott_description/share/rushbott_description/package.ps1'
+[0.995s] INFO:colcon.colcon_core.shell:Creating package descriptor '/home/ttpidelta/RushBoTT-ros2_ws/install/rushbott_description/share/rushbott_description/package.dsv'
+[0.995s] INFO:colcon.colcon_core.shell:Creating package script '/home/ttpidelta/RushBoTT-ros2_ws/install/rushbott_description/share/rushbott_description/package.sh'
+[0.996s] INFO:colcon.colcon_core.shell:Creating package script '/home/ttpidelta/RushBoTT-ros2_ws/install/rushbott_description/share/rushbott_description/package.bash'
+[0.996s] INFO:colcon.colcon_core.shell:Creating package script '/home/ttpidelta/RushBoTT-ros2_ws/install/rushbott_description/share/rushbott_description/package.zsh'
+[0.996s] Level 1:colcon.colcon_core.environment:create_file_with_runtime_dependencies(/home/ttpidelta/RushBoTT-ros2_ws/install/rushbott_description/share/colcon-core/packages/rushbott_description)
+[0.997s] DEBUG:colcon.colcon_parallel_executor.executor.parallel:closing loop
+[0.998s] DEBUG:colcon.colcon_parallel_executor.executor.parallel:loop closed
+[0.998s] DEBUG:colcon.colcon_parallel_executor.executor.parallel:run_until_complete finished with '0'
+[0.998s] DEBUG:colcon.colcon_core.event_reactor:joining thread
+[1.010s] INFO:colcon.colcon_core.plugin_system:Skipping extension 'colcon_notification.desktop_notification.notify_send': Could not find 'notify-send'
+[1.010s] INFO:colcon.colcon_core.plugin_system:Skipping extension 'colcon_notification.desktop_notification.terminal_notifier': Not used on non-Darwin systems
+[1.011s] INFO:colcon.colcon_core.plugin_system:Skipping extension 'colcon_notification.desktop_notification.win32': Not used on non-Windows systems
+[1.011s] INFO:colcon.colcon_notification.desktop_notification:Sending desktop notification using 'notify2'
+[1.014s] DEBUG:colcon.colcon_notification.desktop_notification.notify2:Failed to initialize notify2: org.freedesktop.DBus.Error.Spawn.ExecFailed: /usr/bin/dbus-launch terminated abnormally without any error message
+[1.015s] DEBUG:colcon.colcon_core.event_reactor:joined thread
+[1.016s] INFO:colcon.colcon_core.shell:Creating prefix script '/home/ttpidelta/RushBoTT-ros2_ws/install/local_setup.ps1'
+[1.020s] INFO:colcon.colcon_core.shell:Creating prefix util module '/home/ttpidelta/RushBoTT-ros2_ws/install/_local_setup_util_ps1.py'
+[1.022s] INFO:colcon.colcon_core.shell:Creating prefix chain script '/home/ttpidelta/RushBoTT-ros2_ws/install/setup.ps1'
+[1.023s] INFO:colcon.colcon_core.shell:Creating prefix script '/home/ttpidelta/RushBoTT-ros2_ws/install/local_setup.sh'
+[1.024s] INFO:colcon.colcon_core.shell:Creating prefix util module '/home/ttpidelta/RushBoTT-ros2_ws/install/_local_setup_util_sh.py'
+[1.024s] INFO:colcon.colcon_core.shell:Creating prefix chain script '/home/ttpidelta/RushBoTT-ros2_ws/install/setup.sh'
+[1.026s] INFO:colcon.colcon_core.shell:Creating prefix script '/home/ttpidelta/RushBoTT-ros2_ws/install/local_setup.bash'
+[1.026s] INFO:colcon.colcon_core.shell:Creating prefix chain script '/home/ttpidelta/RushBoTT-ros2_ws/install/setup.bash'
+[1.028s] INFO:colcon.colcon_core.shell:Creating prefix script '/home/ttpidelta/RushBoTT-ros2_ws/install/local_setup.zsh'
+[1.029s] INFO:colcon.colcon_core.shell:Creating prefix chain script '/home/ttpidelta/RushBoTT-ros2_ws/install/setup.zsh'

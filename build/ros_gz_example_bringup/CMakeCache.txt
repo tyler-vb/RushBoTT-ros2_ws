@@ -299,7 +299,7 @@ ros_gz_example_bringup_BINARY_DIR:STATIC=/home/ttpidelta/RushBoTT-ros2_ws/build/
 ros_gz_example_bringup_IS_TOP_LEVEL:STATIC=ON
 
 //Value Computed by CMake
-ros_gz_example_bringup_SOURCE_DIR:STATIC=/home/ttpidelta/RushBoTT-ros2_ws/src/rushbott/ros_gz_example_bringup
+ros_gz_example_bringup_SOURCE_DIR:STATIC=/home/ttpidelta/RushBoTT-ros2_ws/src/rushbott_gz/rushbott_gz_bringup
 
 //The directory containing a CMake configuration file for ros_gz_example_description.
 ros_gz_example_description_DIR:PATH=/home/ttpidelta/RushBoTT-ros2_ws/install/ros_gz_example_description/share/ros_gz_example_description/cmake
@@ -392,7 +392,7 @@ CMAKE_GENERATOR_PLATFORM:INTERNAL=
 CMAKE_GENERATOR_TOOLSET:INTERNAL=
 //Source directory with the top level CMakeLists.txt file for this
 // project
-CMAKE_HOME_DIRECTORY:INTERNAL=/home/ttpidelta/RushBoTT-ros2_ws/src/rushbott/ros_gz_example_bringup
+CMAKE_HOME_DIRECTORY:INTERNAL=/home/ttpidelta/RushBoTT-ros2_ws/src/rushbott_gz/rushbott_gz_bringup
 //Install .so files without execute permission.
 CMAKE_INSTALL_SO_NO_EXE:INTERNAL=1
 //ADVANCED property for variable: CMAKE_LINKER

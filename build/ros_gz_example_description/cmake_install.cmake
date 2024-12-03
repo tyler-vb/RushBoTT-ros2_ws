@@ -1,4 +1,4 @@
-# Install script for directory: /home/ttpidelta/RushBoTT-ros2_ws/src/rushbott/ros_gz_example_description
+# Install script for directory: /home/ttpidelta/RushBoTT-ros2_ws/src/rushbott_gz/rushbott_gz_description
 
 # Set the install prefix
 if(NOT DEFINED CMAKE_INSTALL_PREFIX)
@@ -43,7 +43,7 @@ if(NOT DEFINED CMAKE_OBJDUMP)
 endif()
 
 if(CMAKE_INSTALL_COMPONENT STREQUAL "Unspecified" OR NOT CMAKE_INSTALL_COMPONENT)
-  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/share/ros_gz_example_description/models" TYPE DIRECTORY FILES "/home/ttpidelta/RushBoTT-ros2_ws/src/rushbott/ros_gz_example_description/models/")
+  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/share/ros_gz_example_description/models" TYPE DIRECTORY FILES "/home/ttpidelta/RushBoTT-ros2_ws/src/rushbott_gz/rushbott_gz_description/models/")
 endif()
 
 if(CMAKE_INSTALL_COMPONENT STREQUAL "Unspecified" OR NOT CMAKE_INSTALL_COMPONENT)
@@ -110,7 +110,7 @@ if(CMAKE_INSTALL_COMPONENT STREQUAL "Unspecified" OR NOT CMAKE_INSTALL_COMPONENT
 endif()
 
 if(CMAKE_INSTALL_COMPONENT STREQUAL "Unspecified" OR NOT CMAKE_INSTALL_COMPONENT)
-  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/share/ros_gz_example_description" TYPE FILE FILES "/home/ttpidelta/RushBoTT-ros2_ws/src/rushbott/ros_gz_example_description/package.xml")
+  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/share/ros_gz_example_description" TYPE FILE FILES "/home/ttpidelta/RushBoTT-ros2_ws/src/rushbott_gz/rushbott_gz_description/package.xml")
 endif()
 
 if(CMAKE_INSTALL_COMPONENT)

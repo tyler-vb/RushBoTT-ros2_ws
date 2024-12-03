@@ -1,0 +1,1 @@
+/home/ttpidelta/RushBoTT-ros2_ws/src/rushbott/rushbott_description/launch/rviz2.launch.py

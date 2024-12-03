@@ -1,0 +1,56 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro" name="rushbott">
+
+    <xacro:include filename="common_properties.urdf.xacro"/>
+    <xacro:include filename="wheel.urdf.xacro"/>
+
+    <!-- Mechanical properties -->
+    <xacro:property name="body_mass"               value="2.300" />
+    <xacro:property name="body_length"             value="${40*cm2m}" />
+    <xacro:property name="body_width"              value="${10*cm2m}" />
+    <xacro:property name="body_height"             value="${5*cm2m}" />
+
+    <xacro:property name="wheel_height"            value="${-2.75*cm2m}" />
+    <xacro:property name="distance_between_wheels" value="${23.3*cm2m}" />
+
+    <xacro:property name="base_link_z_offset"      value="${6.42*cm2m}"/>
+
+    <!-- Dummy link --> 
+    <link name="base_footprint"/>
+
+    <!-- Base link --> 
+    <joint name="base_footprint_to_base_link=" type="fixed">  
+        <parent link="base_footprint"/>  
+        <child link="base_link"/>  
+    </joint>
+
+    <link name="base_link">
+        <visual>
+            <origin xyz="0 0 ${base_link_z_offset}" rpy="0 0 0"/>
+            <geometry>
+                <box size="${body_length} ${body_width} ${body_height}"/>
+            </geometry>
+            <xacro:insert_block name="material_cyan"/>
+        </visual>
+        <collision name="create3_base_collision">
+            <origin xyz="0 0 ${base_link_z_offset}" rpy="0 0 0"/>
+            <geometry>
+                <box size="${body_length} ${body_width} ${body_height}"/>
+            </geometry>
+        </collision>
+        <xacro:inertial_cuboid_with_pose mass="${body_mass}" x="${body_length}" y="${body_width}" z="${body_height}">
+            <origin xyz="0 0 ${base_link_z_offset}"/>
+        </xacro:inertial_cuboid_with_pose>
+    </link>
+
+    <!-- Wheels --> 
+    <xacro:wheel name="left_wheel" parent_link="base_link">
+        <origin xyz="0 ${distance_between_wheels/2} ${base_link_z_offset}" rpy="0 0 0"/>
+    </xacro:wheel>
+
+    <xacro:wheel name="right_wheel" parent_link="base_link">
+        <origin xyz="0 ${-distance_between_wheels/2} ${base_link_z_offset}" rpy="0 0 0"/>
+    </xacro:wheel>
+
+</robot>
+

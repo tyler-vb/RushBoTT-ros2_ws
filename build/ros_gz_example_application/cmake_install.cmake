@@ -1,4 +1,4 @@
-# Install script for directory: /home/ttpidelta/RushBoTT-ros2_ws/src/rushbott/ros_gz_example_application
+# Install script for directory: /home/ttpidelta/RushBoTT-ros2_ws/src/rushbott_gz/rushbott_gz_application
 
 # Set the install prefix
 if(NOT DEFINED CMAKE_INSTALL_PREFIX)
@@ -98,7 +98,7 @@ if(CMAKE_INSTALL_COMPONENT STREQUAL "Unspecified" OR NOT CMAKE_INSTALL_COMPONENT
 endif()
 
 if(CMAKE_INSTALL_COMPONENT STREQUAL "Unspecified" OR NOT CMAKE_INSTALL_COMPONENT)
-  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/share/ros_gz_example_application" TYPE FILE FILES "/home/ttpidelta/RushBoTT-ros2_ws/src/rushbott/ros_gz_example_application/package.xml")
+  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/share/ros_gz_example_application" TYPE FILE FILES "/home/ttpidelta/RushBoTT-ros2_ws/src/rushbott_gz/rushbott_gz_application/package.xml")
 endif()
 
 if(CMAKE_INSTALL_COMPONENT)

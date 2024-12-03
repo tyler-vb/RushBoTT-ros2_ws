@@ -662,7 +662,7 @@ ros_gz_example_gazebo_BINARY_DIR:STATIC=/home/ttpidelta/RushBoTT-ros2_ws/build/r
 ros_gz_example_gazebo_IS_TOP_LEVEL:STATIC=ON
 
 //Value Computed by CMake
-ros_gz_example_gazebo_SOURCE_DIR:STATIC=/home/ttpidelta/RushBoTT-ros2_ws/src/rushbott/ros_gz_example_gazebo
+ros_gz_example_gazebo_SOURCE_DIR:STATIC=/home/ttpidelta/RushBoTT-ros2_ws/src/rushbott_gz/rushbott_gz_gazebo
 
 //The directory containing a CMake configuration file for sdformat14.
 sdformat14_DIR:PATH=/opt/ros/jazzy/opt/sdformat_vendor/lib/cmake/sdformat14
@@ -901,7 +901,7 @@ CMAKE_GENERATOR_TOOLSET:INTERNAL=
 CMAKE_HAVE_LIBC_PTHREAD:INTERNAL=1
 //Source directory with the top level CMakeLists.txt file for this
 // project
-CMAKE_HOME_DIRECTORY:INTERNAL=/home/ttpidelta/RushBoTT-ros2_ws/src/rushbott/ros_gz_example_gazebo
+CMAKE_HOME_DIRECTORY:INTERNAL=/home/ttpidelta/RushBoTT-ros2_ws/src/rushbott_gz/rushbott_gz_gazebo
 //Install .so files without execute permission.
 CMAKE_INSTALL_SO_NO_EXE:INTERNAL=1
 //ADVANCED property for variable: CMAKE_LINKER

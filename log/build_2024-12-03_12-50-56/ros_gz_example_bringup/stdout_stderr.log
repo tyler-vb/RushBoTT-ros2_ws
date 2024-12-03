@@ -1,0 +1,43 @@
+-- The C compiler identification is GNU 13.2.0
+-- The CXX compiler identification is GNU 13.2.0
+-- Detecting C compiler ABI info
+-- Detecting C compiler ABI info - done
+-- Check for working C compiler: /usr/bin/cc - skipped
+-- Detecting C compile features
+-- Detecting C compile features - done
+-- Detecting CXX compiler ABI info
+-- Detecting CXX compiler ABI info - done
+-- Check for working CXX compiler: /usr/bin/c++ - skipped
+-- Detecting CXX compile features
+-- Detecting CXX compile features - done
+-- Found ament_cmake: 2.5.2 (/opt/ros/jazzy/share/ament_cmake/cmake)
+-- Found Python3: /usr/bin/python3 (found version "3.12.3") found components: Interpreter 
+-- Found ros_gz_example_description: 0.0.0 (/home/ttpidelta/RushBoTT-ros2_ws/install/ros_gz_example_description/share/ros_gz_example_description/cmake)
+-- Found ros_gz_example_gazebo: 0.0.0 (/home/ttpidelta/RushBoTT-ros2_ws/install/ros_gz_example_gazebo/share/ros_gz_example_gazebo/cmake)
+-- Found ament_lint_auto: 0.17.1 (/opt/ros/jazzy/share/ament_lint_auto/cmake)
+-- Configuring done (0.9s)
+-- Generating done (0.0s)
+-- Build files have been written to: /home/ttpidelta/RushBoTT-ros2_ws/build/ros_gz_example_bringup
+-- Install configuration: ""
+-- Installing: /home/ttpidelta/RushBoTT-ros2_ws/install/ros_gz_example_bringup/share/ros_gz_example_bringup/launch
+-- Installing: /home/ttpidelta/RushBoTT-ros2_ws/install/ros_gz_example_bringup/share/ros_gz_example_bringup/launch/rrbot_setup.launch.py
+-- Installing: /home/ttpidelta/RushBoTT-ros2_ws/install/ros_gz_example_bringup/share/ros_gz_example_bringup/launch/diff_drive.launch.py
+-- Installing: /home/ttpidelta/RushBoTT-ros2_ws/install/ros_gz_example_bringup/share/ros_gz_example_bringup/config
+-- Installing: /home/ttpidelta/RushBoTT-ros2_ws/install/ros_gz_example_bringup/share/ros_gz_example_bringup/config/rrbot.rviz
+-- Installing: /home/ttpidelta/RushBoTT-ros2_ws/install/ros_gz_example_bringup/share/ros_gz_example_bringup/config/ros_gz_example_bridge.yaml
+-- Installing: /home/ttpidelta/RushBoTT-ros2_ws/install/ros_gz_example_bringup/share/ros_gz_example_bringup/config/diff_drive.rviz
+-- Installing: /home/ttpidelta/RushBoTT-ros2_ws/install/ros_gz_example_bringup/share/ament_index/resource_index/package_run_dependencies/ros_gz_example_bringup
+-- Installing: /home/ttpidelta/RushBoTT-ros2_ws/install/ros_gz_example_bringup/share/ament_index/resource_index/parent_prefix_path/ros_gz_example_bringup
+-- Installing: /home/ttpidelta/RushBoTT-ros2_ws/install/ros_gz_example_bringup/share/ros_gz_example_bringup/environment/ament_prefix_path.sh
+-- Installing: /home/ttpidelta/RushBoTT-ros2_ws/install/ros_gz_example_bringup/share/ros_gz_example_bringup/environment/ament_prefix_path.dsv
+-- Installing: /home/ttpidelta/RushBoTT-ros2_ws/install/ros_gz_example_bringup/share/ros_gz_example_bringup/environment/path.sh
+-- Installing: /home/ttpidelta/RushBoTT-ros2_ws/install/ros_gz_example_bringup/share/ros_gz_example_bringup/environment/path.dsv
+-- Installing: /home/ttpidelta/RushBoTT-ros2_ws/install/ros_gz_example_bringup/share/ros_gz_example_bringup/local_setup.bash
+-- Installing: /home/ttpidelta/RushBoTT-ros2_ws/install/ros_gz_example_bringup/share/ros_gz_example_bringup/local_setup.sh
+-- Installing: /home/ttpidelta/RushBoTT-ros2_ws/install/ros_gz_example_bringup/share/ros_gz_example_bringup/local_setup.zsh
+-- Installing: /home/ttpidelta/RushBoTT-ros2_ws/install/ros_gz_example_bringup/share/ros_gz_example_bringup/local_setup.dsv
+-- Installing: /home/ttpidelta/RushBoTT-ros2_ws/install/ros_gz_example_bringup/share/ros_gz_example_bringup/package.dsv
+-- Installing: /home/ttpidelta/RushBoTT-ros2_ws/install/ros_gz_example_bringup/share/ament_index/resource_index/packages/ros_gz_example_bringup
+-- Installing: /home/ttpidelta/RushBoTT-ros2_ws/install/ros_gz_example_bringup/share/ros_gz_example_bringup/cmake/ros_gz_example_bringupConfig.cmake
+-- Installing: /home/ttpidelta/RushBoTT-ros2_ws/install/ros_gz_example_bringup/share/ros_gz_example_bringup/cmake/ros_gz_example_bringupConfig-version.cmake
+-- Installing: /home/ttpidelta/RushBoTT-ros2_ws/install/ros_gz_example_bringup/share/ros_gz_example_bringup/package.xml

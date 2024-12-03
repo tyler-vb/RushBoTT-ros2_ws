@@ -1,0 +1,4 @@
+source;share/rushbott_description/local_setup.bash
+source;share/rushbott_description/local_setup.dsv
+source;share/rushbott_description/local_setup.sh
+source;share/rushbott_description/local_setup.zsh

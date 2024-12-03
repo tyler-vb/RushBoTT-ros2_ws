@@ -296,7 +296,7 @@ ros_gz_example_application_BINARY_DIR:STATIC=/home/ttpidelta/RushBoTT-ros2_ws/bu
 ros_gz_example_application_IS_TOP_LEVEL:STATIC=ON
 
 //Value Computed by CMake
-ros_gz_example_application_SOURCE_DIR:STATIC=/home/ttpidelta/RushBoTT-ros2_ws/src/rushbott/ros_gz_example_application
+ros_gz_example_application_SOURCE_DIR:STATIC=/home/ttpidelta/RushBoTT-ros2_ws/src/rushbott_gz/rushbott_gz_application
 
 
 ########################
@@ -383,7 +383,7 @@ CMAKE_GENERATOR_PLATFORM:INTERNAL=
 CMAKE_GENERATOR_TOOLSET:INTERNAL=
 //Source directory with the top level CMakeLists.txt file for this
 // project
-CMAKE_HOME_DIRECTORY:INTERNAL=/home/ttpidelta/RushBoTT-ros2_ws/src/rushbott/ros_gz_example_application
+CMAKE_HOME_DIRECTORY:INTERNAL=/home/ttpidelta/RushBoTT-ros2_ws/src/rushbott_gz/rushbott_gz_application
 //Install .so files without execute permission.
 CMAKE_INSTALL_SO_NO_EXE:INTERNAL=1
 //ADVANCED property for variable: CMAKE_LINKER

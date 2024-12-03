@@ -1,4 +1,4 @@
-# Install script for directory: /home/ttpidelta/RushBoTT-ros2_ws/src/rushbott/ros_gz_example_gazebo
+# Install script for directory: /home/ttpidelta/RushBoTT-ros2_ws/src/rushbott_gz/rushbott_gz_gazebo
 
 # Set the install prefix
 if(NOT DEFINED CMAKE_INSTALL_PREFIX)
@@ -97,7 +97,7 @@ if(CMAKE_INSTALL_COMPONENT STREQUAL "Unspecified" OR NOT CMAKE_INSTALL_COMPONENT
 endif()
 
 if(CMAKE_INSTALL_COMPONENT STREQUAL "Unspecified" OR NOT CMAKE_INSTALL_COMPONENT)
-  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/share/ros_gz_example_gazebo/worlds" TYPE DIRECTORY FILES "/home/ttpidelta/RushBoTT-ros2_ws/src/rushbott/ros_gz_example_gazebo/worlds/")
+  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/share/ros_gz_example_gazebo/worlds" TYPE DIRECTORY FILES "/home/ttpidelta/RushBoTT-ros2_ws/src/rushbott_gz/rushbott_gz_gazebo/worlds/")
 endif()
 
 if(CMAKE_INSTALL_COMPONENT STREQUAL "Unspecified" OR NOT CMAKE_INSTALL_COMPONENT)
@@ -164,7 +164,7 @@ if(CMAKE_INSTALL_COMPONENT STREQUAL "Unspecified" OR NOT CMAKE_INSTALL_COMPONENT
 endif()
 
 if(CMAKE_INSTALL_COMPONENT STREQUAL "Unspecified" OR NOT CMAKE_INSTALL_COMPONENT)
-  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/share/ros_gz_example_gazebo" TYPE FILE FILES "/home/ttpidelta/RushBoTT-ros2_ws/src/rushbott/ros_gz_example_gazebo/package.xml")
+  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/share/ros_gz_example_gazebo" TYPE FILE FILES "/home/ttpidelta/RushBoTT-ros2_ws/src/rushbott_gz/rushbott_gz_gazebo/package.xml")
 endif()
 
 if(CMAKE_INSTALL_COMPONENT)

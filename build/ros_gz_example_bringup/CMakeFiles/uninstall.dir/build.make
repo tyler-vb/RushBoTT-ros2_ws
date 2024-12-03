@@ -53,7 +53,7 @@ RM = /usr/bin/cmake -E rm -f
 EQUALS = =
 
 # The top-level source directory on which CMake was run.
-CMAKE_SOURCE_DIR = /home/ttpidelta/RushBoTT-ros2_ws/src/rushbott/ros_gz_example_bringup
+CMAKE_SOURCE_DIR = /home/ttpidelta/RushBoTT-ros2_ws/src/rushbott_gz/rushbott_gz_bringup
 
 # The top-level build directory on which CMake was run.
 CMAKE_BINARY_DIR = /home/ttpidelta/RushBoTT-ros2_ws/build/ros_gz_example_bringup
@@ -78,6 +78,6 @@ CMakeFiles/uninstall.dir/clean:
 .PHONY : CMakeFiles/uninstall.dir/clean
 
 CMakeFiles/uninstall.dir/depend:
-	cd /home/ttpidelta/RushBoTT-ros2_ws/build/ros_gz_example_bringup && $(CMAKE_COMMAND) -E cmake_depends "Unix Makefiles" /home/ttpidelta/RushBoTT-ros2_ws/src/rushbott/ros_gz_example_bringup /home/ttpidelta/RushBoTT-ros2_ws/src/rushbott/ros_gz_example_bringup /home/ttpidelta/RushBoTT-ros2_ws/build/ros_gz_example_bringup /home/ttpidelta/RushBoTT-ros2_ws/build/ros_gz_example_bringup /home/ttpidelta/RushBoTT-ros2_ws/build/ros_gz_example_bringup/CMakeFiles/uninstall.dir/DependInfo.cmake "--color=$(COLOR)"
+	cd /home/ttpidelta/RushBoTT-ros2_ws/build/ros_gz_example_bringup && $(CMAKE_COMMAND) -E cmake_depends "Unix Makefiles" /home/ttpidelta/RushBoTT-ros2_ws/src/rushbott_gz/rushbott_gz_bringup /home/ttpidelta/RushBoTT-ros2_ws/src/rushbott_gz/rushbott_gz_bringup /home/ttpidelta/RushBoTT-ros2_ws/build/ros_gz_example_bringup /home/ttpidelta/RushBoTT-ros2_ws/build/ros_gz_example_bringup /home/ttpidelta/RushBoTT-ros2_ws/build/ros_gz_example_bringup/CMakeFiles/uninstall.dir/DependInfo.cmake "--color=$(COLOR)"
 .PHONY : CMakeFiles/uninstall.dir/depend
 

@@ -39,10 +39,17 @@ COPY ./config/bashrc /tmp/bashrc
 
 #  Config container
 RUN cat /tmp/bashrc >> home/$USERNAME/.bashrc && \
-    rm -f /tmp/bashrc
+    rm -f /tmp/bashr
+
+# Make /run/user/1000 directory (idk why we have to do this sometimes)
+RUN mkdir -p /run/user/$USER_UID && \
+    chown $USER_UID:$USER_GID /run/user/$USER_UID && \
+    chmod 0700 /run/user/$USER_UID
 
 # Change user from root
 USER $USERNAME
 
 # Rosdep update
 RUN rosdep update
+
+

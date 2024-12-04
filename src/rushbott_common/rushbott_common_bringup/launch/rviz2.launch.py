@@ -4,10 +4,10 @@ from launch.substitutions import PathJoinSubstitution
 from launch_ros.actions import Node
 
 def generate_launch_description():
-    pkg_rushbott_description = get_package_share_directory('rushbott_description')
+    pkg_rushbott_common_bringup = get_package_share_directory('rushbott_common_bringup')
 
     # Rviz
-    rviz_config = PathJoinSubstitution([pkg_rushbott_description, 'rviz', 'rushbott.rviz'])
+    rviz_config = PathJoinSubstitution([pkg_rushbott_common_bringup, 'rviz', 'rushbott.rviz'])
 
     rviz = Node(
         package='rviz2',

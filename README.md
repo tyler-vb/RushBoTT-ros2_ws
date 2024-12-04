@@ -21,7 +21,7 @@ https://www.youtube.com/watch?v=RbP5cARP-SM&list=PLunhqkrRNRhaqt0UfFxxC_oj7jscss
 rosdep install --from-paths src --ignore-src -r -i -y --rosdistro jazzy
 colcon build --symlink-install --cmake-args -DBUILD_TESTING=ON
 . ~/RushBoTT-ros2_ws/install/setup.sh
-ros2 launch rushbott_description robot_description.launch.py
+ros2 launch rushbott_common_bringup robot_description.launch.py
 
 . ~/RushBoTT-ros2_ws/install/setup.sh
-ros2 launch rushbott_description rviz2.launch.py
+ros2 launch rushbott_common_bringup rviz2.launch.py

@@ -7,11 +7,12 @@
     <!-- Mechanical properties -->
     <xacro:property name="body_mass"               value="2.300" />
     <xacro:property name="body_length"             value="${40*cm2m}" />
-    <xacro:property name="body_width"              value="${10*cm2m}" />
-    <xacro:property name="body_height"             value="${5*cm2m}" />
+    <xacro:property name="body_width"              value="${20*cm2m}" />
+    <xacro:property name="body_height"             value="${10*cm2m}" />
 
-    <xacro:property name="wheel_height"            value="${-2.75*cm2m}" />
-    <xacro:property name="distance_between_wheels" value="${23.3*cm2m}" />
+    <xacro:property name="wheel_depth"            value="${body_height*(1/2)}" />
+    <xacro:property name="track_width"             value="${body_width*(3/4)}" />
+    <xacro:property name="wheelbase"               value="${body_length*(3/4)}" />
 
     <xacro:property name="base_link_z_offset"      value="${6.42*cm2m}"/>
 
@@ -44,12 +45,20 @@
     </link>
 
     <!-- Wheels --> 
-    <xacro:wheel name="left_wheel" parent_link="base_link">
-        <origin xyz="0 ${distance_between_wheels/2} ${base_link_z_offset}" rpy="0 0 0"/>
+    <xacro:wheel name="fl_wheel" parent_link="base_link">
+        <origin xyz="${wheelbase/2} ${track_width/2} ${base_link_z_offset-wheel_depth}" rpy="${pi/2} 0 0"/>
     </xacro:wheel>
 
-    <xacro:wheel name="right_wheel" parent_link="base_link">
-        <origin xyz="0 ${-distance_between_wheels/2} ${base_link_z_offset}" rpy="0 0 0"/>
+    <xacro:wheel name="fr_wheel" parent_link="base_link">
+        <origin xyz="${wheelbase/2} ${-track_width/2} ${base_link_z_offset-wheel_depth}" rpy="${pi/2} 0 0"/>
+    </xacro:wheel>
+
+    <xacro:wheel name="rl_wheel" parent_link="base_link">
+        <origin xyz="${-wheelbase/2} ${track_width/2} ${base_link_z_offset-wheel_depth}" rpy="${pi/2} 0 0"/>
+    </xacro:wheel>
+
+    <xacro:wheel name="rr_wheel" parent_link="base_link">
+        <origin xyz="${-wheelbase/2} ${-track_width/2} ${base_link_z_offset-wheel_depth}" rpy="${pi/2} 0 0"/>
     </xacro:wheel>
 
 </robot>

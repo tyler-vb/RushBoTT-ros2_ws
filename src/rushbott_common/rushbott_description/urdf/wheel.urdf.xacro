@@ -4,8 +4,8 @@
 <xacro:macro name="wheel" params="name parent_link *origin">
 
     <xacro:property name="mass"   value="0.2" />
-    <xacro:property name="radius" value="${3.575*cm2m}" />
-    <xacro:property name="width"  value="${1.5*cm2m}" />
+    <xacro:property name="radius" value="${4*cm2m}" />
+    <xacro:property name="width"  value="${2*cm2m}" />
 
     <xacro:property name="wheel_link_name"  value="${name}_wheel"/>
     <xacro:property name="wheel_joint_name" value="${wheel_link_name}_joint"/>

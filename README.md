@@ -18,10 +18,22 @@ You will know you were successful if you see "Dev Container: RushBoTT ROS2 Conta
 If you are interested in adding any new packages to the container, I HIGHLY recommend watching this video beforehand:
 https://www.youtube.com/watch?v=RbP5cARP-SM&list=PLunhqkrRNRhaqt0UfFxxC_oj7jscss2qe&index=3&ab_channel=ArticulatedRobotics
 
+
+-----ROS INITIALIZING-----
 rosdep install --from-paths src --ignore-src -r -i -y --rosdistro jazzy
 colcon build --symlink-install --cmake-args -DBUILD_TESTING=ON
+
+-----ROBOT DESCRIPTION-----
 . ~/RushBoTT-ros2_ws/install/setup.sh
 ros2 launch rushbott_common_bringup robot_description.launch.py
 
+-----RVIZ2-----
 . ~/RushBoTT-ros2_ws/install/setup.sh
 ros2 launch rushbott_common_bringup rviz2.launch.py
+
+-----SPAWN ROBOT-----
+. ~/RushBoTT-ros2_ws/install/setup.sh
+ros2 launch rushbott_gz_bringup rushbott_spawn.launch.py
+
+. ~/RushBoTT-ros2_ws/install/setup.sh
+ros2 launch rushbott_gz_bringup sim.launch.py

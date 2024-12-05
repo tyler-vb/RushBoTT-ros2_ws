@@ -11,10 +11,6 @@ ARGUMENTS = [
     DeclareLaunchArgument('use_sim_time', default_value='false',
                           choices=['true', 'false'],
                           description='use_sim_time'),
-    DeclareLaunchArgument('robot_name', default_value='rushbott',
-                          description='Robot name'),
-    DeclareLaunchArgument('namespace', default_value=LaunchConfiguration('robot_name'),
-                          description='Robot namespace'),
 ]
 
 def generate_launch_description():
@@ -38,10 +34,10 @@ def generate_launch_description():
         ]
     )
                     
-    joint_state_publisher = Node(
-        package='joint_state_publisher',
-        executable='joint_state_publisher',
-        name='joint_state_publisher',
+    joint_state_publisher_gui = Node(
+        package='joint_state_publisher_gui',
+        executable='joint_state_publisher_gui',
+        name='joint_state_publisher_gui',
         output='screen',
         parameters=[{'use_sim_time': LaunchConfiguration('use_sim_time')}],
         remappings=[
@@ -54,5 +50,5 @@ def generate_launch_description():
     ld = LaunchDescription(ARGUMENTS)
     # Add nodes to LaunchDescription
     ld.add_action(robot_state_publisher)
-    ld.add_action(joint_state_publisher)
+    ld.add_action(joint_state_publisher_gui)
     return ld

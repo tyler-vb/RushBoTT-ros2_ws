@@ -30,7 +30,8 @@
         "ms-iot.vscode-ros",
         "ms-python.python",
         "ms-azuretools.vscode-docker",
-        "ms-vscode.cmake-tools"
+        "ms-vscode.cmake-tools",
+        "tomoki1207.pdf"
       ]
     }
   }

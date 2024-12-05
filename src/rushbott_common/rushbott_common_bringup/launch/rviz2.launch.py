@@ -14,8 +14,7 @@ def generate_launch_description():
         executable='rviz2',
         name='rviz2',
         arguments=[
-            '--display-config', rviz_config,
-        ],
+            '--display-config', rviz_config],
         remappings=[
             ('/tf', 'tf'),
             ('/tf_static', 'tf_static'),

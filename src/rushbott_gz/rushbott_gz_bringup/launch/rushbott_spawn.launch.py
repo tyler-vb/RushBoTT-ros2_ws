@@ -44,13 +44,13 @@ def generate_launch_description():
 
         
         # Spawn RushBoTT
-        #Node(
-        #    package='ros_gz_sim',
-        #    executable='create',
-        #    arguments=['-name', robot_name,
-        #               '-topic', 'robot_description'],
-        #    output='screen'
-        #)
+        Node(
+            package='ros_gz_sim',
+            executable='create',
+            arguments=['-name', robot_name,
+                        '-topic', 'robot_description'],
+           output='screen'
+        )
 
     ])
 

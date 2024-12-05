@@ -14,7 +14,7 @@
     <xacro:property name="track_width"             value="${body_width*(3/4)}" />
     <xacro:property name="wheelbase"               value="${body_length*(3/4)}" />
 
-    <xacro:property name="base_link_z_offset"      value="${6.42*cm2m}"/>
+    <xacro:property name="base_link_z_offset"      value="${15*cm2m}"/>
 
     <!-- Dummy link --> 
     <link name="base_footprint"/>

@@ -18,6 +18,8 @@ git clone https://github.com/tyler-vb/RushBoTT-ros2_ws.git
 Congrats! You have successfully opened this repository in the RushBoTT ROS2 Container.
 You will know you were successful if you see "Dev Container: RushBoTT ROS2 CPU/GPU" in the bottom left of your VS Code window.
 
+-----
+
 Here are some ROS2 terminal commands to run once you're in the container:
 
 ```

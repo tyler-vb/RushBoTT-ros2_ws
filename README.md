@@ -21,26 +21,28 @@ You will know you were successful if you see "Dev Container: RushBoTT ROS2 CPU/G
 Here are some ROS2 terminal commands to to run once you're in the container:
 
 -----ROS INITIALIZING (Run this when you start the container)
+```
 rosdep install --from-paths src --ignore-src -r -i -y --rosdistro jazzy
 colcon build --symlink-install --cmake-args -DBUILD_TESTING=ON
+```
 
------ROBOT DESCRIPTION
+-----LAUNCH ROBOT DESCRIPTION
    ```
    . ~/RushBoTT-ros2_ws/install/setup.sh
    ros2 launch rushbott_common_bringup robot_description.launch.py
    ```
 
------RVIZ2
+-----LAUNCH RVIZ2
+```
 . ~/RushBoTT-ros2_ws/install/setup.sh
 ros2 launch rushbott_common_bringup rviz2.launch.py
-
------SPAWN ROBOT
-. ~/RushBoTT-ros2_ws/install/setup.sh
-ros2 launch rushbott_gz_bringup rushbott_spawn.launch.py
+```
 
 -----START GAZEBO
+```
 . ~/RushBoTT-ros2_ws/install/setup.sh
 ros2 launch rushbott_gz_bringup sim.launch.py
+```
 
 -----START GAZEBO
 . ~/RushBoTT-ros2_ws/install/setup.sh

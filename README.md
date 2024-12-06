@@ -8,9 +8,9 @@ This repository uses docker+devcontainers to work. To get started:
 3) Download VSCode, again on Windows (https://code.visualstudio.com/)
 4) Install the Remote Development VSCode extension
 5) Clone this repository into your WSL directory of choice.
-   ```
-   git clone https://github.com/tyler-vb/RushBoTT-ros2_ws.git
-   ```
+```
+git clone https://github.com/tyler-vb/RushBoTT-ros2_ws.git
+```
 6) With the repository opened in VS Code, press ctrl+shift+p and open "WSL: Connect to WSL" using the command prompt (you can also click on the little blue "><" icon in the bottom right)
 7) Press ctrl+shift+p again (or "><") and open "Dev Containers: Reopen in Container" using the command prompt
 8) Choose the devcontainer.json file you'd like to use to launch your container (CPU for cpu rendering, GPU for gpu rendering)

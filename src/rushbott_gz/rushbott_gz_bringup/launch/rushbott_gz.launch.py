@@ -8,7 +8,11 @@ from launch.substitutions import LaunchConfiguration, PathJoinSubstitution
 
 ARGUMENTS = [
     DeclareLaunchArgument('use_rviz', default_value='true',
-                          choices=['true', 'false'], description='Start rviz.'),
+                          choices=['true', 'false'],
+                          description='Start rviz.'),
+    DeclareLaunchArgument('use_sim_time', default_value='true',
+                          choices=['true', 'false'],
+                          description='use_sim_time'),
     DeclareLaunchArgument('world', default_value='depot',
                           description='Ignition World'),
 ]
@@ -25,13 +29,7 @@ def generate_launch_description():
     sim_launch = PathJoinSubstitution(
         [pkg_rushbott_gz_bringup, 'launch', 'sim.launch.py'])
     
-    rushbott_spawn = IncludeLaunchDescription(
-        PythonLaunchDescriptionSource(rushbott_spawn_launch),
-        launch_arguments=[
-        ('use_rviz', LaunchConfiguration('use_rviz'))
-        ]
-    )
-
+    # Start sim
     sim = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(sim_launch),
         launch_arguments=[
@@ -39,8 +37,16 @@ def generate_launch_description():
         ]
     )
 
+    # Spawn robot
+    rushbott_spawn = IncludeLaunchDescription(
+        PythonLaunchDescriptionSource(rushbott_spawn_launch),
+        launch_arguments=[
+        ('use_rviz', LaunchConfiguration('use_rviz'))
+        ]
+    )
+
     # Create launch description and add actions
     ld = LaunchDescription(ARGUMENTS)
-    ld.add_action(rushbott_spawn)
     ld.add_action(sim)
+    ld.add_action(rushbott_spawn)
     return ld

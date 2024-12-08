@@ -37,23 +37,32 @@ def generate_launch_description():
     )
 
     gz_sim = IncludeLaunchDescription(
-            PythonLaunchDescriptionSource(gz_sim_launch),
-            launch_arguments={
-                'gz_args':[
-                    LaunchConfiguration('world'),
-                    '.sdf '
-                    '-v4 '
-                    ],
-                'on_exit_shutdown': 'True'
-            }.items()           
+        PythonLaunchDescriptionSource(gz_sim_launch),
+        launch_arguments=[
+            ('gz_args', [
+                LaunchConfiguration('world'),
+                '.sdf '
+                '-v1 '
+                ]),
+            ('on_exit_shutdown', 'True')
+        ]
     )
-    
+
+    clock_bridge = Node(
+        package='ros_gz_bridge',
+        executable='parameter_bridge',
+        name='clock_bridge',
+        output='screen',
+        parameters=[{
+            'use_sim_time': LaunchConfiguration('use_sim_time')
+        }],
+        arguments=[
+            ['/clock' + '@rosgraph_msgs/msg/Clock' + '[gz.msgs.Clock']
+        ]
+    )
+
     ld = LaunchDescription(ARGUMENTS)
+    ld.add_action(clock_bridge)
     ld.add_action(gz_resource_path)
     ld.add_action(gz_sim)
-    ld.add_action(
-        LogInfo(
-            msg=EnvironmentVariable('GZ_SIM_RESOURCE_PATH')
-        )
-    )
     return ld

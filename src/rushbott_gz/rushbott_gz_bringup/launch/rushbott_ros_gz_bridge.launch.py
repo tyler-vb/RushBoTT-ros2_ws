@@ -18,29 +18,7 @@ def generate_launch_description():
     robot_name = LaunchConfiguration('robot_name')
     use_sim_time = LaunchConfiguration('use_sim_time')
 
-    # cmd_vel bridge
-    cmd_vel_bridge = Node(
-        package='ros_gz_bridge',
-        executable='parameter_bridge',
-        name='cmd_vel_bridge',
-        output='screen',
-        parameters=[{
-            'use_sim_time': use_sim_time
-        }],
-        arguments=[
-            ['/cmd_vel' + '@geometry_msgs/msg/TwistStamped' + '[ignition.msgs.Twist'],
-            ['/model/', robot_name, '/cmd_vel' +
-             '@geometry_msgs/msg/TwistStamped' +
-             ']ignition.msgs.Twist']
-        ],
-        remappings=[
-            (['/cmd_vel'], 'cmd_vel'),
-            (['/model/', robot_name, '/cmd_vel'],
-             'diffdrive_controller/cmd_vel')
-        ])
-
     ld = LaunchDescription(ARGUMENTS)
-    ld.add_action(cmd_vel_bridge)
     return ld
 
 

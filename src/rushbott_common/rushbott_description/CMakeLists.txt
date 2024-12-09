@@ -1,7 +1,7 @@
-cmake_minimum_required(VERSION 3.5)
+cmake_minimum_required(VERSION 3.8)
+
 project(rushbott_description)
 
-# find dependencies
 find_package(ament_cmake REQUIRED)
 
 install(

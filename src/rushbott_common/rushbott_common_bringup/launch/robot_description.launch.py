@@ -28,10 +28,6 @@ def generate_launch_description():
         parameters=[
             {'use_sim_time': LaunchConfiguration('use_sim_time')},
             {'robot_description': Command(['xacro', ' ', xacro_file])}],
-        remappings=[
-            ('/tf', 'tf'),
-            ('/tf_static', 'tf_static')
-        ]
     )
                     
     joint_state_publisher_gui = Node(
@@ -40,10 +36,6 @@ def generate_launch_description():
         name='joint_state_publisher_gui',
         output='screen',
         parameters=[{'use_sim_time': LaunchConfiguration('use_sim_time')}],
-        remappings=[
-            ('/tf', 'tf'),
-            ('/tf_static', 'tf_static')
-        ]
     )
 
     # Define LaunchDescription variable

@@ -1,14 +1,14 @@
 cmake_minimum_required(VERSION 3.8)
 
-project(rushbott_common_bringup)
+project(rushbott_control)
 
 find_package(ament_cmake REQUIRED)
 
 install(
-  DIRECTORY
+  DIRECTORY 
+    config
     launch
-    rviz
-  DESTINATION
+  DESTINATION 
     share/${PROJECT_NAME}
 )
 

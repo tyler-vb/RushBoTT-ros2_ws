@@ -1,14 +1,13 @@
 from ament_index_python.packages import get_package_share_directory
 
 from launch import LaunchDescription
-from launch.actions import DeclareLaunchArgument, GroupAction
-from launch.actions import IncludeLaunchDescription, LogInfo
+from launch.actions import DeclareLaunchArgument, GroupAction, IncludeLaunchDescription
 from launch.conditions import IfCondition
 from launch.launch_description_sources import PythonLaunchDescriptionSource
 from launch.substitutions import LaunchConfiguration, PathJoinSubstitution
 from launch_ros.actions import Node
 
-# This launch file generates the robot description topic, starts Rviz2, and spawns the robot in a gazebo world
+# This launch file generates anything related to the robot itself (spawning robot, starobot description, rviz, robot controllers, etc.)
 
 ARGUMENTS = [
     DeclareLaunchArgument('use_sim_time', default_value='false',
@@ -35,11 +34,11 @@ def generate_launch_description():
         [pkg_rushbott_common_bringup, 'launch', 'robot_description.launch.py'])
     rviz2_launch = PathJoinSubstitution(
         [pkg_rushbott_common_bringup, 'launch', 'rviz2.launch.py'])
-    rushbott_ros_gz_bridge_launch = PathJoinSubstitution(
-        [pkg_rushbott_gz_bringup, 'launch', 'rushbott_ros_gz_bridge.launch.py'])
+    rushbott_nodes_launch = PathJoinSubstitution(
+        [pkg_rushbott_common_bringup, 'launch', 'rushbott_nodes.launch.py'])
     
     spawn_robot_group_action = GroupAction([
-
+        # RViz
         IncludeLaunchDescription(
             PythonLaunchDescriptionSource(rviz2_launch),
             condition=IfCondition(LaunchConfiguration('use_rviz'))
@@ -48,6 +47,10 @@ def generate_launch_description():
         # Robot Description
         IncludeLaunchDescription(
             PythonLaunchDescriptionSource(robot_description_launch)),
+
+        # Robot Nodes
+        IncludeLaunchDescription(
+            PythonLaunchDescriptionSource(rushbott_nodes_launch)),
 
         # Spawn RushBoTT
         Node(
@@ -58,15 +61,15 @@ def generate_launch_description():
            output='screen'
         ),
 
-        IncludeLaunchDescription(
-            PythonLaunchDescriptionSource(rushbott_ros_gz_bridge_launch),
-            launch_arguments=[
-                ('robot_name', robot_name)
-            ]
+        # Open Teleop Terminal
+        Node(
+            package='teleop_twist_keyboard',
+            executable='teleop_twist_keyboard',
+            output='screen',
+            prefix='xterm -hold -e'
         )
     ])
 
-    # Create launch description and add actions
     ld = LaunchDescription(ARGUMENTS)
     ld.add_action(spawn_robot_group_action)
     return ld

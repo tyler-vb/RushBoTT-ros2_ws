@@ -26,6 +26,9 @@ RUN sudo apt update && sudo apt upgrade -y
 # Install essential packages
 RUN apt-get update && apt-get install --no-install-recommends -y -o Dpkg::Options::="--force-overwrite" \
     ros-jazzy-ros-gz \
+    ros-jazzy-ros2-control \
+    ros-jazzy-ros2-controllers \
+    ros-jazzy-gz-ros2-control \
     ros-jazzy-joint-state-publisher-gui \
     python3-pip \
     python-is-python3 \

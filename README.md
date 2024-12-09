@@ -39,7 +39,7 @@ ros2 launch rushbott_common_bringup rviz2.launch.py
 . ~/RushBoTT-ros2_ws/install/setup.sh
 ros2 launch rushbott_gz_bringup sim.launch.py
 
-# START GAZEBO
+# LAUNCH GAZEBO AND RVIZ2 W/ RUSHBOTT
 . ~/RushBoTT-ros2_ws/install/setup.sh
-ros2 launch rushbott_gz_bringup sim.launch.py
+ros2 launch rushbott_gz_bringup rushbott_gz.launch.py
 ```

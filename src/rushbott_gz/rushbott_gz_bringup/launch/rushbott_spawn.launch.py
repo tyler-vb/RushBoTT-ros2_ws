@@ -56,7 +56,7 @@ def generate_launch_description():
             executable='create',
             arguments=['-name', robot_name,
                         '-topic', 'robot_description'],
-           output='screen'
+            output='screen'
         ),
 
         # Open Teleop Terminal
@@ -64,6 +64,10 @@ def generate_launch_description():
             package='teleop_twist_keyboard',
             executable='teleop_twist_keyboard',
             output='screen',
+            parameters=[{
+                'stamped': True,
+                'frame_id': 'base_link'
+            }],
             remappings=[
                 ('/cmd_vel','/diffdrive_controller/cmd_vel')
             ],

@@ -1,7 +1,7 @@
 <?xml version='1.0'?>
 <robot xmlns:xacro='http://www.ros.org/wiki/xacro'>
 
-<xacro:macro name='wheel' params='name parent_link motor:=False *origin'>
+<xacro:macro name='wheel' params='name parent_link motor:=False *origin *axis'>
 
     <xacro:property name='mass'   value='0.2' />
     <xacro:property name='radius' value='${4*cm2m}' />
@@ -24,17 +24,19 @@
         <parent link='${parent_link}'/>
         <child link='${wheel_link_name}'/>
         <xacro:insert_block name='origin'/>
-        <axis xyz='0 0 1'/>
+        <xacro:insert_block name='axis'/>
     </joint>
 
     <link name='${wheel_link_name}'>
         <visual>
+            <origin xyz='0 0 ${width/2}'/>
             <geometry>
                 <cylinder length='${width}' radius='${radius}'/>
             </geometry>
             <xacro:insert_block name='material_block'/>
         </visual>
         <collision>
+            <origin xyz='0 0 ${width/2}'/>
             <geometry>
                 <cylinder length='${width}' radius='${radius}'/>
             </geometry>

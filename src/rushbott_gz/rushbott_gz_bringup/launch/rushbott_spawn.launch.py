@@ -26,8 +26,6 @@ def generate_launch_description():
     # Directories
     pkg_rushbott_common_bringup = get_package_share_directory(
         'rushbott_common_bringup')
-    pkg_rushbott_gz_bringup = get_package_share_directory(
-        'rushbott_gz_bringup')
 
     # Paths
     robot_description_launch = PathJoinSubstitution(
@@ -66,6 +64,9 @@ def generate_launch_description():
             package='teleop_twist_keyboard',
             executable='teleop_twist_keyboard',
             output='screen',
+            remappings=[
+                ('/cmd_vel','/diffdrive_controller/cmd_vel')
+            ],
             prefix='xterm -hold -e'
         )
     ])

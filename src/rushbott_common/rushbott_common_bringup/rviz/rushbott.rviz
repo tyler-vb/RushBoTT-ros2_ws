@@ -7,7 +7,8 @@ Panels:
         - /Global Options1
         - /RobotModel1
         - /RobotModel1/Description Topic1
-        - /RobotModel1/Links1
+        - /TF1
+        - /TF1/Status1
       Splitter Ratio: 0.5
     Tree Height: 793
   - Class: rviz_common/Selection
@@ -62,31 +63,27 @@ Visualization Manager:
         Expand Link Details: false
         Expand Tree: false
         Link Tree Style: Links in Alphabetic Order
-        base_footprint:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
         base_link:
           Alpha: 1
           Show Axes: false
           Show Trail: false
           Value: true
-        fl_wheel_wheel:
+        fl_wheel:
           Alpha: 1
           Show Axes: false
           Show Trail: false
           Value: true
-        fr_wheel_wheel:
+        fr_wheel:
           Alpha: 1
           Show Axes: false
           Show Trail: false
           Value: true
-        rl_wheel_wheel:
+        rl_wheel:
           Alpha: 1
           Show Axes: false
           Show Trail: false
           Value: true
-        rr_wheel_wheel:
+        rr_wheel:
           Alpha: 1
           Show Axes: false
           Show Trail: false
@@ -126,32 +123,46 @@ Visualization Manager:
       Value: true
       Visual Enabled: true
     - Class: rviz_default_plugins/TF
-      Enabled: false
+      Enabled: true
       Filter (blacklist): ""
       Filter (whitelist): ""
       Frame Timeout: 15
       Frames:
         All Enabled: true
+        base_link:
+          Value: true
+        fl_wheel:
+          Value: true
+        fr_wheel:
+          Value: true
+        odom:
+          Value: true
+        rl_wheel:
+          Value: true
+        rr_wheel:
+          Value: true
       Marker Scale: 1
       Name: TF
       Show Arrows: true
       Show Axes: true
       Show Names: false
       Tree:
-        {}
+        odom:
+          base_link:
+            fl_wheel:
+              {}
+            fr_wheel:
+              {}
+            rl_wheel:
+              {}
+            rr_wheel:
+              {}
       Update Interval: 0
-      Value: false
-    - Class: rviz_default_plugins/Axes
-      Enabled: true
-      Length: 0.5
-      Name: Axes
-      Radius: 0.029999999329447746
-      Reference Frame: <Fixed Frame>
       Value: true
   Enabled: true
   Global Options:
     Background Color: 48; 48; 48
-    Fixed Frame: base_footprint
+    Fixed Frame: odom
     Frame Rate: 30
   Name: root
   Tools:
@@ -209,10 +220,10 @@ Visualization Manager:
       Invert Z Axis: false
       Name: Current View
       Near Clip Distance: 0.009999999776482582
-      Pitch: -0.035202816128730774
+      Pitch: 0.0847972184419632
       Target Frame: <Fixed Frame>
       Value: Orbit (rviz)
-      Yaw: 5.898582458496094
+      Yaw: 5.603580951690674
     Saved: ~
 Window Geometry:
   Displays:
@@ -228,5 +239,5 @@ Window Geometry:
   Views:
     collapsed: false
   Width: 1848
-  X: 8
-  Y: -27
+  X: 40
+  Y: -5

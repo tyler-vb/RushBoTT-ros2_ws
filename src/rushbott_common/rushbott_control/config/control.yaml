@@ -20,5 +20,3 @@ diffdrive_controller:
     right_wheel_names: ['fr_wheel_joint']
     wheel_separation: 0.35
     wheel_radius: 0.05
-
-    use_stamped_vel: false

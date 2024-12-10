@@ -16,15 +16,7 @@
 
     <xacro:property name='base_link_z_offset'      value='${15*cm2m}'/>
 
-    <!-- Dummy link --> 
-    <link name='base_footprint'/>
-
     <!-- Base link --> 
-    <joint name='base_footprint_to_base_link' type='fixed'>  
-        <parent link='base_footprint'/>  
-        <child link='base_link'/>  
-    </joint>
-
     <link name='base_link'>
         <visual>
             <origin xyz='0 0 ${base_link_z_offset}' rpy='0 0 0'/>
@@ -45,11 +37,11 @@
     </link>
 
     <!-- Wheels --> 
-    <xacro:wheel name='fl' parent_link='base_link' motor='True' min_vel='-10' max_vel='10'>
+    <xacro:wheel name='fl' parent_link='base_link' motor='True'>
         <origin xyz='${wheelbase/2} ${track_width/2} ${base_link_z_offset-wheel_depth}' rpy='${pi/2} 0 0'/>
     </xacro:wheel>
 
-    <xacro:wheel name='fr' parent_link='base_link' motor='True' min_vel='-10' max_vel='10'>
+    <xacro:wheel name='fr' parent_link='base_link' motor='True'>
         <origin xyz='${wheelbase/2} ${-track_width/2} ${base_link_z_offset-wheel_depth}' rpy='${pi/2} 0 0'/>
     </xacro:wheel>
 

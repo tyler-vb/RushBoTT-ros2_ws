@@ -43,6 +43,7 @@ def generate_launch_description():
                 LaunchConfiguration('world'),
                 '.sdf '
                 '-v1 '
+                '-r '
                 ]),
             ('on_exit_shutdown', 'True')
         ]

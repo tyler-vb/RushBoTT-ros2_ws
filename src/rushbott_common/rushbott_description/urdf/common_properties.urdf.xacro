@@ -56,14 +56,25 @@
     <!-- Material colors -->
     <xacro:property name='material_black'>
         <material name='black'>
-            <color rgba='1 1 1 1'/>
+            <color rgba='0 0 0 1'/>
+        </material>
+    </xacro:property>
+
+    <xacro:property name='material_red'>
+        <material name='red'>
+            <color rgba='1 0 0 1'/>
         </material>
     </xacro:property>
 
     <xacro:property name='material_cyan'>
         <material name='cyan'>
-            <color rgba='0 1.0 1.0 1.0'/>
+            <color rgba='0 1 1 1'/>
         </material>
     </xacro:property>
 
+    <xacro:property name='material_white'>
+        <material name='white'>
+            <color rgba='1 1 1 1'/>
+        </material>
+    </xacro:property>
 </robot>

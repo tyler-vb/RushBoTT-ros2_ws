@@ -1,11 +1,21 @@
 <?xml version='1.0'?>
 <robot xmlns:xacro='http://www.ros.org/wiki/xacro'>
 
-<xacro:macro name='wheel' params='name parent_link *origin motor:="false" min_vel:="0" max_vel:="0"'>
+<xacro:macro name='wheel' params='name parent_link motor:=False min_vel:=0 max_vel:=0 *origin'>
 
     <xacro:property name='mass'   value='0.2' />
     <xacro:property name='radius' value='${4*cm2m}' />
     <xacro:property name='width'  value='${2*cm2m}' />
+
+    <xacro:property name='material_block'>
+        <xacro:insert_block name='material_white'/>
+    </xacro:property>
+
+    <xacro:if value='${motor == True}' >
+        <xacro:property name='material_block'>
+            <xacro:insert_block name='material_red'/>
+        </xacro:property>
+    </xacro:if>
 
     <xacro:property name='wheel_link_name'  value='${name}_wheel'/>
     <xacro:property name='wheel_joint_name' value='${wheel_link_name}_joint'/>
@@ -22,7 +32,7 @@
             <geometry>
                 <cylinder length='${width}' radius='${radius}'/>
             </geometry>
-            <xacro:insert_block name='material_black'/>
+            <xacro:insert_block name='material_block'/>
         </visual>
         <collision>
             <geometry>
@@ -33,15 +43,15 @@
             length='${width}'/>
     </link>
 
-    <xacro:if value='${motor == "true"}'>
+    <xacro:if value='${motor == True}'>
         <ros2_control name='${wheel_link_name}_controller' type='system'>
             <hardware>
-                <plugin> gz_ros2_control/GazeboSimSystem </plugin>
+                <plugin>gz_ros2_control/GazeboSimSystem</plugin>
             </hardware>
             <joint name='${wheel_joint_name}'>
                 <command_interface name='velocity'>
-                    <param name='min'> ${min_vel} </param>
-                    <param name='max'> ${min_vel} </param>
+                    <param name='min'>${min_vel}</param>
+                    <param name='max'>${min_vel}</param>
                 </command_interface>
                 <state_interface name='velocity'/>
                 <state_interface name='position'/>

@@ -21,8 +21,25 @@ def generate_launch_description():
         PythonLaunchDescriptionSource(control_launch)
     )
 
+    # Teleop
+    teleop = Node(
+        package='teleop_twist_keyboard',
+        executable='teleop_twist_keyboard',
+        name='teleop_twist_keyboard',
+        output='screen',
+        emulate_tty=True,
+        prefix='xterm -hold -e',
+        parameters=[{
+                'stamped': True,
+            }],
+        remappings=[
+            ('/cmd_vel', '/diffdrive_controller/cmd_vel')
+        ],
+    )   
+
     # Create launch description and add actions
     ld = LaunchDescription()
+    ld.add_action(teleop)
     ld.add_action(diffdrive_controller)
 
     return ld

@@ -1,5 +1,5 @@
 {
-  "name": "RushBoTT ROS2 CPU",
+  "name": "RushBoTT ROS2 (Intel)",
   "build": {
     "dockerfile": "../Dockerfile",
     "args": {
@@ -10,12 +10,11 @@
     "DISPLAY": "${localEnv:DISPLAY}",
     "WAYLAND_DISPLAY": "${localEnv:WAYLAND_DISPLAY}",
     "XDG_RUNTIME_DIR": "${localEnv:XDG_RUNTIME_DIR}",
-    "PULSE_SERVER": "${localEnv:PULSE_SERVER}",
-    "LIBGL_ALWAYS_SOFTWARE": "1"
+    "PULSE_SERVER": "${localEnv:PULSE_SERVER}"
   },
   "runArgs": [
     "--network=host",
-    "--privileged"
+    "--device=/dev/dri:/dev/dri"
   ],
   "workspaceMount": "source=${localWorkspaceFolder},target=/home/ttpidelta/${localWorkspaceFolderBasename},type=bind",
   "workspaceFolder": "/home/ttpidelta/${localWorkspaceFolderBasename}",

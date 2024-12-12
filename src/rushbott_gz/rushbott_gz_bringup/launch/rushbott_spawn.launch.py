@@ -16,7 +16,7 @@ ARGUMENTS = [
     DeclareLaunchArgument('use_rviz', default_value='true',
                           choices=['true', 'false'], description='Start rviz.'),
     DeclareLaunchArgument('robot_name', default_value='RushBoTT',
-                          description='Robot namespace'),
+                          description='Robot name'),
 ]
 
 robot_name = LaunchConfiguration('robot_name')
@@ -55,23 +55,9 @@ def generate_launch_description():
             package='ros_gz_sim',
             executable='create',
             arguments=['-name', robot_name,
-                        '-topic', 'robot_description'],
+                        '-topic', 'robot_description',
+                        '-z', '1'],
             output='screen'
-        ),
-
-        # Open Teleop Terminal
-        Node(
-            package='teleop_twist_keyboard',
-            executable='teleop_twist_keyboard',
-            output='screen',
-            parameters=[{
-                'stamped': True,
-                'frame_id': 'base_link'
-            }],
-            remappings=[
-                ('/cmd_vel','/diffdrive_controller/cmd_vel')
-            ],
-            prefix='xterm -hold -e'
         )
     ])
 

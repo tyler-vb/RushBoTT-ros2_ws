@@ -31,7 +31,7 @@ colcon build --symlink-install --cmake-args -DBUILD_TESTING=ON
 . ~/RushBoTT-ros2_ws/install/setup.sh
 ros2 launch rushbott_common_bringup rviz2.launch.py
 
-# START GAZEBO
+# START GAZEBO SIM
 . ~/RushBoTT-ros2_ws/install/setup.sh
 ros2 launch rushbott_gz_bringup sim.launch.py
 

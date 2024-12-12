@@ -1,5 +1,5 @@
 {
-  "name": "RushBoTT ROS2 GPU",
+  "name": "RushBoTT ROS2 (NVIDIA)",
   "build": {
     "dockerfile": "../Dockerfile",
     "args": {

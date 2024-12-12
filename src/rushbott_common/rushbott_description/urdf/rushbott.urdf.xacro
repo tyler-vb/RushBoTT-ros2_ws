@@ -6,14 +6,12 @@
 
     <!-- Mechanical properties -->
     <xacro:property name='body_mass'               value='2.300' />
-    <xacro:property name='body_length'             value='${40*cm2m}' />
-    <xacro:property name='body_width'              value='${20*cm2m}' />
-    <xacro:property name='body_height'             value='${10*cm2m}' />
+    <xacro:property name='body_length'             value='${50*cm2m}' />
+    <xacro:property name='body_width'              value='${30*cm2m}' />
+    <xacro:property name='body_height'             value='${20*cm2m}' />
 
     <xacro:property name='wheel_depth'            value='${body_height*(1/2)}' />
     <xacro:property name='wheelbase'               value='${body_length*(3/4)}' />
-
-    <xacro:property name='base_link_z_offset'      value='${15*cm2m}'/>
 
     <!-- Base link --> 
     <link name='base_link'/>
@@ -55,12 +53,12 @@
         <axis xyz='0 0 -1'/>
     </xacro:wheel>
 
-    <xacro:wheel name='rl' parent_link='base_link'>
+    <xacro:wheel name='rl' parent_link='base_link' motor='True'>
         <origin xyz='${-wheelbase} ${body_width/2} 0' rpy='${-pi/2} 0 0'/>
         <axis xyz='0 0 1'/>
     </xacro:wheel>
 
-    <xacro:wheel name='rr' parent_link='base_link'>
+    <xacro:wheel name='rr' parent_link='base_link' motor='True'>
         <origin xyz='${-wheelbase} ${-body_width/2} 0' rpy='${pi/2} 0 0'/>
         <axis xyz='0 0 -1'/>
     </xacro:wheel>

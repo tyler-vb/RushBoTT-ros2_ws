@@ -9,5 +9,6 @@
         "/opt/ros/humble/lib/python3.10/site-packages",
         "/opt/ros/humble/local/lib/python3.10/dist-packages"
     ],
-    "cmake.sourceDirectory": "/home/ttpidelta/RushBoTT-ros2_ws/src/rushbott_common/rushbott_common_bringup"
+    "cmake.sourceDirectory": "/home/ttpidelta/RushBoTT-ros2_ws/src/rushbott_common/rushbott_common_bringup",
+    "remote.autoForwardPortsFallback": 0
 }

@@ -13,8 +13,8 @@ ARGUMENTS = [
     DeclareLaunchArgument('use_sim_time', default_value='true',
                           choices=['true', 'false'],
                           description='use_sim_time'),
-    DeclareLaunchArgument('world', default_value='depot',
-                          description='Ignition World'),
+    DeclareLaunchArgument('world', default_value='maze',
+                          description='Gazebo World'),
 ]
 
 def generate_launch_description():

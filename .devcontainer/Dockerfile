@@ -12,7 +12,7 @@ RUN if id -u $USER_UID >/dev/null 2>&1; then \
         userdel -r $(getent passwd 1000 | cut -d: -f1); \
     fi && \
     groupadd --gid $USER_GID $USERNAME && \
-    useradd -s /bin/bash --uid $USER_UID --gid $USER_GID -m $USERNAME;
+    useradd -s /bin/bash --uid $USER_UID --gid $USER_GID --groups video -m $USERNAME;
 
 # Add sudo support for the non-root user
 RUN apt-get update && \
@@ -25,32 +25,34 @@ RUN sudo apt update && sudo apt upgrade -y
 
 # Install essential packages
 RUN apt-get update && apt-get install --no-install-recommends -y -o Dpkg::Options::="--force-overwrite" \
+    # ros stuff
     ros-jazzy-ros-gz \
     ros-jazzy-ros2-control \
     ros-jazzy-ros2-controllers \
     ros-jazzy-gz-ros2-control \
     ros-jazzy-joint-state-publisher-gui \
+    # utils
     python3-pip \
     python-is-python3 \
     nano \
     less \
     xterm \
-    mesa-utils && \
+    libdrm-dev \
+    mesa-utils &&\
     rm -rf /var/lib/apt/lists/*
 
-# Copy config files
+# Bashrc scripts
 COPY ./config/bashrc /tmp/bashrc
 
-#  Config container
 RUN cat /tmp/bashrc >> home/$USERNAME/.bashrc && \
     rm -f /tmp/bashr
 
-# Make /run/user/1000 directory (idk why we have to do this sometimes)
+# Make runtime directory
 RUN mkdir -p /run/user/$USER_UID && \
     chown $USER_UID:$USER_GID /run/user/$USER_UID && \
     chmod 0700 /run/user/$USER_UID
 
-# Change user from root
+# Change User
 USER $USERNAME
 
 # Rosdep update

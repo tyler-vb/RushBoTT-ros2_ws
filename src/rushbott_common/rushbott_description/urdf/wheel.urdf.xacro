@@ -4,7 +4,6 @@
 <xacro:macro name='wheel' params='name parent_link motor:=False *origin *axis'>
 
     <xacro:property name='mass'   value='0.2' />
-    <xacro:property name='radius' value='${10*cm2m}' />
     <xacro:property name='width'  value='${4*cm2m}' />
 
     <xacro:property name='wheel_link_name'  value='${name}_wheel'/>
@@ -16,8 +15,11 @@
         </xacro:property>
 
         <gazebo reference='${wheel_link_name}'>
-            <mu1 value="0.1"/>
-            <mu2 value="0.1"/>
+			<mu1 value="0.5"/>
+			<mu2 value="0.3"/>
+			<kp value="10000000.0"/>
+			<kd value="1.0"/>
+			<fdir1 value="1 0 0"/>
         </gazebo>
 
         <ros2_control name='${wheel_link_name}_controller' type='system'>
@@ -36,14 +38,18 @@
     </xacro:if>
 
     <xacro:if value='${motor == False}'>
-        <xacro:property name='material_block'>
+         <xacro:property name='material_block'>
             <xacro:insert_block name='material_white'/>
         </xacro:property>
 
-        <gazebo reference='${wheel_link_name}'>
-            <mu1 value="0.001"/>
-            <mu2 value="0.001"/>
+         <gazebo reference='${wheel_link_name}'>
+			<mu1 value="0.5"/>
+			<mu2 value="0.3"/>
+			<kp value="10000000.0"/>
+			<kd value="1.0"/>
+			<fdir1 value="1 0 0"/>
         </gazebo>
+
     </xacro:if>
 
     <joint name='${wheel_joint_name}' type='continuous'>
@@ -57,17 +63,17 @@
         <visual>
             <origin xyz='0 0 ${width/2}'/>
             <geometry>
-                <cylinder length='${width}' radius='${radius}'/>
+                <cylinder length='${width}' radius='${wheel_radius}'/>
             </geometry>
             <xacro:insert_block name='material_block'/>
         </visual>
         <collision>
             <origin xyz='0 0 ${width/2}'/>
             <geometry>
-                <cylinder length='${width}' radius='${radius}'/>
+                <cylinder length='${width}' radius='${wheel_radius}'/>
             </geometry>
         </collision>
-        <xacro:inertial_cylinder mass='${mass}' radius='${radius}'
+        <xacro:inertial_cylinder mass='${mass}' radius='${wheel_radius}'
             length='${width}'/>
     </link>
 

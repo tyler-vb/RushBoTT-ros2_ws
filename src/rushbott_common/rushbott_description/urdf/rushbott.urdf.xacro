@@ -3,6 +3,7 @@
 
     <xacro:include filename='common_properties.urdf.xacro'/>
     <xacro:include filename='wheel.urdf.xacro'/>
+    <xacro:include filename='wheel_with_servo.urdf.xacro'/>
 
     <!-- Mechanical properties -->
     <xacro:property name='body_mass'               value='2.300' />
@@ -10,9 +11,17 @@
     <xacro:property name='body_width'              value='${30*cm2m}' />
     <xacro:property name='body_height'             value='${20*cm2m}' />
 
-    <xacro:property name='wheel_radius'            value='${10*cm2m}' />
-    <xacro:property name='wheel_depth'            value='${body_height*(1/2)}' />
-    <xacro:property name='wheelbase'               value='${body_length*(3/4)}' />
+    <xacro:property name='wheel_mass'              value='0.2' />
+    <xacro:property name='wheel_radius'            value='${7.5*cm2m}' />
+    <xacro:property name='wheel_width'             value='${5*cm2m}' />
+    <xacro:property name='wheel_depth'             value='${wheel_radius}' />
+    <xacro:property name='wheelbase'               value='${body_length*(4/5)}' />
+    <xacro:property name='track_width'             value='${body_width+wheel_width+3*cm2m}' />
+
+    <xacro:property name='servo_mass'              value='0.2' />
+    <xacro:property name='servo_radius'            value='${3*cm2m}' />
+    <xacro:property name='servo_width'             value='${4*cm2m}' />
+    <xacro:property name='servo_depth'            value='${wheel_radius+3*cm2m}' />
 
     <!-- Base footprint --> 
     <link name='base_footprint'/>
@@ -21,7 +30,7 @@
     <joint name='base_link_joint' type='fixed'>
         <parent link='base_footprint'/>
         <child link='base_link'/>
-        <origin xyz='0 0 ${wheel_radius}'/>
+        <origin xyz='0 0 ${body_height/2}'/>
     </joint>
 
     <link name='base_link'>
@@ -32,7 +41,7 @@
             </geometry>
             <xacro:insert_block name='material_cyan'/>
         </visual>
-        <collision name='create3_base_collision'>
+        <collision>
             <origin xyz='0 0 ${body_height/2}'/>
             <geometry>
                 <box size='${body_length} ${body_width} ${body_height}'/>
@@ -43,27 +52,39 @@
         </xacro:inertial_cuboid_with_pose>
     </link>
 
-    <!-- Wheels --> 
-    <xacro:wheel name='fl' parent_link='base_link' motor='True'>
-        <origin xyz='${wheelbase/2} ${body_width/2} 0' rpy='${-pi/2} 0 0'/>
+    <!-- Wheels with servos--> 
+
+    <xacro:wheel_with_servo name='fl' parent_link='base_link'>
+        <origin xyz='${wheelbase/2} ${track_width/2} ${-wheel_depth+servo_depth}' rpy='0 0 0'/>
         <axis xyz='0 0 1'/>
-    </xacro:wheel>
+    </xacro:wheel_with_servo>
 
-    <xacro:wheel name='fr' parent_link='base_link' motor='True'>
-        <origin xyz='${wheelbase/2} ${-body_width/2} 0' rpy='${pi/2} 0 0'/>
+    <xacro:wheel_with_servo name='fr' parent_link='base_link'>
+        <origin xyz='${wheelbase/2} ${-track_width/2} ${-wheel_depth+servo_depth}' rpy='0 0 ${pi}'/>
         <axis xyz='0 0 -1'/>
-    </xacro:wheel>
+    </xacro:wheel_with_servo>
 
-    <xacro:wheel name='rl' parent_link='base_link' motor='True'>
-        <origin xyz='${-wheelbase/2} ${body_width/2} 0' rpy='${-pi/2} 0 0'/>
+    <xacro:wheel_with_servo name='rl' parent_link='base_link'>
+        <origin xyz='${-wheelbase/2} ${track_width/2} ${-wheel_depth+servo_depth}' rpy='0 0 0'/>
         <axis xyz='0 0 1'/>
-    </xacro:wheel>
+    </xacro:wheel_with_servo>
 
-    <xacro:wheel name='rr' parent_link='base_link' motor='True'>
-        <origin xyz='${-wheelbase/2} ${-body_width/2} 0' rpy='${pi/2} 0 0'/>
+    <xacro:wheel_with_servo name='rr' parent_link='base_link'>
+        <origin xyz='${-wheelbase/2} ${-track_width/2} ${-wheel_depth+servo_depth}' rpy='0 0 ${pi}'/>
         <axis xyz='0 0 -1'/>
-    </xacro:wheel>
+    </xacro:wheel_with_servo>
     
+    <!-- Wheels--> 
+
+    <xacro:wheel name='l' parent_link='base_link'>
+        <origin xyz='0 ${track_width/2} ${-wheel_depth}' rpy='${-pi/2} 0 0'/>
+        <axis xyz='0 0 1'/>
+    </xacro:wheel>
+
+    <xacro:wheel name='r' parent_link='base_link'>
+        <origin xyz='0 ${-track_width/2} ${-wheel_depth}' rpy='${-pi/2} 0 ${pi}'/>
+        <axis xyz='0 0 -1'/>
+    </xacro:wheel>
 
     <!-- Gazebo (make this conditional later on)-->
     <gazebo>

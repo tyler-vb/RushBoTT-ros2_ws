@@ -1,5 +1,5 @@
 {
-  "name": "RushBoTT ROS2 (Intel)",
+  "name": "RushBoTT ROS2 (NO GPU)",
   "build": {
     "dockerfile": "../Dockerfile",
     "args": {
@@ -13,8 +13,7 @@
     "PULSE_SERVER": "${localEnv:PULSE_SERVER}"
   },
   "runArgs": [
-    "--network=host",
-    "--device=/dev/dri:/dev/dri"
+    "--network=host"
   ],
   "workspaceMount": "source=${localWorkspaceFolder},target=/home/ttpidelta/${localWorkspaceFolderBasename},type=bind",
   "workspaceFolder": "/home/ttpidelta/${localWorkspaceFolderBasename}",

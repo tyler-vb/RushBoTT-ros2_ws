@@ -1,56 +1,14 @@
 <?xml version='1.0'?>
 <robot xmlns:xacro='http://www.ros.org/wiki/xacro'>
 
-<xacro:macro name='wheel' params='name parent_link motor:=False *origin *axis'>
-
-    <xacro:property name='mass'   value='0.2' />
-    <xacro:property name='width'  value='${4*cm2m}' />
+<xacro:macro name='wheel' params='name parent_link *origin *axis'>
 
     <xacro:property name='wheel_link_name'  value='${name}_wheel'/>
     <xacro:property name='wheel_joint_name' value='${wheel_link_name}_joint'/>
 
-    <xacro:if value='${motor == True}'>
-        <xacro:property name='material_block'>
-            <xacro:insert_block name='material_red'/>
-        </xacro:property>
-
-        <gazebo reference='${wheel_link_name}'>
-			<mu1 value="0.5"/>
-			<mu2 value="0.3"/>
-			<kp value="10000000.0"/>
-			<kd value="1.0"/>
-			<fdir1 value="1 0 0"/>
-        </gazebo>
-
-        <ros2_control name='${wheel_link_name}_controller' type='system'>
-            <hardware>
-                <plugin>gz_ros2_control/GazeboSimSystem</plugin>
-            </hardware>
-            <joint name='${wheel_joint_name}'>
-                <command_interface name='velocity'>
-                    <param name='min'>-10</param>
-                    <param name='max'>10</param>
-                </command_interface>
-                <state_interface name='velocity'/>
-                <state_interface name='position'/>
-            </joint>
-        </ros2_control>
-    </xacro:if>
-
-    <xacro:if value='${motor == False}'>
-         <xacro:property name='material_block'>
-            <xacro:insert_block name='material_white'/>
-        </xacro:property>
-
-         <gazebo reference='${wheel_link_name}'>
-			<mu1 value="0.5"/>
-			<mu2 value="0.3"/>
-			<kp value="10000000.0"/>
-			<kd value="1.0"/>
-			<fdir1 value="1 0 0"/>
-        </gazebo>
-
-    </xacro:if>
+    <xacro:property name='material_block'>
+        <xacro:insert_block name='material_black'/>
+    </xacro:property>
 
     <joint name='${wheel_joint_name}' type='continuous'>
         <parent link='${parent_link}'/>
@@ -61,21 +19,42 @@
 
     <link name='${wheel_link_name}'>
         <visual>
-            <origin xyz='0 0 ${width/2}'/>
+            <origin xyz='0 0 0'/>
             <geometry>
-                <cylinder length='${width}' radius='${wheel_radius}'/>
+                <cylinder length='${wheel_width}' radius='${wheel_radius}'/>
             </geometry>
             <xacro:insert_block name='material_block'/>
         </visual>
         <collision>
-            <origin xyz='0 0 ${width/2}'/>
+            <origin xyz='0 0 0'/>
             <geometry>
-                <cylinder length='${width}' radius='${wheel_radius}'/>
+                <cylinder length='${wheel_width}' radius='${wheel_radius}'/>
             </geometry>
         </collision>
-        <xacro:inertial_cylinder mass='${mass}' radius='${wheel_radius}'
-            length='${width}'/>
+        <xacro:inertial_cylinder mass='${wheel_mass}' radius='${wheel_radius}' length='${wheel_width}'/>
     </link>
+
+    <ros2_control name='${wheel_link_name}_controller' type='system'>
+        <hardware>
+            <plugin>gz_ros2_control/GazeboSimSystem</plugin>
+        </hardware>
+        <joint name='${wheel_joint_name}'>
+            <command_interface name='velocity'>
+                <param name='min'>-10</param>
+                <param name='max'>10</param>
+            </command_interface>
+            <state_interface name='velocity'/>
+            <state_interface name='position'/>
+        </joint>
+    </ros2_control>
+
+    <gazebo reference='${wheel_link_name}'>
+        <mu1 value="0.5"/>
+        <mu2 value="0.3"/>
+        <kp value="10000000.0"/>
+        <kd value="1.0"/>
+        <fdir1 value="1 0 0"/>
+    </gazebo>
 
 </xacro:macro>   
 </robot>

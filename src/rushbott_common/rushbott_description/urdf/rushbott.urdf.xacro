@@ -15,8 +15,8 @@
     <xacro:property name='wheel_radius'            value='${7.5*cm2m}' />
     <xacro:property name='wheel_width'             value='${5*cm2m}' />
     <xacro:property name='wheel_depth'             value='${wheel_radius}' />
-    <xacro:property name='wheelbase'               value='${body_length*(4/5)}' />
-    <xacro:property name='track_width'             value='${body_width+wheel_width+3*cm2m}' />
+    <xacro:property name='wheelbase'               value='${40*cm2m}' />
+    <xacro:property name='track_width'             value='${38*cm2m}' />
 
     <xacro:property name='servo_mass'              value='0.2' />
     <xacro:property name='servo_radius'            value='${3*cm2m}' />
@@ -76,12 +76,12 @@
     
     <!-- Wheels--> 
 
-    <xacro:wheel name='l' parent_link='base_link'>
+    <xacro:wheel name='ml' parent_link='base_link'>
         <origin xyz='0 ${track_width/2} ${-wheel_depth}' rpy='${-pi/2} 0 0'/>
         <axis xyz='0 0 1'/>
     </xacro:wheel>
 
-    <xacro:wheel name='r' parent_link='base_link'>
+    <xacro:wheel name='mr' parent_link='base_link'>
         <origin xyz='0 ${-track_width/2} ${-wheel_depth}' rpy='${-pi/2} 0 ${pi}'/>
         <axis xyz='0 0 -1'/>
     </xacro:wheel>

@@ -2,8 +2,8 @@ controller_manager:
   ros__parameters:
     update_rate: 30
 
-    diffdrive_controller:
-      type: diff_drive_controller/DiffDriveController
+    ackermannSteering_controller:
+      type: ackermann_steering_controller/AckermannSteeringController
 
     joint_state_broadcaster:
       type: joint_state_broadcaster/JointStateBroadcaster
@@ -16,7 +16,18 @@ diffdrive_controller:
 
     base_frame_id: base_footprint
 
-    left_wheel_names: ['fl_wheel_joint', 'rl_wheel_joint']
-    right_wheel_names: ['fr_wheel_joint', 'rr_wheel_joint']
-    wheel_separation: 0.3
-    wheel_radius: 0.10
+    front_steering: true
+    open_loop: false
+    velocity_rolling_window_size: 10
+    position_feedback: false
+
+    front_wheels_names: ['fl_wheel_joint', 'fr_wheel_joint']
+    rear_wheels_names: ['ml_wheel_joint', 'mr_wheel_joint']
+
+    wheelbase: 0.40
+    front_wheel_track: 0.38
+    rear_wheel_track: 0.38
+    front_wheels_radius: 0.075
+    rear_wheels_radius: 0.075
+
+    

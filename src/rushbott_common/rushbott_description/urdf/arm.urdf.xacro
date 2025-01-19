@@ -1,0 +1,41 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro">
+
+<xacro:macro name="arm" params="name parent_link *origin *limit">
+
+
+    <!--Properties-->
+    <xacro:property name = "arm_length" value = "1"/>
+    <xacro:property name = "arm_radius" value = "0.05"/>
+
+    <!--Joint Definition-->
+    <joint name = "lower_arm_joint" type = "revolute">
+        <parent link="${parent_link}"/>
+        <child link="lower_arm_link"/>
+        <xacro:insert_block name = "origin"/>
+        <axis xyz = "0 -1 0"/>
+        <xacro:insert_block name = "limit"/>
+    </joint>
+
+    <!--Link Definition-->
+    <link name = "lower_arm_link">
+        <visual>
+            <origin xyz = "${arm_length/2} 0 0" rpy = "0 ${pi/2} 0"/>
+            <geometry>
+                <cylinder length = "${arm_length}" radius = "${arm_radius}"/>
+            </geometry>
+            <xacro:insert_block name="material_orange"/>
+        </visual>
+        <collision>
+            <origin xyz = "${arm_length/2} 0 0" rpy = "0 ${pi/2} 0"/>
+            <geometry>
+                <cylinder length = "${arm_length}" radius = "${arm_radius}"/>
+            </geometry>
+        </collision>
+        <xacro:inertial_cylinder_with_pose mass = "1.0" length = "${arm_length}" radius = "${arm_radius}">
+            <origin xyz = "${arm_length/2} 0 0" rpy = "0 ${pi/2} 0"/>
+        </xacro:inertial_cylinder_with_pose>
+    </link>
+
+</xacro:macro>   
+</robot>

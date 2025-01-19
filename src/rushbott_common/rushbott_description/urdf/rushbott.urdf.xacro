@@ -4,6 +4,8 @@
     <xacro:include filename='common_properties.urdf.xacro'/>
     <xacro:include filename='wheel.urdf.xacro'/>
     <xacro:include filename='wheel_with_servo.urdf.xacro'/>
+    <xacro:include filename="arm.urdf.xacro"/>
+    <xacro:include filename="upperarm.urdf.xacro"/>
 
     <!-- Mechanical properties -->
     <xacro:property name='body_mass'               value='2.300' />
@@ -23,14 +25,16 @@
     <xacro:property name='servo_width'             value='${4*cm2m}' />
     <xacro:property name='servo_depth'            value='${wheel_radius+3*cm2m}' />
 
+    <xacro:property name = "arm_length" value = "1"/>
+    <xacro:property name = "arm_radius" value = "0.05"/>
+
     <!-- Base footprint --> 
     <link name='base_footprint'/>
 
     <!-- Base link --> 
-    <joint name='base_link_joint' type='fixed'>
-        <parent link='base_footprint'/>
-        <child link='base_link'/>
-        <origin xyz='0 0 ${body_height/2}'/>
+    <joint name="base_footprint_to_base_link" type="fixed">  
+        <parent link="base_footprint"/>  
+        <child link="base_link"/>  
     </joint>
 
     <link name='base_link'>
@@ -92,5 +96,16 @@
             <parameters>$(find rushbott_control)/config/control.yaml</parameters>
         </plugin>
     </gazebo>
+
+    <!-- Lower Arm -->
+    <xacro:arm name = "lower_arm" parent_link = "base_link">
+        <origin xyz = "0 0 ${base_link_z_offset}" rpy = "0 0 0"/>
+        <limit lower = "0" upper = "${pi/2}" velocity = "100" effort = "100"/>
+    </xacro:arm>
+
+    <!-- Upper Arm -->
+    <xacro:upperarm name = "upper_arm" parent_link = "lower_arm_link">
+        <origin xyz = "${arm_length} 0 0" rpy = "0 0 0"/>
+    </xacro:upperarm>
 
 </robot>

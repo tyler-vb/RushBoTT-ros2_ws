@@ -72,6 +72,18 @@
         </material>
     </xacro:property>
 
+    <xacro:property name = "material_orange">
+        <material name="orange">
+            <color rgba="1.0 0.65 0.0 1.0"/>
+        </material>
+    </xacro:property>
+
+    <xacro:property name = "material_pink">
+        <material name="pink">
+            <color rgba="1.0 0.75 0.8 1.0"/>
+        </material>
+    </xacro:property>
+
     <xacro:property name='material_white'>
         <material name='white'>
             <color rgba='1 1 1 1'/>

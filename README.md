@@ -27,7 +27,11 @@ Here are some ROS2 terminal commands to run once you're in the container:
 rosdep install --from-paths src --ignore-src -r -i -y --rosdistro jazzy
 colcon build --symlink-install --cmake-args -DBUILD_TESTING=ON
 
-# LAUNCH RVIZ2
+-----LAUNCH ROBOT DESCRIPTION-----
+. ~/RushBoTT-ros2_ws/install/setup.sh
+ros2 launch rushbott_common_bringup robot_description.launch.py
+
+-----LAUNCH RVIZ2-----
 . ~/RushBoTT-ros2_ws/install/setup.sh
 ros2 launch rushbott_common_bringup rviz2.launch.py
 

@@ -190,9 +190,7 @@ class RoverController(Node):
         # For now we don't read the URDF and just hard-code the drive modules
         track_width = 0.35
         wheelbase = 0.30
-
-        wheel_radius = 0.04
-        wheel_width = 0.05
+        
 
         # store the steering joints
         steering_joint_names = self.get_parameter("steering_joints").value
@@ -308,157 +306,6 @@ class RoverController(Node):
 
         return drive_modules
 
-    def initialize_drive_module_states(self, drive_modules: List[DriveModule]) -> List[DriveModuleMeasuredValues]:
-        measured_drive_states: List[DriveModuleMeasuredValues] = []
-        for drive_module in self.drive_modules:
-
-            value = DriveModuleMeasuredValues(
-                drive_module.name,
-                drive_module.steering_axis_xy_position.x,
-                drive_module.steering_axis_xy_position.y,
-                0.0,
-                0.0,
-                0.0,
-                0.0,
-                0.0,
-                0.0,
-                0.0
-            )
-            measured_drive_states.append(value)
-
-            self.get_logger().info(
-                f'Initializing drive module state for module: "{drive_module.name}"'
-            )
-
-        self.store_time_and_update_controller_time()
-        self.controller.on_state_update(measured_drive_states)
-
-        return measured_drive_states
-
-    def joint_states_callback(self, msg: JointState):
-        if msg == None:
-            return
-
-        # self.get_logger().debug(
-        #     f'Received a JointState message: "{msg}"'
-        # )
-
-        # It would be better if we stored this message and processed it during our own timer loop. That way
-        # we wouldn't be blocking the callback.
-
-        joint_names: List[str] = msg.name
-        joint_positions: List[float] = [pos for pos in msg.position]
-        joint_velocities: List[float] = [vel for vel in msg.velocity]
-
-        measured_drive_states: List[DriveModuleMeasuredValues] = []
-        for index, drive_module in enumerate(self.drive_modules):
-            if drive_module.steering_link_name in joint_names and drive_module.driving_link_name in joint_names:
-                steering_values_index = joint_names.index(drive_module.steering_link_name)
-                drive_values_index = joint_names.index(drive_module.driving_link_name)
-
-                value = DriveModuleMeasuredValues(
-                    drive_module.name,
-                    drive_module.steering_axis_xy_position.x,
-                    drive_module.steering_axis_xy_position.y,
-                    joint_positions[steering_values_index],
-                    joint_velocities[steering_values_index],
-                    0.0,
-                    0.0,
-                    joint_velocities[drive_values_index] * drive_module.wheel_radius,
-                    0.0,
-                    0.0
-                )
-                measured_drive_states.append(value)
-
-                # self.get_logger().info(
-                #     f'Updating joint states for: "{drive_module.name}" with: ' +
-                #     f'[ steering angle: "{value.orientation_in_body_coordinates.z}", ' +
-                #     f' steering velocity: "{value.orientation_velocity_in_body_coordinates.z}",' +
-                #     f' velocity: "{value.drive_velocity_in_module_coordinates.x}" ] '
-                # )
-            else:
-                # grab the previous state and just assume that's the one
-                value = self.last_drive_module_state[index]
-                measured_drive_states.append(value)
-
-                # self.get_logger().debug(
-                #     f'Updating joint states for: "{drive_module.name}" with: ' +
-                #     f'[ steering angle: "{value.orientation_in_body_coordinates.z}", ' +
-                #     f' steering velocity: "{value.orientation_velocity_in_body_coordinates.z}",' +
-                #     f' velocity: "{value.drive_velocity_in_module_coordinates.x}" ] '
-                # )
-
-        # Ideally we would get the time from the message. And then check if we have gotten a more
-        # recent message
-        self.store_time_and_update_controller_time()
-        self.controller.on_state_update(measured_drive_states)
-        self.last_drive_module_state = measured_drive_states
-
-    def publish_odometry(self):
-        body_state = self.controller.body_state_at_current_time()
-
-        msg = Odometry()
-        msg.header.stamp = self.last_recorded_time.to_msg()
-        msg.header.frame_id = "odom"
-        msg.child_frame_id = self.robot_base_link
-        msg.pose.pose.position.x = body_state.position_in_world_coordinates.x
-        msg.pose.pose.position.y = body_state.position_in_world_coordinates.y
-        msg.pose.pose.position.z = body_state.position_in_world_coordinates.z
-
-        quat = quaternion_from_euler(0.0, 0.0, body_state.orientation_in_world_coordinates.z)
-        msg.pose.pose.orientation.x = quat[0]
-        msg.pose.pose.orientation.y = quat[1]
-        msg.pose.pose.orientation.z = quat[2]
-        msg.pose.pose.orientation.w = quat[3]
-
-        msg.twist.twist.linear.x = body_state.motion_in_body_coordinates.linear_velocity.x
-        msg.twist.twist.linear.y = body_state.motion_in_body_coordinates.linear_velocity.y
-        msg.twist.twist.linear.z = body_state.motion_in_body_coordinates.linear_velocity.z
-
-        msg.twist.twist.angular.x = body_state.motion_in_body_coordinates.angular_velocity.x
-        msg.twist.twist.angular.y = body_state.motion_in_body_coordinates.angular_velocity.y
-        msg.twist.twist.angular.z = body_state.motion_in_body_coordinates.angular_velocity.z
-
-        self.send_odom_transform(msg)
-
-        # For now we ignore the covariances
-
-        # self.get_logger().info(
-        #     'Publishing odometry message {}'.format(msg)
-        # )
-
-        self.odometry_publisher.publish(msg)
-
-    def send_odom_transform(self, odometry_msg: Odometry):
-        transform = TransformStamped()
-        transform.header.stamp = odometry_msg.header.stamp
-        transform.header.frame_id = "odom"
-        transform.child_frame_id = self.robot_base_link
-        transform.transform.translation.x = odometry_msg.pose.pose.position.x
-        transform.transform.translation.y = odometry_msg.pose.pose.position.y
-        transform.transform.translation.z = odometry_msg.pose.pose.position.z
-        transform.transform.rotation.x = odometry_msg.pose.pose.orientation.x
-        transform.transform.rotation.y = odometry_msg.pose.pose.orientation.y
-        transform.transform.rotation.z = odometry_msg.pose.pose.orientation.z
-        transform.transform.rotation.w = odometry_msg.pose.pose.orientation.w
-        self.tf_broadcaster.sendTransform(transform)
-
-    def send_static_tf(self):
-        tf_static_broadcaster = StaticTransformBroadcaster(self)
-        transform = TransformStamped()
-        transform.header.stamp = self.get_clock().now().to_msg()
-        transform.header.frame_id = "odom"
-        transform.child_frame_id = self.robot_base_link
-        transform.transform.translation.x = 0.0
-        transform.transform.translation.y = 0.0
-        transform.transform.translation.z = 0.0
-        quat = quaternion_from_euler(0.0, 0.0, 0.0)
-        transform.transform.rotation.x = quat[0]
-        transform.transform.rotation.y = quat[1]
-        transform.transform.rotation.z = quat[2]
-        transform.transform.rotation.w = quat[3]
-        tf_static_broadcaster.sendTransform(transform)
-
     def store_time_and_update_controller_time(self):
         time: Time = self.get_clock().now()
         seconds = time.nanoseconds * 1e-9
@@ -468,37 +315,7 @@ class RoverController(Node):
     def timer_callback(self):
         self.store_time_and_update_controller_time()
 
-        # always send out the odometry information
-        self.publish_odometry()
-
-        # Check if we actually have a movement profile to send
-        current_time = self.get_clock().now()
-        trajectory_running_duration: TimeDuration = current_time - self.last_velocity_command_received_at
-        # self.get_logger().debug(
-        #     'Current trajectory duration {} s. Based on current time {} and sequence start time {}'.format(
-        #         trajectory_running_duration,
-        #         current_time,
-        #         self.last_velocity_command_received_at
-        #     )
-        # )
-
-        running_duration_as_float: float = trajectory_running_duration.nanoseconds * 1e-9
-        # self.get_logger().debug(
-        #     'Current trajectory duration {} s'.format(running_duration_as_float)
-        # )
-
-        if running_duration_as_float > self.controller.min_time_for_profile:
-            # self.get_logger().debug(
-            #     'Trajectory completed waiting for next command.'
-            # )
-            return
-
-        next_time_step = current_time.nanoseconds * 1e-9 + 1.0 / self.cycle_time_in_hertz
-        # self.get_logger().debug(
-        #     'Calculating next step in profile at time {} s'.format(next_time_step)
-        # )
-
-        drive_module_states = self.controller.drive_module_state_at_future_time(next_time_step)
+        drive_module_states = self.controller.get_drive_module_states()
 
         # Only publish movement commands if there is a trajectory
         if len(drive_module_states) == 0:
@@ -508,15 +325,8 @@ class RoverController(Node):
         steering_angle_values = [a.steering_angle_in_radians for a in drive_module_states]
         position_msg.data = steering_angle_values
 
-        # Note that the controller gives the velocity in meters per second, i.e. the velocity of the wheel at the
-        # contact point with the ground. But ROS wants to know the rotational velocity of the wheel
-        drive_velocity_values = []
-        for a in drive_module_states:
-            linear_velocity = a.drive_velocity_in_meters_per_second
-            wheel_radius = next((x.wheel_radius for x in self.drive_modules if x.name == a.name), 1.0)
-            drive_velocity_values.append(linear_velocity / wheel_radius)
-
         velocity_msg = Float64MultiArray()
+        drive_velocity_values = [a.drive_velocity_in_radians_per_second for a in drive_module_states]
         velocity_msg.data = drive_velocity_values
 
         # if there are some inf values in data publish last position instead (or update last position message)

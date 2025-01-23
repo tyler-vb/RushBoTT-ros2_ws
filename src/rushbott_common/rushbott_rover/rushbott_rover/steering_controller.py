@@ -15,7 +15,6 @@ from typing import Callable, List
 
 # local
 from .drive_module import DriveModule
-from .geometry import Point
 from .states import DriveModuleDesiredValues, BodyMotion
 
 class SteeringController():
@@ -29,47 +28,71 @@ class SteeringController():
         self.motion_limit = motion_limit
         self.modules = drive_modules
         self.logger = logger
-        
-        self.COT_limit = Point(0,0,0)
-        self.get_angle_limits()
 
+        self.module_desired_states: List[DriveModuleDesiredValues] = None
 
-    def get_angle_limits(self):
+        self.COT_limit = self.get_COT_limit()
+
+    def get_COT_limit(self):
         for module in self.modules:
-            self.COT_limit = max(abs((self.COT_limit.x-module.xy_position.x)/math.tan(module.steering_motor_maximum_position) + module.xy_position.y), self.COT_limit)
-
-    def update_current_motion(self, motion: BodyMotion):
-        self.motion = motion
+            limit = abs(max(module.xy_position.x/math.tan(module.steering_motor_maximum_position) + module.xy_position.y, self.COT_limit))
+        return limit
+    
+    def get_drive_module_states(self) -> List[DriveModuleDesiredValues]:
+        if self.module_desired_states is None:
+            return []
+        return self.module_desired_states
 
     def update_drive_module_states(self, desired_motion: BodyMotion):
-
-        v = desired_motion.linear_velocity
-        w = desired_motion.angular_velocity
-
-        center_of_turning = Point(0, v/w, 0)
-
         states = []
 
-        for module in self.modules:
+        scale = 1.0
 
-            steering_angle = math.atan(center_of_turning.x - module.xy_position.x, center_of_turning.y - module.xy_position.y)
+        body_v = desired_motion.linear_velocity
+        body_w = desired_motion.angular_velocity
 
+        if math.isclose(body_v, 0):
+            states = [
+                DriveModuleDesiredValues(
+                    module.name,
+                    0,
+                    0
+                ) for module in self.modules
+            ]
 
-        
-            distance_from_COT = math.sqrt((center_of_turning.y - module.xy_position.y)**2 + (center_of_turning.x - module.xy_position.x)**2)
-            
-            drive_velocity = distance_from_COT*v/module.wheel_radius
-            steering_angle = math.atan(center_of_turning.x - module.xy_position.x, center_of_turning.y - module.xy_position.y)
+        elif math.isclose(body_w, 0):
+            for module in self.modules:
+                scale = min(module.drive_motor_maximum_velocity / abs(drive_velocity), scale)
+                state = DriveModuleDesiredValues(
+                    module.name,
+                    0,
+                    drive_velocity)
+                
+                states.append(state)
 
-            if not math.isclose(drive_velocity, 0.0, abs_)
+        else:
+            center_of_turning = body_v/body_w
+            if abs(center_of_turning) >= self.COT_limit:
+                center_of_turning = self.COT_limit
+                body_w = body_v/center_of_turning
 
-            states.append(DriveModuleDesiredValues(
-                module.name,
-                self.clamp(drive_velocity, module.drive_motor_maximum_velocity),
-                self.clamp(steering_angle, module.steering_motor_maximum_position)
-            ))
+            for module in self.modules:
 
-            return states
-        
-    def clamp(self, value, limit):
-        return max(-limit, min(value, limit))
+                distance_from_COT = math.sqrt((center_of_turning - module.xy_position.y)**2 - module.xy_position.x**2)
+
+                drive_velocity = distance_from_COT*body_w/module.wheel_radius
+                steering_angle = math.atan(-module.xy_position.x, center_of_turning - module.xy_position.y)
+
+                scale = min(module.drive_motor_maximum_velocity / abs(drive_velocity), scale)
+
+                state = DriveModuleDesiredValues(
+                    module.name,
+                    steering_angle,
+                    drive_velocity)
+                
+                states.append(state)
+
+        for state in states: 
+            state.drive_velocity_in_radians_per_second *= scale
+
+        self.module_desired_states = states

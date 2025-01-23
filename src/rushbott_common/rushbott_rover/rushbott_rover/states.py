@@ -32,4 +32,4 @@ class DriveModuleDesiredValues(object):
         ):
         self.name = name
         self.steering_angle_in_radians = steering_angle_in_radians
-        self.drive_velocity_in_meters_per_second = drive_velocity_in_meters_per_second
+        self.drive_velocity_in_radians_per_second = drive_velocity_in_meters_per_second

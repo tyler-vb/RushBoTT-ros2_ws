@@ -7,11 +7,11 @@ from launch_ros.actions import Node
 
 def generate_launch_description():
 
-    ackermannSteering_controller_spawner = Node(
+    diff_drive_controller_spawner = Node(
         package="controller_manager",
         executable="spawner",
         arguments=[
-            'ackermannSteering_controller',
+            'diff_drive_controller',
             '--controller-manager-timeout',
             '30'
         ],
@@ -29,16 +29,16 @@ def generate_launch_description():
         output='screen',
     )
 
-    ackermannSteering_controller_callback = RegisterEventHandler(
+    diff_drive_controller_callback = RegisterEventHandler(
         event_handler=OnProcessExit(
             target_action=joint_state_broadcaster_spawner,
-            on_exit=[ackermannSteering_controller_spawner],
+            on_exit=[diff_drive_controller_spawner],
         )
     )
 
     ld = LaunchDescription()
 
     ld.add_action(joint_state_broadcaster_spawner)
-    ld.add_action(ackermannSteering_controller_callback)
+    ld.add_action(diff_drive_controller_callback)
 
     return ld

@@ -10,7 +10,17 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from .geometry import Point
+class DriveModuleDesiredValues(object):
+
+    def __init__(
+        self,
+        name: str,
+        steering_angle_in_radians: float,
+        drive_velocity_in_meters_per_second: float,
+        ):
+        self.name = name
+        self.steering_angle_in_radians = steering_angle_in_radians
+        self.drive_velocity_in_radians_per_second = drive_velocity_in_meters_per_second
 
 class DriveModule(object):
 
@@ -19,7 +29,8 @@ class DriveModule(object):
         name: str,
         steering_link: str,
         drive_link: str,
-        xy_position: Point,
+        x_position: float,
+        y_position: float,
         wheel_radius: float,
         steering_motor_maximum_position: float,
         drive_motor_maximum_velocity: float):
@@ -30,7 +41,8 @@ class DriveModule(object):
         self.driving_link_name = drive_link
 
         # Assume a vertical steering axis that goes through the center of the wheel (i.e. no steering offset)
-        self.xy_position = xy_position
+        self.x_position = x_position
+        self.y_position = y_position
         self.wheel_radius = wheel_radius
 
         self.steering_motor_maximum_position = steering_motor_maximum_position

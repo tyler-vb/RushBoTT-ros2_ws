@@ -14,18 +14,15 @@ import math
 from typing import Callable, List
 
 # local
-from .drive_module import DriveModule
-from .states import DriveModuleDesiredValues, BodyMotion
+from .drive_module import DriveModule, DriveModuleDesiredValues
 
 class SteeringController():
 
     def __init__(
             self,
             drive_modules: List[DriveModule],
-            motion_limit: BodyMotion,
             logger: Callable[[str], None]):
-            
-        self.motion_limit = motion_limit
+
         self.modules = drive_modules
         self.logger = logger
 
@@ -35,7 +32,7 @@ class SteeringController():
 
     def get_COT_limit(self):
         for module in self.modules:
-            limit = abs(max(module.xy_position.x/math.tan(module.steering_motor_maximum_position) + module.xy_position.y, self.COT_limit))
+            limit = abs(max(module.x_position/math.tan(module.steering_motor_maximum_position) + module.y_position, self.COT_limit))
         return limit
     
     def get_drive_module_states(self) -> List[DriveModuleDesiredValues]:
@@ -43,13 +40,10 @@ class SteeringController():
             return []
         return self.module_desired_states
 
-    def update_drive_module_states(self, desired_motion: BodyMotion):
+    def update_drive_module_states(self, body_v, body_w):
         states = []
 
         scale = 1.0
-
-        body_v = desired_motion.linear_velocity
-        body_w = desired_motion.angular_velocity
 
         if math.isclose(body_v, 0):
             states = [
@@ -78,10 +72,10 @@ class SteeringController():
 
             for module in self.modules:
 
-                distance_from_COT = math.sqrt((center_of_turning - module.xy_position.y)**2 - module.xy_position.x**2)
+                distance_from_COT = math.sqrt((center_of_turning - module.y_position)**2 - module.x_position**2)
 
                 drive_velocity = distance_from_COT*body_w/module.wheel_radius
-                steering_angle = math.atan(-module.xy_position.x, center_of_turning - module.xy_position.y)
+                steering_angle = math.atan(-module.x_position, center_of_turning - module.y_position)
 
                 scale = min(module.drive_motor_maximum_velocity / abs(drive_velocity), scale)
 

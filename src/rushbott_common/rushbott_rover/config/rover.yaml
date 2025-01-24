@@ -1,0 +1,25 @@
+rover_controller:
+  ros__parameters:
+
+    robot_base_frame: base_footprint
+
+    twist_topic: cmd_vel
+
+    position_controller_name: "drive_module_steering_angle_controller"
+    velocity_controller_name: "drive_module_velocity_controller"
+
+    cycle_fequency: 50
+
+    steering_joints:
+      - steering_left_front
+      - steering_right_front
+      - steering_left_rear
+      - steering_right_rear
+
+    drive_joints:
+      - drive_left_front
+      - drive_right_front
+      - drive_left_middle
+      - drive_right_middle
+      - drive_left_rear
+      - drive_right_rear

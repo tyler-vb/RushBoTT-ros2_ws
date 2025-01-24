@@ -51,3 +51,5 @@ ros2 launch rushbott_gz_bringup rushbott_gz.launch.py
 sudo chmod 777 /dev/dri/renderD128
 sudo add-apt-repository ppa:kisak/kisak-mesa
 sudo apt update
+
+ros2 run rushbott_rover rover_controller --ros-args --params-file install/rushbott_rover/share/rushbott_rover/config/rover.yaml

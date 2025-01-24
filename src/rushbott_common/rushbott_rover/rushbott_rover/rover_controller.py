@@ -14,10 +14,8 @@ from typing import List
 import math
 
 import rclpy
-from rclpy.subscription import Subscription
 from rclpy.executors import ExternalShutdownException, SingleThreadedExecutor
-from rclpy.lifecycle import Node, Publisher, State, TransitionCallbackReturn
-from rclpy.timer import Timer
+from rclpy import Node
 from rclpy.qos import QoSProfile, ReliabilityPolicy, HistoryPolicy, DurabilityPolicy
 
 from geometry_msgs.msg import Twist
@@ -29,7 +27,6 @@ from .steering_controller import SteeringController
 class RoverController(Node):
     def __init__(self, node_name):
         super().__init__(node_name)
-        self.get_logger().info(f'Initializing rover controller ...')
 
         # Declare all parameters
         self.declare_parameter("robot_base_frame", "base_footprint")
@@ -42,15 +39,7 @@ class RoverController(Node):
         self.declare_parameter("steering_joints", ["joint1", "joint2"])
         self.declare_parameter("drive_joints", ["joint1", "joint2"])
 
-        self.drive_module_steering_angle_publisher: Publisher = None
-        self.drive_module_velocity_publisher: Publisher = None
-        self.timer: Timer = None
-        self.cmd_vel_subscription: Subscription = None
-
-    def on_configure(self, state: State) -> TransitionCallbackReturn:
-        self.get_logger().info(
-            f'Configuring rover controller...'
-        )
+        self.get_logger().info(f'Initializing rover controller ...')
 
         self.last_velocity_command: Twist = None
          # keep last position message to avoid inf value in steering angle data
@@ -61,7 +50,7 @@ class RoverController(Node):
         # publish the module steering angle
         position_controller_name = self.get_parameter("position_controller_name").value
         steering_angle_publish_topic = "/" + position_controller_name + "/" + "commands"
-        self.drive_module_steering_angle_publisher = self.create_lifecycle_publisher(
+        self.drive_module_steering_angle_publisher = self.create_publisher(
             Float64MultiArray,
             steering_angle_publish_topic,
             QoSProfile(
@@ -77,7 +66,7 @@ class RoverController(Node):
         # publish the module drive velocity
         velocity_controller_name = self.get_parameter("velocity_controller_name").value
         velocity_publish_topic = "/" + velocity_controller_name + "/" + "commands"
-        self.drive_module_velocity_publisher = self.create_lifecycle_publisher(
+        self.drive_module_velocity_publisher = self.create_publisher(
             Float64MultiArray,
             velocity_publish_topic,
             QoSProfile(
@@ -102,14 +91,12 @@ class RoverController(Node):
         self.get_logger().info(
             f'Publishing changes at fequency: "{self.cycle_time_in_hertz}" Hz'
         )
-
         self.timer = self.create_timer(
             1.0 / self.cycle_time_in_hertz,
             self.timer_callback,
             callback_group=None,
             clock=self.get_clock())
         self.i = 0
-        self.timer.cancel()
 
         # Finally listen to the cmd_vel topic for movement commands. We could have a message incoming
         # at any point after we register so we set this subscription up last.
@@ -126,37 +113,6 @@ class RoverController(Node):
         self.get_logger().info(
             f'Listening for movement commands on topic "{twist_topic}"'
         )
-        return TransitionCallbackReturn.SUCCESS
-    
-    def on_activate(self, state: State) -> TransitionCallbackReturn:
-        self.get_logger().info(
-            f'activating rover controller...'
-        )
-        self.timer.reset()
-        return super().on_activate(state)
-    
-    def on_deactivate(self, state: State) -> TransitionCallbackReturn:
-        self.get_logger().info(
-            f'deactivating rover controller...'
-        )
-        self.timer.cancel()
-        return super().on_deactivate(state)
-    
-    def on_cleanup(self, state: State) -> TransitionCallbackReturn:
-        self.get_logger().info(
-            f'cleaning up rover controller...'
-        )
-        self.destroy_lifecycle_publisher(self.drive_module_steering_angle_publisher)
-        self.destroy_lifecycle_publisher(self.drive_module_velocity_publisher)
-        self.destroy_timer(self.timer)
-        self.destroy_subscription(self.cmd_vel_subscription)
-        return TransitionCallbackReturn.SUCCESS
-    
-    def on_shutdown(self, state: State) -> TransitionCallbackReturn:
-        self.get_logger().info(
-            f'shutting down rover controller...'
-        )
-        return TransitionCallbackReturn.SUCCESS
 
     def cmd_vel_callback(self, msg: Twist):
         if msg == None:
@@ -193,7 +149,6 @@ class RoverController(Node):
         track_width = 0.35
         wheelbase = 0.30
         
-
         # store the steering joints
         steering_joint_names = self.get_parameter("steering_joints").value
         steering_joints = []
@@ -321,7 +276,7 @@ class RoverController(Node):
             return
         
         position_msg = Float64MultiArray()
-        steering_angle_values = [a.teering_angle_in_radians for a in drive_module_states]
+        steering_angle_values = [a.steering_angle_in_radians for a in drive_module_states]
         position_msg.data = steering_angle_values
 
         velocity_msg = Float64MultiArray()
@@ -346,9 +301,9 @@ class RoverController(Node):
 
 def main(args=None):
     rclpy.init(args=args)
-    lc_node = RoverController('rover_controller')
+    node = RoverController('rover_controller')
     executor = SingleThreadedExecutor()
-    executor.add_node(lc_node)
+    executor.add_node(node)
     try:
         executor.spin()
 

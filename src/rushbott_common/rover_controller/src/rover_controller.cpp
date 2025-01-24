@@ -46,6 +46,7 @@ controller_interface::CallbackReturn DiffDriveController::on_init()
   return controller_interface::CallbackReturn::SUCCESS;
 }
 
+// method to configure command interfaces
 InterfaceConfiguration RoverController::command_interface_configuration() const
 {
   std::vector<std::string> conf_names;
@@ -60,6 +61,7 @@ InterfaceConfiguration RoverController::command_interface_configuration() const
   return {interface_configuration_type::INDIVIDUAL, conf_names};
 }
 
+// method to configure state interfaces
 InterfaceConfiguration RoverController::state_interface_configuration() const
 {
   std::vector<std::string> conf_names;
@@ -70,7 +72,8 @@ InterfaceConfiguration RoverController::state_interface_configuration() const
   return {interface_configuration_type::INDIVIDUAL, conf_names};
 }
 
-// this function gets the latest cmd_vel msg from the subscriber and validates it,
+
+// this method gets the latest cmd_vel msg from the subscriber and validates it,
 // then it updates the reference_interfaces
 controller_interface::return_type RoverController::update_reference_from_subscribers(
   const rclcpp::Time & time, const rclcpp::Duration & /*period*/)
@@ -119,6 +122,11 @@ controller_interface::return_type RoverController::update_reference_from_subscri
 
   return controller_interface::return_type::OK;
 }
+
+
+
+
+
 
 controller_interface::return_type RoverController::update_and_write_commands(
   const rclcpp::Time & time, const rclcpp::Duration & period)
@@ -628,9 +636,11 @@ void DiffDriveController::halt()
   halt_wheels(registered_right_wheel_handles_);
 }
 
-controller_interface::CallbackReturn DiffDriveController::configure_side(
-  const std::string & side, const std::vector<std::string> & wheel_names,
-  std::vector<WheelHandle> & registered_handles)
+controller_interface::CallbackReturn DiffDriveController::configure_wheels(
+  const std::vector<std::string> & drive_joint_names,
+  const std::vector<std::string> & steering_joint_names,
+  std::vector<DriveHandle> & registered_handles
+  std::vector<SteeringHandle> & registered_handles)
 {
   auto logger = get_node()->get_logger();
 
@@ -640,10 +650,26 @@ controller_interface::CallbackReturn DiffDriveController::configure_side(
     return controller_interface::CallbackReturn::ERROR;
   }
 
-  // register handles
+  // register handles and configure wheels
   registered_handles.reserve(wheel_names.size());
   for (const auto & wheel_name : wheel_names)
   {
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
     const auto interface_name = feedback_type();
     const auto state_handle = std::find_if(
       state_interfaces_.cbegin(), state_interfaces_.cend(),

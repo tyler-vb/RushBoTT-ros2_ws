@@ -50,11 +50,24 @@ public:
 
 protected:
 
+  struct 
+  {
+
+  }
+
   struct WheelHandle
   {
     std::reference_wrapper<const hardware_interface::LoanedStateInterface> feedback;
     std::reference_wrapper<hardware_interface::LoanedCommandInterface> velocity;
   };
+
+  struct SteeringHandle
+  {
+    std::reference_wrapper<const hardware_interface::LoanedStateInterface> feedback;
+    std::reference_wrapper<hardware_interface::LoanedCommandInterface> position;
+  };
+
+
 
   // configure wheels on each side, change to configuring drive modules
   controller_interface::CallbackReturn configure_side(
@@ -62,7 +75,7 @@ protected:
     const std::vector<std::string> & wheel_names,
     std::vector<WheelHandle> & registered_handles);
 
-  // registered wheels (change this to drive modules later)
+  // registered wheels 
   std::vector<WheelHandle> registered_left_wheel_handles_;
   std::vector<WheelHandle> registered_right_wheel_handles_;
 

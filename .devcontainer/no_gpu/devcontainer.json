@@ -31,7 +31,8 @@
         "ms-vscode.cmake-tools",
         "tomoki1207.pdf",
         "Codeium.codeium",
-        "DotJoshJohnson.xml"
+        "DotJoshJohnson.xml",
+        "ms-vscode.cpptools-extension-pack"
       ]
     }
   }

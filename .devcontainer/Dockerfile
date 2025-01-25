@@ -40,6 +40,8 @@ RUN apt-get update && apt-get install --no-install-recommends -y -o Dpkg::Option
     ros-jazzy-moveit \
     ros-jazzy-moveit-servo \
     ros-jazzy-moveit-visual-tools \
+    # slam_toolbox
+    ros-jazzy-slam-toolbox \
     # utils
     python3-pip \
     python-is-python3 \

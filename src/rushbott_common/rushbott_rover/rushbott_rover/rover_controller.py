@@ -15,7 +15,7 @@ import math
 
 import rclpy
 from rclpy.executors import ExternalShutdownException, SingleThreadedExecutor
-from rclpy import Node
+from rclpy.node import Node
 from rclpy.qos import QoSProfile, ReliabilityPolicy, HistoryPolicy, DurabilityPolicy
 
 from geometry_msgs.msg import Twist
@@ -34,10 +34,17 @@ class RoverController(Node):
 
         self.declare_parameter("position_controller_name", "position_controller")
         self.declare_parameter("velocity_controller_name", "velocity_controller")
-        self.declare_parameter("cycle_fequency", 50)
+        self.declare_parameter("publish_rate", 50.0)
 
         self.declare_parameter("steering_joints", ["joint1", "joint2"])
         self.declare_parameter("drive_joints", ["joint1", "joint2"])
+
+        self.declare_parameter("wheel_radius", 0.5)
+        self.declare_parameter("track_width", 40.0)
+        self.declare_parameter("wheelbase", 40.0)
+
+        self.declare_parameter("drive_velocity_limit", 10.0)
+        self.declare_parameter("steering_angle_limit", 10.0)
 
         self.get_logger().info(f'Initializing rover controller ...')
 
@@ -82,12 +89,20 @@ class RoverController(Node):
         # Create the controller that will determine the correct drive commands for the different drive modules
         # Create the controller before we subscribe to state changes so that the first change that comes in gets
         # registered
-        self.get_logger().info(f'Storing drive module information...')
+        self.drive_velocity_limit = self.get_parameter("drive_velocity_limit").value
+        self.steeing_angle_limit = self.get_parameter("steering_angle_limit").value
+        self.wheel_radius = self.get_parameter("wheel_radius").value
         self.drive_modules = self.get_drive_modules()
-        self.controller = SteeringController(self.drive_modules, self.write_log)
+        self.controller = SteeringController(
+            self.drive_modules,
+            self.drive_velocity_limit,
+            self.steeing_angle_limit,
+            self.wheel_radius,
+            self.write_log)
+        self.get_logger().info(f'Loading controller...')
 
         # Create the timer that is used to ensure that we publish movement data regularly
-        self.cycle_time_in_hertz = self.get_parameter("cycle_fequency").value
+        self.cycle_time_in_hertz = self.get_parameter("publish_rate").value
         self.get_logger().info(
             f'Publishing changes at fequency: "{self.cycle_time_in_hertz}" Hz'
         )
@@ -134,45 +149,30 @@ class RoverController(Node):
             f'Received a Twist message that is different from the last command. Processing message: "{msg}"'
         )
 
-        self.controller.get_drive_module_states(
+        self.controller.update_drive_module_states(
                 body_v = msg.linear.x,
                 body_w = msg.angular.z
             )
 
         self.last_velocity_command = msg
-        self.last_velocity_command_received_at = self.last_recorded_time
 
     def get_drive_modules(self) -> List[DriveModule]:
         # Get the drive module information from the URDF and turn it into a list of drive modules.
         #
         # For now we don't read the URDF and just hard-code the drive modules
-        track_width = 0.35
-        wheelbase = 0.30
+        track_width = self.get_parameter("track_width").value
+        wheelbase = self.get_parameter("wheelbase").value
+        steering_joints: List[str] = self.get_parameter("steering_joints").value + ["None"]
+        drive_joints: List[str] = self.get_parameter("drive_joints").value + ["None"]
         
         # store the steering joints
-        steering_joint_names = self.get_parameter("steering_joints").value
-        steering_joints = []
-        for name in steering_joint_names:
-            steering_joints.append(name)
-            self.get_logger().info(
-                f'Discovered steering joint: "{name}"'
-            )
-
-        # store the drive joints
-        drive_joint_names = self.get_parameter("drive_joints").value
-        drive_joints = []
-        for name in drive_joint_names:
-            drive_joints.append(name)
-            self.get_logger().info(
-                f'Discovered drive joint: "{name}"'
-            )
-
         drive_modules: List[DriveModule] = []
+
         drive_module_name = "left_front"
         left_front = DriveModule(
             name=drive_module_name,
-            steering_link=next((x for x in steering_joints if drive_module_name in x), "joint_steering_{}".format(drive_module_name)),
-            drive_link=next((x for x in drive_joints if drive_module_name in x), "joint_drive_{}".format(drive_module_name)),
+            steering_index=next((steering_joints.index(x) for x in steering_joints if drive_module_name in x), -1),
+            drive_index=next((drive_joints.index(x) for x in drive_joints if drive_module_name in x), -1),
             x_position=0.5*wheelbase,
             y_position=0.5*track_width
         )
@@ -180,16 +180,16 @@ class RoverController(Node):
 
         self.get_logger().info(
             f'Configured drive module: "{left_front.name}" ' +
-            f'with steering link: "{left_front.steering_link_name}" ' +
-            f'and drive link: "{left_front.driving_link_name}" ' +
+            f'with steering link: "{steering_joints[left_front.steering_index]}" ' +
+            f'and drive link: "{drive_joints[left_front.drive_index]}" ' +
             f'and position: ["{left_front.x_position}", "{left_front.y_position}"]'
         )
 
         drive_module_name = "right_front"
         right_front = DriveModule(
             name=drive_module_name,
-            steering_link=next((x for x in steering_joints if drive_module_name in x), "joint_steering_{}".format(drive_module_name)),
-            drive_link=next((x for x in drive_joints if drive_module_name in x), "joint_drive_{}".format(drive_module_name)),
+            steering_index=next((steering_joints.index(x) for x in steering_joints if drive_module_name in x), -1),
+            drive_index=next((drive_joints.index(x) for x in drive_joints if drive_module_name in x), -1),
             x_position=0.5*wheelbase,
             y_position=-0.5*track_width
         )
@@ -197,15 +197,16 @@ class RoverController(Node):
 
         self.get_logger().info(
             f'Configured drive module: "{right_front.name}" ' +
-            f'with steering link: "{right_front.steering_link_name}" ' +
-            f'and drive link: "{right_front.driving_link_name}" ' +
-            f'and position: ["{left_front.x_position}", "{left_front.y_position}"]'
+            f'with steering link: "{steering_joints[right_front.steering_index]}" ' +
+            f'and drive link: "{drive_joints[right_front.drive_index]}" ' +
+            f'and position: ["{right_front.x_position}", "{right_front.y_position}"]'
         )
 
         drive_module_name = "left_middle"
         left_middle = DriveModule(
             name=drive_module_name,
-            drive_link=next((x for x in drive_joints if drive_module_name in x), "joint_drive_{}".format(drive_module_name)),
+            steering_index=next((steering_joints.index(x) for x in steering_joints if drive_module_name in x), -1),
+            drive_index=next((drive_joints.index(x) for x in drive_joints if drive_module_name in x), -1),
             x_position=0,
             y_position=0.5*track_width
         )
@@ -213,14 +214,16 @@ class RoverController(Node):
 
         self.get_logger().info(
             f'Configured drive module: "{left_middle.name}" ' +
-            f'with drive link: "{left_middle.driving_link_name}" ' +
-            f'and position: ["{left_front.x_position}", "{left_front.y_position}"]'
+            f'with steering link: "{steering_joints[left_middle.steering_index]}" ' +
+            f'and drive link: "{drive_joints[left_middle.drive_index]}" ' +
+            f'and position: ["{left_middle.x_position}", "{left_middle.y_position}"]'
         )
 
         drive_module_name = "right_middle"
         right_middle = DriveModule(
             name=drive_module_name,
-            drive_link=next((x for x in drive_joints if drive_module_name in x), "joint_drive_{}".format(drive_module_name)),
+            steering_index=next((steering_joints.index(x) for x in steering_joints if drive_module_name in x), -1),
+            drive_index=next((drive_joints.index(x) for x in drive_joints if drive_module_name in x), -1),
             x_position=0,
             y_position=-0.5*track_width
         )
@@ -228,15 +231,16 @@ class RoverController(Node):
 
         self.get_logger().info(
             f'Configured drive module: "{right_middle.name}" ' +
-            f'with drive link: "{right_middle.driving_link_name}" ' +
-            f'and position: ["{left_front.x_position}", "{left_front.y_position}"]'
+            f'with steering link: "{steering_joints[right_middle.steering_index]}" ' +
+            f'and drive link: "{drive_joints[right_middle.drive_index]}" ' +
+            f'and position: ["{right_middle.x_position}", "{right_middle.y_position}"]'
         )
 
         drive_module_name = "left_rear"
         left_rear = DriveModule(
             name=drive_module_name,
-            steering_link=next((x for x in steering_joints if drive_module_name in x), "joint_steering_{}".format(drive_module_name)),
-            drive_link=next((x for x in drive_joints if drive_module_name in x), "joint_drive_{}".format(drive_module_name)),
+            steering_index=next((steering_joints.index(x) for x in steering_joints if drive_module_name in x), -1),
+            drive_index=next((drive_joints.index(x) for x in drive_joints if drive_module_name in x), -1),
             x_position=-0.5*wheelbase,
             y_position=0.5*track_width       
         )
@@ -244,16 +248,16 @@ class RoverController(Node):
 
         self.get_logger().info(
             f'Configured drive module: "{left_rear.name}" ' +
-            f'with steering link: "{left_rear.steering_link_name}" ' +
-            f'and drive link: "{left_rear.driving_link_name}" ' +
-            f'and position: ["{left_front.x_position}", "{left_front.y_position}"]'
+            f'with steering link: "{steering_joints[left_rear.steering_index]}" ' +
+            f'and drive link: "{drive_joints[left_rear.drive_index]}" ' +
+            f'and position: ["{left_rear.x_position}", "{left_rear.y_position}"]'
         )
 
         drive_module_name = "right_rear"
         right_rear = DriveModule(
             name=drive_module_name,
-            steering_link=next((x for x in steering_joints if drive_module_name in x), "joint_steering_{}".format(drive_module_name)),
-            drive_link=next((x for x in drive_joints if drive_module_name in x), "joint_drive_{}".format(drive_module_name)),
+            steering_index=next((steering_joints.index(x) for x in steering_joints if drive_module_name in x), -1),
+            drive_index=next((drive_joints.index(x) for x in drive_joints if drive_module_name in x), -1),
             x_position=-0.5*wheelbase,
             y_position=-0.5*track_width
         )
@@ -261,27 +265,26 @@ class RoverController(Node):
 
         self.get_logger().info(
             f'Configured drive module: "{right_rear.name}" ' +
-            f'with steering link: "{right_rear.steering_link_name}" ' +
-            f'and drive link: "{right_rear.driving_link_name}" ' +
-            f'and position: ["{left_front.x_position}", "{left_front.y_position}"]'
+            f'with steering link: "{steering_joints[right_rear.steering_index]}" ' +
+            f'and drive link: "{drive_joints[right_rear.drive_index]}" ' +
+            f'and position: ["{right_rear.x_position}", "{right_rear.y_position}"]'
         )
-
         return drive_modules
 
     def timer_callback(self):
-        drive_module_states = self.controller.get_drive_module_states()
+        drive_module_states = self.controller.get_desired_states()
 
         # Only publish movement commands if drive modules have states
         if len(drive_module_states) == 0:
             return
-        
-        position_msg = Float64MultiArray()
-        steering_angle_values = [a.steering_angle_in_radians for a in drive_module_states]
-        position_msg.data = steering_angle_values
 
         velocity_msg = Float64MultiArray()
-        drive_velocity_values = [a.drive_velocity_in_radians_per_second for a in drive_module_states]
+        drive_velocity_values = [a for a in drive_module_states[0][:-1]]
         velocity_msg.data = drive_velocity_values
+
+        position_msg = Float64MultiArray()
+        steering_angle_values = [a for a in drive_module_states[1][:-1]]
+        position_msg.data = steering_angle_values
 
         # if there are some inf values in data publish last position instead (or update last position message)
         if (any(math.isinf(x) for x in position_msg.data)) and not (self.last_position_msg is None):
@@ -311,7 +314,6 @@ def main(args=None):
         pass
     finally:
         executor.shutdown()  # Shut down the executor
-        rclpy.shutdown()     # Properly clean up rclpy resources
 
 if __name__ == "__main__":
    main()

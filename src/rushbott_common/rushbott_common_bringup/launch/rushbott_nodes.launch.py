@@ -8,7 +8,6 @@ from launch_ros.actions import Node
 def generate_launch_description():
 
     # Directories
-    pkg_rushbott_common_bringup = get_package_share_directory('rushbott_common_bringup')
     pkg_rushbott_control = get_package_share_directory('rushbott_control')
 
     # Paths
@@ -16,8 +15,8 @@ def generate_launch_description():
         [pkg_rushbott_control, 'launch', 'control.launch.py']
     )
 
-    # Controller
-    diffdrive_controller = IncludeLaunchDescription(
+    # Controllers
+    controllers = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(control_launch)
     )
 
@@ -30,16 +29,13 @@ def generate_launch_description():
         emulate_tty=True,
         prefix='xterm -hold -e',
         parameters=[{
-                'stamped': True,
+                'stamped': False,
             }],
-        remappings=[
-            ('/cmd_vel', '/diffdrive_controller/cmd_vel')
-        ],
     )   
 
     # Create launch description and add actions
     ld = LaunchDescription()
     ld.add_action(teleop)
-    ld.add_action(diffdrive_controller)
+    ld.add_action(controllers)
 
     return ld

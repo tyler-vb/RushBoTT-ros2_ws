@@ -21,72 +21,84 @@ class SteeringController():
     def __init__(
             self,
             drive_modules: List[DriveModule],
+            vel_limit: float,
+            angle_limit: float,
+            wheel_radius: float,
             logger: Callable[[str], None]):
 
         self.modules = drive_modules
+        self.vel_limit = vel_limit
+        self.angle_limit = angle_limit
+        self.wheel_radius = wheel_radius
         self.logger = logger
 
-        self.module_desired_states: List[DriveModuleDesiredValues] = None
+        self.desired_states: List[List[float]] = None
 
+        self.num_joints = self.get_num_joints()
         self.COT_limit = self.get_COT_limit()
 
-    def get_COT_limit(self):
+    def get_num_joints(self):
+        num_drive = 0
+        num_steer = 0
         for module in self.modules:
-            limit = abs(max(module.x_position/math.tan(module.steering_motor_maximum_position) + module.y_position, self.COT_limit))
+            if module.drive_index != -1:
+                num_drive += 1
+            if module.steering_index != -1:
+                num_steer += 1
+        
+        return [num_drive, num_steer]
+    def get_COT_limit(self):
+        limit = 0
+        for module in self.modules:
+            limit = max(abs(module.x_position/math.tan(self.angle_limit) + module.y_position), limit)
+            limit = math.ceil(limit)
+        self.logger(f"Calculated COT limit: {limit}")
         return limit
     
-    def get_drive_module_states(self) -> List[DriveModuleDesiredValues]:
-        if self.module_desired_states is None:
+    def get_desired_states(self) -> List[List[float]]:
+        if self.desired_states is None:
             return []
-        return self.module_desired_states
+        return self.desired_states
 
     def update_drive_module_states(self, body_v, body_w):
-        states = []
+        drive_velocities = [0] * (self.num_joints[0] + 1)
+        steering_angles = [0] * (self.num_joints[1] + 1)
 
         scale = 1.0
 
-        if math.isclose(body_v, 0):
-            states = [
-                DriveModuleDesiredValues(
-                    module.name,
-                    0,
-                    0
-                ) for module in self.modules
-            ]
+        for module in self.modules:
 
-        elif math.isclose(body_w, 0):
-            for module in self.modules:
-                scale = min(module.drive_motor_maximum_velocity / abs(drive_velocity), scale)
-                state = DriveModuleDesiredValues(
-                    module.name,
-                    0,
-                    drive_velocity)
+            drive_velocity = 0
+            steering_angle = 0
+
+            if math.isclose(body_v, 0):
+                pass
+
+            elif math.isclose(body_w, 0):
+                drive_velocity = body_v/self.wheel_radius
                 
-                states.append(state)
+                scale = min(self.vel_limit / abs(drive_velocity), scale)
 
-        else:
-            center_of_turning = body_v/body_w
-            if abs(center_of_turning) >= self.COT_limit:
-                center_of_turning = self.COT_limit
-                body_w = body_v/center_of_turning
+            else:
+                center_of_turning = body_v/body_w
 
-            for module in self.modules:
+                if abs(center_of_turning) >= self.COT_limit:
+                    center_of_turning = math.copysign(self.COT_limit, center_of_turning)
+                    body_w = body_v/center_of_turning
 
-                distance_from_COT = math.sqrt((center_of_turning - module.y_position)**2 - module.x_position**2)
+                distance_from_COT = math.sqrt((center_of_turning-module.y_position)**2+(-module.x_position)**2)
 
-                drive_velocity = distance_from_COT*body_w/module.wheel_radius
-                steering_angle = math.atan(-module.x_position, center_of_turning - module.y_position)
+                drive_velocity = math.copysign(distance_from_COT*body_w/self.wheel_radius, body_v)
+                steering_angle = math.atan(-module.x_position/(center_of_turning - module.y_position))
 
-                scale = min(module.drive_motor_maximum_velocity / abs(drive_velocity), scale)
+                scale = min(self.vel_limit/abs(drive_velocity), scale)
 
-                state = DriveModuleDesiredValues(
-                    module.name,
-                    steering_angle,
-                    drive_velocity)
-                
-                states.append(state)
+            drive_velocities[module.drive_index] = drive_velocity   
+            steering_angles[module.steering_index] = steering_angle
 
-        for state in states: 
-            state.drive_velocity_in_radians_per_second *= scale
+        drive_velocities = [scale * x for x in drive_velocities]
 
-        self.module_desired_states = states
+        self.desired_states = [drive_velocities, steering_angles]
+
+        self.logger(f"drive velocities: {drive_velocities}")
+        self.logger(f"steering angles: {steering_angles}")

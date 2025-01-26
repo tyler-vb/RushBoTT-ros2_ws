@@ -5,21 +5,28 @@ rover_controller:
 
     twist_topic: cmd_vel
 
-    position_controller_name: "drive_module_steering_angle_controller"
-    velocity_controller_name: "drive_module_velocity_controller"
+    position_controller_name: "rover_joint_position_controller"
+    velocity_controller_name: "rover_joint_velocity_controller"
 
-    cycle_fequency: 50
+    wheel_radius: .075
+    track_width: 0.38
+    wheelbase: 0.40
+    
+    drive_velocity_limit: 10.0
+    steering_angle_limit: 0.785
+
+    publish_rate: 50.0
 
     steering_joints:
-      - steering_left_front
-      - steering_right_front
-      - steering_left_rear
-      - steering_right_rear
+      - left_front_servo_joint
+      - right_front_servo_joint
+      - left_rear_servo_joint
+      - right_rear_servo_joint
 
     drive_joints:
-      - drive_left_front
-      - drive_right_front
-      - drive_left_middle
-      - drive_right_middle
-      - drive_left_rear
-      - drive_right_rear
+      - left_front_wheel_joint
+      - right_front_wheel_joint
+      - left_middle_wheel_joint
+      - right_middle_wheel_joint
+      - left_rear_wheel_joint
+      - right_rear_wheel_joint

@@ -2,28 +2,52 @@ controller_manager:
   ros__parameters:
     update_rate: 30
 
-    ackermann_steering_controller:
-      type: diff_drive_controller/DiffDriveController
+    # diff_drive_controller:
+    #   type: diff_drive_controller/DiffDriveController
 
     joint_state_broadcaster:
       type: joint_state_broadcaster/JointStateBroadcaster
 
-diffdrive_controller:
-  ros__parameters:
+    rover_joint_velocity_controller:
+      type: velocity_controllers/JointGroupVelocityController
     
-    publish_rate: 50.0
-    use_sim_time: True
+    rover_joint_position_controller:
+      type: position_controllers/JointGroupPositionController
 
-    base_frame_id: base_footprint
+rover_joint_velocity_controller:
+  ros__parameters:
+    joints:
+      - left_front_wheel_joint
+      - right_front_wheel_joint
+      - left_middle_wheel_joint
+      - right_middle_wheel_joint
+      - left_rear_wheel_joint
+      - right_rear_wheel_joint
 
-    open_loop: false
-    velocity_rolling_window_size: 10
-    position_feedback: false
+rover_joint_position_controller:
+  ros__parameters:
+    joints:
+      - left_front_servo_joint
+      - right_front_servo_joint
+      - left_rear_servo_joint
+      - right_rear_servo_joint
 
-    front_wheels_names: ['fl_wheel_joint', 'fr_wheel_joint']
-    rear_wheels_names: ['rl_wheel_joint', 'rr_wheel_joint']
+# diffdrive_controller:
+#   ros__parameters:
+    
+#     publish_rate: 50.0
+#     use_sim_time: True
 
-    wheel_seperation: 0.40
-    wheel_radius: 7.5
+#     base_frame_id: base_footprint
+
+#     open_loop: false
+#     velocity_rolling_window_size: 10
+#     position_feedback: false
+
+#     front_wheels_names: ['fl_wheel_joint', 'fr_wheel_joint']
+#     rear_wheels_names: ['rl_wheel_joint', 'rr_wheel_joint']
+
+#     wheel_seperation: 0.40
+#     wheel_radius: 7.5
 
     

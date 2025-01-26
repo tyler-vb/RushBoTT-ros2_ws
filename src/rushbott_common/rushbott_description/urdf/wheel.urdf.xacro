@@ -34,7 +34,7 @@
         <xacro:inertial_cylinder mass='${wheel_mass}' radius='${wheel_radius}' length='${wheel_width}'/>
     </link>
 
-    <ros2_control name='GazeboSystem' type='system'>
+    <ros2_control name='${wheel_joint_name}' type='system'>
         <hardware>
             <plugin>gz_ros2_control/GazeboSimSystem</plugin>
         </hardware>

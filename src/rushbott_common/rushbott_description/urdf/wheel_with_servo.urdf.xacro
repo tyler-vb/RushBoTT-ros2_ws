@@ -16,7 +16,7 @@
             <parent link='${parent_link}'/>
             <child link='${servo_link_name}'/>
             <xacro:insert_block name='origin'/>
-            <xacro:insert_block name='axis'/>
+            <axis xyz='0 0 -1'/>
         </joint>
 
         <link name='${servo_link_name}'>
@@ -36,8 +36,17 @@
             <xacro:inertial_cylinder mass='${servo_mass}' radius='${servo_radius}' length='${servo_width}'/>
         </link>
 
+        <ros2_control name='${servo_joint_name}' type='system'>
+            <hardware>
+                <plugin>gz_ros2_control/GazeboSimSystem</plugin>
+            </hardware>
+            <joint name='${servo_joint_name}'>
+                <command_interface name='position'/>
+            </joint>
+        </ros2_control>
+
         <xacro:wheel name='${name}' parent_link='${servo_link_name}'>
-            <origin xyz='0 0 ${-servo_depth}' rpy='${-pi/2} 0 0'/>
+            <origin xyz='0 0 ${-servo_height}' rpy='${-pi/2} 0 0'/>
             <xacro:insert_block name='axis'/>
         </xacro:wheel>
 

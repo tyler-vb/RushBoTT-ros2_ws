@@ -27,27 +27,19 @@ class DriveModule(object):
     def __init__(
         self,
         name: str,
-        steering_link: str,
-        drive_link: str,
+        steering_index: int,
+        drive_index: int,
         x_position: float,
-        y_position: float,
-        wheel_radius: float,
-        steering_motor_maximum_position: float,
-        drive_motor_maximum_velocity: float):
+        y_position: float):
 
         self.name = name
-
-        self.steering_link_name = steering_link
-        self.driving_link_name = drive_link
+        self.steering_index = steering_index
+        self.drive_index = drive_index
 
         # Assume a vertical steering axis that goes through the center of the wheel (i.e. no steering offset)
         self.x_position = x_position
         self.y_position = y_position
-        self.wheel_radius = wheel_radius
-
-        self.steering_motor_maximum_position = steering_motor_maximum_position
-        self.drive_motor_maximum_velocity = drive_motor_maximum_velocity
-
+        
     # Motors
     # Wheel
     # Sensors

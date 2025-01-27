@@ -10,18 +10,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-class DriveModuleDesiredValues(object):
-
-    def __init__(
-        self,
-        name: str,
-        steering_angle_in_radians: float,
-        drive_velocity_in_meters_per_second: float,
-        ):
-        self.name = name
-        self.steering_angle_in_radians = steering_angle_in_radians
-        self.drive_velocity_in_radians_per_second = drive_velocity_in_meters_per_second
-
 class DriveModule(object):
 
     def __init__(

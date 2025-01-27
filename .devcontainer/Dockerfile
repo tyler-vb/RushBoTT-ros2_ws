@@ -31,6 +31,7 @@ RUN apt-get update && apt-get install --no-install-recommends -y -o Dpkg::Option
     ros-jazzy-ros2-controllers \
     ros-jazzy-gz-ros2-control \
     ros-jazzy-joint-state-publisher-gui \
+    # slam_toolbox
     ros-jazzy-slam-toolbox \
     # utils
     python3-pip \

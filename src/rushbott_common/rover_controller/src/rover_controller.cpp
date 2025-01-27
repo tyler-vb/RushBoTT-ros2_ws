@@ -1,35 +1,55 @@
+// Copyright 2022 Pixel Robotics.
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
+/*
+ * Author: Tony Najjar
+ */
+
 #include <memory>
 #include <queue>
 #include <string>
 #include <utility>
 #include <vector>
 
-#include "rover_controller/rover_controller.hpp"
 #include "hardware_interface/types/hardware_interface_type_values.hpp"
 #include "lifecycle_msgs/msg/state.hpp"
 #include "rclcpp/logging.hpp"
 #include "tf2/LinearMath/Quaternion.h"
 
+#include "tricycle_controller/tricycle_controller.hpp"
+
 namespace
 {
 constexpr auto DEFAULT_COMMAND_TOPIC = "~/cmd_vel";
-constexpr auto DEFAULT_COMMAND_OUT_TOPIC = "~/cmd_vel_out";
+constexpr auto DEFAULT_ACKERMANN_OUT_TOPIC = "~/cmd_ackermann";
 constexpr auto DEFAULT_ODOMETRY_TOPIC = "~/odom";
 constexpr auto DEFAULT_TRANSFORM_TOPIC = "/tf";
+constexpr auto DEFAULT_RESET_ODOM_SERVICE = "~/reset_odometry";
 }  // namespace
 
-namespace diff_drive_controller
+namespace tricycle_controller
 {
 using namespace std::chrono_literals;
 using controller_interface::interface_configuration_type;
 using controller_interface::InterfaceConfiguration;
-using hardware_interface::HW_IF_VELOCITY;
 using hardware_interface::HW_IF_POSITION;
+using hardware_interface::HW_IF_VELOCITY;
 using lifecycle_msgs::msg::State;
 
-RoverController::RoverController() : controller_interface::ControllerInterface() {}
+TricycleController::TricycleController() : controller_interface::ControllerInterface() {}
 
-controller_interface::CallbackReturn DiffDriveController::on_init()
+CallbackReturn TricycleController::on_init()
 {
   try
   {
@@ -40,45 +60,33 @@ controller_interface::CallbackReturn DiffDriveController::on_init()
   catch (const std::exception & e)
   {
     fprintf(stderr, "Exception thrown during init stage with message: %s \n", e.what());
-    return controller_interface::CallbackReturn::ERROR;
+    return CallbackReturn::ERROR;
   }
 
-  return controller_interface::CallbackReturn::SUCCESS;
+  return CallbackReturn::SUCCESS;
 }
 
-// method to configure command interfaces
-InterfaceConfiguration RoverController::command_interface_configuration() const
+InterfaceConfiguration TricycleController::command_interface_configuration() const
 {
-  std::vector<std::string> conf_names;
-  for (const auto & joint_name : params_.wheel_names)
-  {
-    conf_names.push_back(joint_name + "/" + HW_IF_VELOCITY);
-  }
-  for (const auto & joint_name : params_.servo_names)
-  {
-    conf_names.push_back(joint_name + "/" + HW_IF_POSITION);
-  }
-  return {interface_configuration_type::INDIVIDUAL, conf_names};
+  InterfaceConfiguration command_interfaces_config;
+  command_interfaces_config.type = interface_configuration_type::INDIVIDUAL;
+  command_interfaces_config.names.push_back(params_.traction_joint_name + "/" + HW_IF_VELOCITY);
+  command_interfaces_config.names.push_back(params_.steering_joint_name + "/" + HW_IF_POSITION);
+  return command_interfaces_config;
 }
 
-// method to configure state interfaces
-InterfaceConfiguration RoverController::state_interface_configuration() const
+InterfaceConfiguration TricycleController::state_interface_configuration() const
 {
-  std::vector<std::string> conf_names;
-  for (const auto & joint_name : params_.wheel_names)
-  {
-    conf_names.push_back(joint_name + "/" + HW_IF_VELOCITY);
-  }
-  return {interface_configuration_type::INDIVIDUAL, conf_names};
+  InterfaceConfiguration state_interfaces_config;
+  state_interfaces_config.type = interface_configuration_type::INDIVIDUAL;
+  state_interfaces_config.names.push_back(params_.traction_joint_name + "/" + HW_IF_VELOCITY);
+  state_interfaces_config.names.push_back(params_.steering_joint_name + "/" + HW_IF_POSITION);
+  return state_interfaces_config;
 }
 
-
-// this method gets the latest cmd_vel msg from the subscriber and validates it,
-// then it updates the reference_interfaces
-controller_interface::return_type RoverController::update_reference_from_subscribers(
-  const rclcpp::Time & time, const rclcpp::Duration & /*period*/)
+controller_interface::return_type TricycleController::update(
+  const rclcpp::Time & time, const rclcpp::Duration & period)
 {
-  auto logger = get_node()->get_logger();
   if (get_lifecycle_state().id() == State::PRIMARY_STATE_INACTIVE)
   {
     if (!is_halted)
@@ -89,207 +97,135 @@ controller_interface::return_type RoverController::update_reference_from_subscri
     return controller_interface::return_type::OK;
   }
 
-  const std::shared_ptr<TwistStamped> command_msg_ptr = *(received_velocity_msg_ptr_.readFromRT());
-
-  if (command_msg_ptr == nullptr)
+  // if the mutex is unable to lock, last_command_msg_ won't be updated
+  received_velocity_msg_ptr_.try_get([this](const std::shared_ptr<TwistStamped> & msg)
+                                     { last_command_msg_ = msg; });
+  if (last_command_msg_ == nullptr)
   {
-    RCLCPP_WARN(logger, "Velocity message received was a nullptr.");
+    RCLCPP_WARN(get_node()->get_logger(), "Velocity message received was a nullptr.");
     return controller_interface::return_type::ERROR;
   }
 
-  const auto age_of_last_command = time - command_msg_ptr->header.stamp;
-
+  const auto age_of_last_command = time - last_command_msg_->header.stamp;
+  // Brake if cmd_vel has timeout, override the stored command
   if (age_of_last_command > cmd_vel_timeout_)
   {
-    reference_interfaces_[0] = 0.0;
-    reference_interfaces_[1] = 0.0;
-  }
-  else if (
-    std::isfinite(command_msg_ptr->twist.linear.x) &&
-    std::isfinite(command_msg_ptr->twist.angular.z))
-  {
-    reference_interfaces_[0] = command_msg_ptr->twist.linear.x;
-    reference_interfaces_[1] = command_msg_ptr->twist.angular.z;
-  }
-  else
-  {
-    RCLCPP_WARN_SKIPFIRST_THROTTLE(
-      logger, *get_node()->get_clock(), cmd_vel_timeout_.seconds() * 1000,
-      "Command message contains NaNs. Not updating reference interfaces.");
+    last_command_msg_->twist.linear.x = 0.0;
+    last_command_msg_->twist.angular.z = 0.0;
   }
 
-  previous_update_timestamp_ = time;
-
-  return controller_interface::return_type::OK;
-}
-
-
-
-
-
-
-controller_interface::return_type RoverController::update_and_write_commands(
-  const rclcpp::Time & time, const rclcpp::Duration & period)
-{
-  auto logger = get_node()->get_logger();
-  if (get_lifecycle_state().id() == State::PRIMARY_STATE_INACTIVE)
-  {
-    if (!is_halted)
-    {
-      halt();
-      is_halted = true;
-    }
-    return controller_interface::return_type::OK;
-  }
-
-  // command may be limited further by SpeedLimit,
+  // command may be limited further by Limiters,
   // without affecting the stored twist command
-  double linear_command = reference_interfaces_[0];
-  double angular_command = reference_interfaces_[1];
-
-  if (!std::isfinite(linear_command) || !std::isfinite(angular_command))
-  {
-    // NaNs occur on initialization when the reference interfaces are not yet set
-    return controller_interface::return_type::OK;
-  }
-
-  // Apply (possibly new) multipliers:
-  const double wheel_separation = params_.wheel_separation_multiplier * params_.wheel_separation;
-  const double left_wheel_radius = params_.left_wheel_radius_multiplier * params_.wheel_radius;
-  const double right_wheel_radius = params_.right_wheel_radius_multiplier * params_.wheel_radius;
+  TwistStamped command = *last_command_msg_;
+  double & linear_command = command.twist.linear.x;
+  double & angular_command = command.twist.angular.z;
+  double Ws_read = traction_joint_[0].velocity_state.get().get_value();     // in radians/s
+  double alpha_read = steering_joint_[0].position_state.get().get_value();  // in radians
 
   if (params_.open_loop)
   {
-    odometry_.updateOpenLoop(linear_command, angular_command, time);
+    odometry_.updateOpenLoop(linear_command, angular_command, period);
   }
   else
   {
-    double left_feedback_mean = 0.0;
-    double right_feedback_mean = 0.0;
-    for (size_t index = 0; index < static_cast<size_t>(wheels_per_side_); ++index)
+    if (std::isnan(Ws_read) || std::isnan(alpha_read))
     {
-      const double left_feedback = registered_left_wheel_handles_[index].feedback.get().get_value();
-      const double right_feedback =
-        registered_right_wheel_handles_[index].feedback.get().get_value();
-
-      if (std::isnan(left_feedback) || std::isnan(right_feedback))
-      {
-        RCLCPP_ERROR(
-          logger, "Either the left or right wheel %s is invalid for index [%zu]", feedback_type(),
-          index);
-        return controller_interface::return_type::ERROR;
-      }
-
-      left_feedback_mean += left_feedback;
-      right_feedback_mean += right_feedback;
+      RCLCPP_ERROR(get_node()->get_logger(), "Could not read feedback value");
+      return controller_interface::return_type::ERROR;
     }
-    left_feedback_mean /= static_cast<double>(wheels_per_side_);
-    right_feedback_mean /= static_cast<double>(wheels_per_side_);
-
-    if (params_.position_feedback)
-    {
-      odometry_.update(left_feedback_mean, right_feedback_mean, time);
-    }
-    else
-    {
-      odometry_.updateFromVelocity(
-        left_feedback_mean * left_wheel_radius * period.seconds(),
-        right_feedback_mean * right_wheel_radius * period.seconds(), time);
-    }
+    odometry_.update(Ws_read, alpha_read, period);
   }
 
   tf2::Quaternion orientation;
   orientation.setRPY(0.0, 0.0, odometry_.getHeading());
 
-  bool should_publish = false;
-  try
+  if (realtime_odometry_publisher_->trylock())
   {
-    if (previous_publish_timestamp_ + publish_period_ < time)
+    auto & odometry_message = realtime_odometry_publisher_->msg_;
+    odometry_message.header.stamp = time;
+    if (!params_.odom_only_twist)
     {
-      previous_publish_timestamp_ += publish_period_;
-      should_publish = true;
-    }
-  }
-  catch (const std::runtime_error &)
-  {
-    // Handle exceptions when the time source changes and initialize publish timestamp
-    previous_publish_timestamp_ = time;
-    should_publish = true;
-  }
-
-  if (should_publish)
-  {
-    if (realtime_odometry_publisher_->trylock())
-    {
-      auto & odometry_message = realtime_odometry_publisher_->msg_;
-      odometry_message.header.stamp = time;
       odometry_message.pose.pose.position.x = odometry_.getX();
       odometry_message.pose.pose.position.y = odometry_.getY();
       odometry_message.pose.pose.orientation.x = orientation.x();
       odometry_message.pose.pose.orientation.y = orientation.y();
       odometry_message.pose.pose.orientation.z = orientation.z();
       odometry_message.pose.pose.orientation.w = orientation.w();
-      odometry_message.twist.twist.linear.x = odometry_.getLinear();
-      odometry_message.twist.twist.angular.z = odometry_.getAngular();
-      realtime_odometry_publisher_->unlockAndPublish();
     }
-
-    if (params_.enable_odom_tf && realtime_odometry_transform_publisher_->trylock())
-    {
-      auto & transform = realtime_odometry_transform_publisher_->msg_.transforms.front();
-      transform.header.stamp = time;
-      transform.transform.translation.x = odometry_.getX();
-      transform.transform.translation.y = odometry_.getY();
-      transform.transform.rotation.x = orientation.x();
-      transform.transform.rotation.y = orientation.y();
-      transform.transform.rotation.z = orientation.z();
-      transform.transform.rotation.w = orientation.w();
-      realtime_odometry_transform_publisher_->unlockAndPublish();
-    }
+    odometry_message.twist.twist.linear.x = odometry_.getLinear();
+    odometry_message.twist.twist.angular.z = odometry_.getAngular();
+    realtime_odometry_publisher_->unlockAndPublish();
   }
 
-  double & last_linear = previous_two_commands_.back()[0];
-  double & second_to_last_linear = previous_two_commands_.front()[0];
-  double & last_angular = previous_two_commands_.back()[1];
-  double & second_to_last_angular = previous_two_commands_.front()[1];
-
-  limiter_linear_->limit(linear_command, last_linear, second_to_last_linear, period.seconds());
-  limiter_angular_->limit(angular_command, last_angular, second_to_last_angular, period.seconds());
-  previous_two_commands_.pop();
-  previous_two_commands_.push({{linear_command, angular_command}});
-
-  //    Publish limited velocity
-  if (publish_limited_velocity_ && realtime_limited_velocity_publisher_->trylock())
+  if (params_.enable_odom_tf && realtime_odometry_transform_publisher_->trylock())
   {
-    auto & limited_velocity_command = realtime_limited_velocity_publisher_->msg_;
-    limited_velocity_command.header.stamp = time;
-    limited_velocity_command.twist.linear.x = linear_command;
-    limited_velocity_command.twist.linear.y = 0.0;
-    limited_velocity_command.twist.linear.z = 0.0;
-    limited_velocity_command.twist.angular.x = 0.0;
-    limited_velocity_command.twist.angular.y = 0.0;
-    limited_velocity_command.twist.angular.z = angular_command;
-    realtime_limited_velocity_publisher_->unlockAndPublish();
+    auto & transform = realtime_odometry_transform_publisher_->msg_.transforms.front();
+    transform.header.stamp = time;
+    transform.transform.translation.x = odometry_.getX();
+    transform.transform.translation.y = odometry_.getY();
+    transform.transform.rotation.x = orientation.x();
+    transform.transform.rotation.y = orientation.y();
+    transform.transform.rotation.z = orientation.z();
+    transform.transform.rotation.w = orientation.w();
+    realtime_odometry_transform_publisher_->unlockAndPublish();
   }
 
-  // Compute wheels velocities:
-  const double velocity_left =
-    (linear_command - angular_command * wheel_separation / 2.0) / left_wheel_radius;
-  const double velocity_right =
-    (linear_command + angular_command * wheel_separation / 2.0) / right_wheel_radius;
+  // Compute wheel velocity and angle
+  auto [alpha_write, Ws_write] = twist_to_ackermann(linear_command, angular_command);
 
-  // Set wheels velocities:
-  for (size_t index = 0; index < static_cast<size_t>(wheels_per_side_); ++index)
+  // Reduce wheel speed until the target angle has been reached
+  double alpha_delta = abs(alpha_write - alpha_read);
+  double scale;
+  if (alpha_delta < M_PI / 6)
   {
-    registered_left_wheel_handles_[index].velocity.get().set_value(velocity_left);
-    registered_right_wheel_handles_[index].velocity.get().set_value(velocity_right);
+    scale = 1;
+  }
+  else if (alpha_delta > M_PI_2)
+  {
+    scale = 0.01;
+  }
+  else
+  {
+    // TODO(anyone): find the best function, e.g convex power functions
+    scale = cos(alpha_delta);
+  }
+  Ws_write *= scale;
+
+  auto & last_command = previous_commands_.back();
+  auto & second_to_last_command = previous_commands_.front();
+
+  limiter_traction_.limit(
+    Ws_write, last_command.speed, second_to_last_command.speed, period.seconds());
+
+  limiter_steering_.limit(
+    alpha_write, last_command.steering_angle, second_to_last_command.steering_angle,
+    period.seconds());
+
+  previous_commands_.pop();
+  AckermannDrive ackermann_command;
+  // speed in AckermannDrive is defined as desired forward speed (m/s) but it is used here as wheel
+  // speed (rad/s)
+  ackermann_command.speed = static_cast<float>(Ws_write);
+  ackermann_command.steering_angle = static_cast<float>(alpha_write);
+  previous_commands_.emplace(ackermann_command);
+
+  //  Publish ackermann command
+  if (params_.publish_ackermann_command && realtime_ackermann_command_publisher_->trylock())
+  {
+    auto & realtime_ackermann_command = realtime_ackermann_command_publisher_->msg_;
+    // speed in AckermannDrive is defined desired forward speed (m/s) but we use it here as wheel
+    // speed (rad/s)
+    realtime_ackermann_command.speed = static_cast<float>(Ws_write);
+    realtime_ackermann_command.steering_angle = static_cast<float>(alpha_write);
+    realtime_ackermann_command_publisher_->unlockAndPublish();
   }
 
+  traction_joint_[0].velocity_command.get().set_value(Ws_write);
+  steering_joint_[0].position_command.get().set_value(alpha_write);
   return controller_interface::return_type::OK;
 }
 
-controller_interface::CallbackReturn DiffDriveController::on_configure(
-  const rclcpp_lifecycle::State &)
+CallbackReturn TricycleController::on_configure(const rclcpp_lifecycle::State & /*previous_state*/)
 {
   auto logger = get_node()->get_logger();
 
@@ -300,112 +236,60 @@ controller_interface::CallbackReturn DiffDriveController::on_configure(
     RCLCPP_INFO(logger, "Parameters were updated");
   }
 
-  if (params_.left_wheel_names.size() != params_.right_wheel_names.size())
-  {
-    RCLCPP_ERROR(
-      logger, "The number of left wheels [%zu] and the number of right wheels [%zu] are different",
-      params_.left_wheel_names.size(), params_.right_wheel_names.size());
-    return controller_interface::CallbackReturn::ERROR;
-  }
-
-  const double wheel_separation = params_.wheel_separation_multiplier * params_.wheel_separation;
-  const double left_wheel_radius = params_.left_wheel_radius_multiplier * params_.wheel_radius;
-  const double right_wheel_radius = params_.right_wheel_radius_multiplier * params_.wheel_radius;
-
-  odometry_.setWheelParams(wheel_separation, left_wheel_radius, right_wheel_radius);
+  odometry_.setWheelParams(params_.wheelbase, params_.wheel_radius);
   odometry_.setVelocityRollingWindowSize(static_cast<size_t>(params_.velocity_rolling_window_size));
 
-  cmd_vel_timeout_ = rclcpp::Duration::from_seconds(params_.cmd_vel_timeout);
-  publish_limited_velocity_ = params_.publish_limited_velocity;
+  cmd_vel_timeout_ = std::chrono::milliseconds{params_.cmd_vel_timeout};
+  params_.publish_ackermann_command =
+    get_node()->get_parameter("publish_ackermann_command").as_bool();
 
-  // TODO(christophfroehlich) remove deprecated parameters
-  // START DEPRECATED
-  if (!params_.linear.x.has_velocity_limits)
+  try
   {
-    RCLCPP_WARN(
-      logger,
-      "[deprecated] has_velocity_limits parameter is deprecated, instead set the respective limits "
-      "to NAN");
-    params_.linear.x.min_velocity = params_.linear.x.max_velocity =
-      std::numeric_limits<double>::quiet_NaN();
+    limiter_traction_ = TractionLimiter(
+      params_.traction.min_velocity, params_.traction.max_velocity,
+      params_.traction.min_acceleration, params_.traction.max_acceleration,
+      params_.traction.min_deceleration, params_.traction.max_deceleration,
+      params_.traction.min_jerk, params_.traction.max_jerk);
   }
-  if (!params_.linear.x.has_acceleration_limits)
+  catch (const std::invalid_argument & e)
   {
-    RCLCPP_WARN(
-      logger,
-      "[deprecated] has_acceleration_limits parameter is deprecated, instead set the respective "
-      "limits to "
-      "NAN");
-    params_.linear.x.max_deceleration = params_.linear.x.max_acceleration =
-      params_.linear.x.max_deceleration_reverse = params_.linear.x.max_acceleration_reverse =
-        std::numeric_limits<double>::quiet_NaN();
+    RCLCPP_ERROR(get_node()->get_logger(), "Error configuring traction limiter: %s", e.what());
+    return CallbackReturn::ERROR;
   }
-  if (!params_.linear.x.has_jerk_limits)
+  try
   {
-    RCLCPP_WARN(
-      logger,
-      "[deprecated] has_jerk_limits parameter is deprecated, instead set the respective limits to "
-      "NAN");
-    params_.linear.x.min_jerk = params_.linear.x.max_jerk =
-      std::numeric_limits<double>::quiet_NaN();
+    limiter_steering_ = SteeringLimiter(
+      params_.steering.min_position, params_.steering.max_position, params_.steering.min_velocity,
+      params_.steering.max_velocity, params_.steering.min_acceleration,
+      params_.steering.max_acceleration);
   }
-  if (!params_.angular.z.has_velocity_limits)
+  catch (const std::invalid_argument & e)
   {
-    RCLCPP_WARN(
-      logger,
-      "[deprecated] has_velocity_limits parameter is deprecated, instead set the respective limits "
-      "to NAN");
-    params_.angular.z.min_velocity = params_.angular.z.max_velocity =
-      std::numeric_limits<double>::quiet_NaN();
+    RCLCPP_ERROR(get_node()->get_logger(), "Error configuring steering limiter: %s", e.what());
+    return CallbackReturn::ERROR;
   }
-  if (!params_.angular.z.has_acceleration_limits)
-  {
-    RCLCPP_WARN(
-      logger,
-      "[deprecated] has_acceleration_limits parameter is deprecated, instead set the respective "
-      "limits to "
-      "NAN");
-    params_.angular.z.max_deceleration = params_.angular.z.max_acceleration =
-      params_.angular.z.max_deceleration_reverse = params_.angular.z.max_acceleration_reverse =
-        std::numeric_limits<double>::quiet_NaN();
-  }
-  if (!params_.angular.z.has_jerk_limits)
-  {
-    RCLCPP_WARN(
-      logger,
-      "[deprecated] has_jerk_limits parameter is deprecated, instead set the respective limits to "
-      "NAN");
-    params_.angular.z.min_jerk = params_.angular.z.max_jerk =
-      std::numeric_limits<double>::quiet_NaN();
-  }
-  // END DEPRECATED
-  limiter_linear_ = std::make_unique<SpeedLimiter>(
-    params_.linear.x.min_velocity, params_.linear.x.max_velocity,
-    params_.linear.x.max_acceleration_reverse, params_.linear.x.max_acceleration,
-    params_.linear.x.max_deceleration, params_.linear.x.max_deceleration_reverse,
-    params_.linear.x.min_jerk, params_.linear.x.max_jerk);
-
-  limiter_angular_ = std::make_unique<SpeedLimiter>(
-    params_.angular.z.min_velocity, params_.angular.z.max_velocity,
-    params_.angular.z.max_acceleration_reverse, params_.angular.z.max_acceleration,
-    params_.angular.z.max_deceleration, params_.angular.z.max_deceleration_reverse,
-    params_.angular.z.min_jerk, params_.angular.z.max_jerk);
 
   if (!reset())
   {
-    return controller_interface::CallbackReturn::ERROR;
+    return CallbackReturn::ERROR;
   }
 
-  // left and right sides are both equal at this point
-  wheels_per_side_ = static_cast<int>(params_.left_wheel_names.size());
+  last_command_msg_ = std::make_shared<TwistStamped>();
+  received_velocity_msg_ptr_.set([this](std::shared_ptr<TwistStamped> & stored_value)
+                                 { stored_value = last_command_msg_; });
+  // Fill last two commands with default constructed commands
+  const AckermannDrive empty_ackermann_drive;
+  previous_commands_.emplace(empty_ackermann_drive);
+  previous_commands_.emplace(empty_ackermann_drive);
 
-  if (publish_limited_velocity_)
+  // initialize ackermann command publisher
+  if (params_.publish_ackermann_command)
   {
-    limited_velocity_publisher_ = get_node()->create_publisher<TwistStamped>(
-      DEFAULT_COMMAND_OUT_TOPIC, rclcpp::SystemDefaultsQoS());
-    realtime_limited_velocity_publisher_ =
-      std::make_shared<realtime_tools::RealtimePublisher<TwistStamped>>(
-        limited_velocity_publisher_);
+    ackermann_command_publisher_ = get_node()->create_publisher<AckermannDrive>(
+      DEFAULT_ACKERMANN_OUT_TOPIC, rclcpp::SystemDefaultsQoS());
+    realtime_ackermann_command_publisher_ =
+      std::make_shared<realtime_tools::RealtimePublisher<AckermannDrive>>(
+        ackermann_command_publisher_);
   }
 
   // initialize command subscriber
@@ -424,26 +308,10 @@ controller_interface::CallbackReturn DiffDriveController::on_configure(
           get_node()->get_logger(),
           "Received TwistStamped with zero timestamp, setting it to current "
           "time, this message will only be shown once");
-        msg->header.stamp = get_node()->now();
+        msg->header.stamp = get_node()->get_clock()->now();
       }
-
-      const auto current_time_diff = get_node()->now() - msg->header.stamp;
-
-      if (
-        cmd_vel_timeout_ == rclcpp::Duration::from_seconds(0.0) ||
-        current_time_diff < cmd_vel_timeout_)
-      {
-        received_velocity_msg_ptr_.writeFromNonRT(msg);
-      }
-      else
-      {
-        RCLCPP_WARN(
-          get_node()->get_logger(),
-          "Ignoring the received message (timestamp %.10f) because it is older than "
-          "the current time by %.10f seconds, which exceeds the allowed timeout (%.4f)",
-          rclcpp::Time(msg->header.stamp).seconds(), current_time_diff.seconds(),
-          cmd_vel_timeout_.seconds());
-      }
+      received_velocity_msg_ptr_.set([msg](std::shared_ptr<TwistStamped> & stored_value)
+                                     { stored_value = std::move(msg); });
     });
 
   // initialize odometry publisher and message
@@ -453,40 +321,9 @@ controller_interface::CallbackReturn DiffDriveController::on_configure(
     std::make_shared<realtime_tools::RealtimePublisher<nav_msgs::msg::Odometry>>(
       odometry_publisher_);
 
-  // Append the tf prefix if there is one
-  std::string tf_prefix = "";
-  if (params_.tf_frame_prefix_enable)
-  {
-    if (params_.tf_frame_prefix != "")
-    {
-      tf_prefix = params_.tf_frame_prefix;
-    }
-    else
-    {
-      tf_prefix = std::string(get_node()->get_namespace());
-    }
-
-    // Make sure prefix does not start with '/' and always ends with '/'
-    if (tf_prefix.back() != '/')
-    {
-      tf_prefix = tf_prefix + "/";
-    }
-    if (tf_prefix.front() == '/')
-    {
-      tf_prefix.erase(0, 1);
-    }
-  }
-
-  const auto odom_frame_id = tf_prefix + params_.odom_frame_id;
-  const auto base_frame_id = tf_prefix + params_.base_frame_id;
-
   auto & odometry_message = realtime_odometry_publisher_->msg_;
-  odometry_message.header.frame_id = odom_frame_id;
-  odometry_message.child_frame_id = base_frame_id;
-
-  // limit the publication on the topics /odom and /tf
-  publish_rate_ = params_.publish_rate;
-  publish_period_ = rclcpp::Duration::from_seconds(1.0 / publish_rate_);
+  odometry_message.header.frame_id = params_.odom_frame_id;
+  odometry_message.child_frame_id = params_.base_frame_id;
 
   // initialize odom values zeros
   odometry_message.twist =
@@ -502,238 +339,227 @@ controller_interface::CallbackReturn DiffDriveController::on_configure(
   }
 
   // initialize transform publisher and message
-  odometry_transform_publisher_ = get_node()->create_publisher<tf2_msgs::msg::TFMessage>(
-    DEFAULT_TRANSFORM_TOPIC, rclcpp::SystemDefaultsQoS());
-  realtime_odometry_transform_publisher_ =
-    std::make_shared<realtime_tools::RealtimePublisher<tf2_msgs::msg::TFMessage>>(
-      odometry_transform_publisher_);
-
-  // keeping track of odom and base_link transforms only
-  auto & odometry_transform_message = realtime_odometry_transform_publisher_->msg_;
-  odometry_transform_message.transforms.resize(1);
-  odometry_transform_message.transforms.front().header.frame_id = odom_frame_id;
-  odometry_transform_message.transforms.front().child_frame_id = base_frame_id;
-
-  previous_update_timestamp_ = get_node()->get_clock()->now();
-  return controller_interface::CallbackReturn::SUCCESS;
-}
-
-controller_interface::CallbackReturn DiffDriveController::on_activate(
-  const rclcpp_lifecycle::State &)
-{
-  const auto left_result =
-    configure_side("left", params_.left_wheel_names, registered_left_wheel_handles_);
-  const auto right_result =
-    configure_side("right", params_.right_wheel_names, registered_right_wheel_handles_);
-
-  if (
-    left_result == controller_interface::CallbackReturn::ERROR ||
-    right_result == controller_interface::CallbackReturn::ERROR)
+  if (params_.enable_odom_tf)
   {
-    return controller_interface::CallbackReturn::ERROR;
+    odometry_transform_publisher_ = get_node()->create_publisher<tf2_msgs::msg::TFMessage>(
+      DEFAULT_TRANSFORM_TOPIC, rclcpp::SystemDefaultsQoS());
+    realtime_odometry_transform_publisher_ =
+      std::make_shared<realtime_tools::RealtimePublisher<tf2_msgs::msg::TFMessage>>(
+        odometry_transform_publisher_);
+
+    // keeping track of odom and base_link transforms only
+    auto & odometry_transform_message = realtime_odometry_transform_publisher_->msg_;
+    odometry_transform_message.transforms.resize(1);
+    odometry_transform_message.transforms.front().header.frame_id = params_.odom_frame_id;
+    odometry_transform_message.transforms.front().child_frame_id = params_.base_frame_id;
   }
 
-  if (registered_left_wheel_handles_.empty() || registered_right_wheel_handles_.empty())
+  // Create odom reset service
+  reset_odom_service_ = get_node()->create_service<std_srvs::srv::Empty>(
+    DEFAULT_RESET_ODOM_SERVICE, std::bind(
+                                  &TricycleController::reset_odometry, this, std::placeholders::_1,
+                                  std::placeholders::_2, std::placeholders::_3));
+
+  return CallbackReturn::SUCCESS;
+}
+
+CallbackReturn TricycleController::on_activate(const rclcpp_lifecycle::State &)
+{
+  RCLCPP_INFO(get_node()->get_logger(), "On activate: Initialize Joints");
+
+  // Initialize the joints
+  const auto wheel_front_result = get_traction(params_.traction_joint_name, traction_joint_);
+  const auto steering_result = get_steering(params_.steering_joint_name, steering_joint_);
+  if (wheel_front_result == CallbackReturn::ERROR || steering_result == CallbackReturn::ERROR)
+  {
+    return CallbackReturn::ERROR;
+  }
+  if (traction_joint_.empty() || steering_joint_.empty())
   {
     RCLCPP_ERROR(
-      get_node()->get_logger(),
-      "Either left wheel interfaces, right wheel interfaces are non existent");
-    return controller_interface::CallbackReturn::ERROR;
+      get_node()->get_logger(), "Either steering or traction interfaces are non existent");
+    return CallbackReturn::ERROR;
   }
 
   is_halted = false;
   subscriber_is_active_ = true;
 
   RCLCPP_DEBUG(get_node()->get_logger(), "Subscriber and publisher are now active.");
-  return controller_interface::CallbackReturn::SUCCESS;
+  return CallbackReturn::SUCCESS;
 }
 
-controller_interface::CallbackReturn DiffDriveController::on_deactivate(
-  const rclcpp_lifecycle::State &)
+CallbackReturn TricycleController::on_deactivate(const rclcpp_lifecycle::State &)
 {
   subscriber_is_active_ = false;
-  if (!is_halted)
-  {
-    halt();
-    is_halted = true;
-  }
-  reset_buffers();
-  registered_left_wheel_handles_.clear();
-  registered_right_wheel_handles_.clear();
-  return controller_interface::CallbackReturn::SUCCESS;
+  return CallbackReturn::SUCCESS;
 }
 
-controller_interface::CallbackReturn DiffDriveController::on_cleanup(
-  const rclcpp_lifecycle::State &)
+CallbackReturn TricycleController::on_cleanup(const rclcpp_lifecycle::State &)
 {
   if (!reset())
   {
-    return controller_interface::CallbackReturn::ERROR;
+    return CallbackReturn::ERROR;
   }
 
-  return controller_interface::CallbackReturn::SUCCESS;
+  return CallbackReturn::SUCCESS;
 }
 
-controller_interface::CallbackReturn DiffDriveController::on_error(const rclcpp_lifecycle::State &)
+CallbackReturn TricycleController::on_error(const rclcpp_lifecycle::State &)
 {
   if (!reset())
   {
-    return controller_interface::CallbackReturn::ERROR;
+    return CallbackReturn::ERROR;
   }
-  return controller_interface::CallbackReturn::SUCCESS;
+  return CallbackReturn::SUCCESS;
 }
 
-bool DiffDriveController::reset()
+void TricycleController::reset_odometry(
+  const std::shared_ptr<rmw_request_id_t> /*request_header*/,
+  const std::shared_ptr<std_srvs::srv::Empty::Request> /*req*/,
+  std::shared_ptr<std_srvs::srv::Empty::Response> /*res*/)
+{
+  odometry_.resetOdometry();
+  RCLCPP_INFO(get_node()->get_logger(), "Odometry successfully reset");
+}
+
+bool TricycleController::reset()
 {
   odometry_.resetOdometry();
 
-  reset_buffers();
+  // release the old queue
+  std::queue<AckermannDrive> empty_ackermann_drive;
+  std::swap(previous_commands_, empty_ackermann_drive);
 
-  registered_left_wheel_handles_.clear();
-  registered_right_wheel_handles_.clear();
+  traction_joint_.clear();
+  steering_joint_.clear();
 
   subscriber_is_active_ = false;
   velocity_command_subscriber_.reset();
 
+  received_velocity_msg_ptr_.set(nullptr);
   is_halted = false;
   return true;
 }
 
-void DiffDriveController::reset_buffers()
+void TricycleController::halt()
 {
-  reference_interfaces_ = std::vector<double>(2, std::numeric_limits<double>::quiet_NaN());
-  // Empty out the old queue. Fill with zeros (not NaN) to catch early accelerations.
-  std::queue<std::array<double, 2>> empty;
-  std::swap(previous_two_commands_, empty);
-  previous_two_commands_.push({{0.0, 0.0}});
-  previous_two_commands_.push({{0.0, 0.0}});
-
-  // Fill RealtimeBuffer with NaNs so it will contain a known value
-  // but still indicate that no command has yet been sent.
-  received_velocity_msg_ptr_.reset();
-  std::shared_ptr<TwistStamped> empty_msg_ptr = std::make_shared<TwistStamped>();
-  empty_msg_ptr->header.stamp = get_node()->now();
-  empty_msg_ptr->twist.linear.x = std::numeric_limits<double>::quiet_NaN();
-  empty_msg_ptr->twist.linear.y = std::numeric_limits<double>::quiet_NaN();
-  empty_msg_ptr->twist.linear.z = std::numeric_limits<double>::quiet_NaN();
-  empty_msg_ptr->twist.angular.x = std::numeric_limits<double>::quiet_NaN();
-  empty_msg_ptr->twist.angular.y = std::numeric_limits<double>::quiet_NaN();
-  empty_msg_ptr->twist.angular.z = std::numeric_limits<double>::quiet_NaN();
-  received_velocity_msg_ptr_.writeFromNonRT(empty_msg_ptr);
+  traction_joint_[0].velocity_command.get().set_value(0.0);
+  steering_joint_[0].position_command.get().set_value(0.0);
 }
 
-void DiffDriveController::halt()
+CallbackReturn TricycleController::get_traction(
+  const std::string & traction_joint_name, std::vector<TractionHandle> & joint)
 {
-  const auto halt_wheels = [](auto & wheel_handles)
-  {
-    for (const auto & wheel_handle : wheel_handles)
+  RCLCPP_INFO(get_node()->get_logger(), "Get Wheel Joint Instance");
+
+  // Lookup the velocity state interface
+  const auto state_handle = std::find_if(
+    state_interfaces_.cbegin(), state_interfaces_.cend(),
+    [&traction_joint_name](const auto & interface)
     {
-      wheel_handle.velocity.get().set_value(0.0);
-    }
-  };
-
-  halt_wheels(registered_left_wheel_handles_);
-  halt_wheels(registered_right_wheel_handles_);
-}
-
-controller_interface::CallbackReturn DiffDriveController::configure_wheels(
-  const std::vector<std::string> & drive_joint_names,
-  const std::vector<std::string> & steering_joint_names,
-  std::vector<DriveHandle> & registered_handles
-  std::vector<SteeringHandle> & registered_handles)
-{
-  auto logger = get_node()->get_logger();
-
-  if (wheel_names.empty())
+      return interface.get_prefix_name() == traction_joint_name &&
+             interface.get_interface_name() == HW_IF_VELOCITY;
+    });
+  if (state_handle == state_interfaces_.cend())
   {
-    RCLCPP_ERROR(logger, "No '%s' wheel names specified", side.c_str());
-    return controller_interface::CallbackReturn::ERROR;
+    RCLCPP_ERROR(
+      get_node()->get_logger(), "Unable to obtain joint state handle for %s",
+      traction_joint_name.c_str());
+    return CallbackReturn::ERROR;
   }
 
-  // register handles and configure wheels
-  registered_handles.reserve(wheel_names.size());
-  for (const auto & wheel_name : wheel_names)
+  // Lookup the velocity command interface
+  const auto command_handle = std::find_if(
+    command_interfaces_.begin(), command_interfaces_.end(),
+    [&traction_joint_name](const auto & interface)
+    {
+      return interface.get_prefix_name() == traction_joint_name &&
+             interface.get_interface_name() == HW_IF_VELOCITY;
+    });
+  if (command_handle == command_interfaces_.end())
   {
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    const auto interface_name = feedback_type();
-    const auto state_handle = std::find_if(
-      state_interfaces_.cbegin(), state_interfaces_.cend(),
-      [&wheel_name, &interface_name](const auto & interface)
-      {
-        return interface.get_prefix_name() == wheel_name &&
-               interface.get_interface_name() == interface_name;
-      });
-
-    if (state_handle == state_interfaces_.cend())
-    {
-      RCLCPP_ERROR(logger, "Unable to obtain joint state handle for %s", wheel_name.c_str());
-      return controller_interface::CallbackReturn::ERROR;
-    }
-
-    const auto command_handle = std::find_if(
-      command_interfaces_.begin(), command_interfaces_.end(),
-      [&wheel_name](const auto & interface)
-      {
-        return interface.get_prefix_name() == wheel_name &&
-               interface.get_interface_name() == HW_IF_VELOCITY;
-      });
-
-    if (command_handle == command_interfaces_.end())
-    {
-      RCLCPP_ERROR(logger, "Unable to obtain joint command handle for %s", wheel_name.c_str());
-      return controller_interface::CallbackReturn::ERROR;
-    }
-
-    registered_handles.emplace_back(
-      WheelHandle{std::ref(*state_handle), std::ref(*command_handle)});
+    RCLCPP_ERROR(
+      get_node()->get_logger(), "Unable to obtain joint state handle for %s",
+      traction_joint_name.c_str());
+    return CallbackReturn::ERROR;
   }
 
-  return controller_interface::CallbackReturn::SUCCESS;
+  // Create the traction joint instance
+  joint.emplace_back(TractionHandle{std::ref(*state_handle), std::ref(*command_handle)});
+  return CallbackReturn::SUCCESS;
 }
 
-bool DiffDriveController::on_set_chained_mode(bool chained_mode)
+CallbackReturn TricycleController::get_steering(
+  const std::string & steering_joint_name, std::vector<SteeringHandle> & joint)
 {
-  // Always accept switch to/from chained mode (without linting type-cast error)
-  return true || chained_mode;
+  RCLCPP_INFO(get_node()->get_logger(), "Get Steering Joint Instance");
+
+  // Lookup the velocity state interface
+  const auto state_handle = std::find_if(
+    state_interfaces_.cbegin(), state_interfaces_.cend(),
+    [&steering_joint_name](const auto & interface)
+    {
+      return interface.get_prefix_name() == steering_joint_name &&
+             interface.get_interface_name() == HW_IF_POSITION;
+    });
+  if (state_handle == state_interfaces_.cend())
+  {
+    RCLCPP_ERROR(
+      get_node()->get_logger(), "Unable to obtain joint state handle for %s",
+      steering_joint_name.c_str());
+    return CallbackReturn::ERROR;
+  }
+
+  // Lookup the velocity command interface
+  const auto command_handle = std::find_if(
+    command_interfaces_.begin(), command_interfaces_.end(),
+    [&steering_joint_name](const auto & interface)
+    {
+      return interface.get_prefix_name() == steering_joint_name &&
+             interface.get_interface_name() == HW_IF_POSITION;
+    });
+  if (command_handle == command_interfaces_.end())
+  {
+    RCLCPP_ERROR(
+      get_node()->get_logger(), "Unable to obtain joint state handle for %s",
+      steering_joint_name.c_str());
+    return CallbackReturn::ERROR;
+  }
+
+  // Create the steering joint instance
+  joint.emplace_back(SteeringHandle{std::ref(*state_handle), std::ref(*command_handle)});
+  return CallbackReturn::SUCCESS;
 }
 
-std::vector<hardware_interface::CommandInterface>
-DiffDriveController::on_export_reference_interfaces()
+double TricycleController::convert_trans_rot_vel_to_steering_angle(
+  double Vx, double theta_dot, double wheelbase)
 {
-  const int nr_ref_itfs = 2;
-  reference_interfaces_.resize(nr_ref_itfs, std::numeric_limits<double>::quiet_NaN());
-  std::vector<hardware_interface::CommandInterface> reference_interfaces;
-  reference_interfaces.reserve(nr_ref_itfs);
-
-  reference_interfaces.push_back(hardware_interface::CommandInterface(
-    get_node()->get_name(), std::string("linear/") + hardware_interface::HW_IF_VELOCITY,
-    &reference_interfaces_[0]));
-
-  reference_interfaces.push_back(hardware_interface::CommandInterface(
-    get_node()->get_name(), std::string("angular/") + hardware_interface::HW_IF_VELOCITY,
-    &reference_interfaces_[1]));
-
-  return reference_interfaces;
+  if (theta_dot == 0 || Vx == 0)
+  {
+    return 0;
+  }
+  return std::atan(theta_dot * wheelbase / Vx);
 }
 
-}  // namespace diff_drive_controller
+std::tuple<double, double> TricycleController::twist_to_ackermann(double Vx, double theta_dot)
+{
+  // using naming convention in http://users.isr.ist.utl.pt/~mir/cadeiras/robmovel/Kinematics.pdf
+  double alpha, Ws;
 
-#include "class_loader/register_macro.hpp"
+  if (Vx == 0 && theta_dot != 0)
+  {  // is spin action
+    alpha = theta_dot > 0 ? M_PI_2 : -M_PI_2;
+    Ws = abs(theta_dot) * params_.wheelbase / params_.wheel_radius;
+    return std::make_tuple(alpha, Ws);
+  }
 
-CLASS_LOADER_REGISTER_CLASS(
-  diff_drive_controller::DiffDriveController, controller_interface::ChainableControllerInterface)
+  alpha = convert_trans_rot_vel_to_steering_angle(Vx, theta_dot, params_.wheelbase);
+  Ws = Vx / (params_.wheel_radius * std::cos(alpha));
+  return std::make_tuple(alpha, Ws);
+}
+
+}  // namespace tricycle_controller
+
+#include <pluginlib/class_list_macros.hpp>
+PLUGINLIB_EXPORT_CLASS(
+  tricycle_controller::TricycleController, controller_interface::ControllerInterface)

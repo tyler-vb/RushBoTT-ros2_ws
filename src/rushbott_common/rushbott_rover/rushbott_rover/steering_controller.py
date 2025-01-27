@@ -14,7 +14,7 @@ import math
 from typing import Callable, List
 
 # local
-from .drive_module import DriveModule, DriveModuleDesiredValues
+from .drive_module import DriveModule
 
 class SteeringController():
 
@@ -32,6 +32,7 @@ class SteeringController():
         self.wheel_radius = wheel_radius
         self.logger = logger
 
+        self.body_state: List[float] = None
         self.desired_states: List[List[float]] = None
 
         self.num_joints = self.get_num_joints()
@@ -61,6 +62,7 @@ class SteeringController():
         return self.desired_states
 
     def update_drive_module_states(self, body_v, body_w):
+        
         drive_velocities = [0] * (self.num_joints[0] + 1)
         steering_angles = [0] * (self.num_joints[1] + 1)
 

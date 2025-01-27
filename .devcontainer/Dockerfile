@@ -1,4 +1,4 @@
-ARG BASE_IMAGE=osrf/ros:jazzy-desktop-full
+ARG BASE_IMAGE=osrf/ros:jazzy-desktop
 FROM $BASE_IMAGE
 
 ARG DEBIAN_FRONTEND=noninteractive
@@ -31,6 +31,7 @@ RUN apt-get update && apt-get install --no-install-recommends -y -o Dpkg::Option
     ros-jazzy-ros2-controllers \
     ros-jazzy-gz-ros2-control \
     ros-jazzy-joint-state-publisher-gui \
+    ros-jazzy-tf-transformations \
     # utils
     python3-pip \
     python-is-python3 \

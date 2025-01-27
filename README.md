@@ -25,7 +25,7 @@ Here are some ROS2 terminal commands to run once you're in the container:
 ```
 # ROS INITIALIZING (Run this when you start the container)
 rosdep install --from-paths src --ignore-src -r -i -y --rosdistro jazzy
-colcon build --symlink-install --cmake-args -DBUILD_TESTING=ON
+colcon build --symlink-install --cmake-args -DBUILD_TESTING=ON -DCMAKE_EXPORT_COMPILE_COMMANDS=ON
 
 -----LAUNCH ROBOT DESCRIPTION-----
 . ~/RushBoTT-ros2_ws/install/setup.sh

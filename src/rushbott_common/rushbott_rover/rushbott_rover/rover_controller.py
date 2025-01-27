@@ -18,6 +18,12 @@ from rclpy.executors import ExternalShutdownException, SingleThreadedExecutor
 from rclpy.node import Node
 from rclpy.qos import QoSProfile, ReliabilityPolicy, HistoryPolicy, DurabilityPolicy
 
+import tf2_ros
+from tf2_ros.static_transform_broadcaster import StaticTransformBroadcaster
+from tf_transformations import quaternion_from_euler
+
+from nav_msgs.msg import Odometry
+from tf2_geometry_msgs import TransformStamped
 from geometry_msgs.msg import Twist
 from std_msgs.msg import Float64MultiArray
 
@@ -39,12 +45,12 @@ class RoverController(Node):
         self.declare_parameter("steering_joints", ["joint1", "joint2"])
         self.declare_parameter("drive_joints", ["joint1", "joint2"])
 
-        self.declare_parameter("wheel_radius", 0.5)
-        self.declare_parameter("track_width", 40.0)
-        self.declare_parameter("wheelbase", 40.0)
+        self.declare_parameter("wheel_radius", 0.05)
+        self.declare_parameter("track_width", 0.40)
+        self.declare_parameter("wheelbase", 0.40)
 
         self.declare_parameter("drive_velocity_limit", 10.0)
-        self.declare_parameter("steering_angle_limit", 10.0)
+        self.declare_parameter("steering_angle_limit", 0.7854)
 
         self.get_logger().info(f'Initializing rover controller ...')
 
@@ -85,6 +91,38 @@ class RoverController(Node):
         self.get_logger().info(
             f'Publishing drive velocity changes on topic "{velocity_publish_topic}"'
         )
+
+        # publish odometry
+        odom_topic = "/odom"
+        self.odometry_publisher = self.create_publisher(
+            Odometry,
+            odom_topic,
+            QoSProfile(
+                reliability=ReliabilityPolicy.RELIABLE,
+                history=HistoryPolicy.KEEP_LAST,
+                durability=DurabilityPolicy.VOLATILE,
+                depth=10))
+        self.get_logger().info(
+            f'Publishing odometry information on topic "{odom_topic}"'
+        )
+
+        # Define TF broadcaster 
+        self.tf_broadcaster = tf2_ros.TransformBroadcaster(self)
+
+        # Initialize odom TF 
+        zero_odometry = Odometry()
+        zero_odometry.header.stamp = self.get_clock().now().to_msg()
+        zero_odometry.header.frame_id = "odom"
+        zero_odometry.child_frame_id = self.robot_base_link
+        zero_odometry.pose.pose.position.x = 0.0
+        zero_odometry.pose.pose.position.y = 0.0
+        zero_odometry.pose.pose.position.z = 0.0
+        quat = quaternion_from_euler(0.0, 0.0, 0.0)
+        zero_odometry.pose.pose.orientation.x = quat[0]
+        zero_odometry.pose.pose.orientation.y = quat[1]
+        zero_odometry.pose.pose.orientation.z = quat[2]
+        zero_odometry.pose.pose.orientation.w = quat[3]
+        self.send_odom_transform(zero_odometry)
 
         # Create the controller that will determine the correct drive commands for the different drive modules
         # Create the controller before we subscribe to state changes so that the first change that comes in gets
@@ -128,33 +166,6 @@ class RoverController(Node):
         self.get_logger().info(
             f'Listening for movement commands on topic "{twist_topic}"'
         )
-
-    def cmd_vel_callback(self, msg: Twist):
-        if msg == None:
-            return
-
-        # If this twist message is the same as last time, then we don't need to do anything
-        if self.last_velocity_command is not None:
-            if msg.linear.x == self.last_velocity_command.linear.x and \
-                msg.angular.z == self.last_velocity_command.angular.z:
-
-                # The last command was the same as the current command. So just ignore it and move on.
-                self.get_logger().info(
-                    f'Received a Twist message that is the same as the last message. Taking no action. Message was: "{msg}"'
-                )
-
-                return
-
-        self.get_logger().info(
-            f'Received a Twist message that is different from the last command. Processing message: "{msg}"'
-        )
-
-        self.controller.update_drive_module_states(
-                body_v = msg.linear.x,
-                body_w = msg.angular.z
-            )
-
-        self.last_velocity_command = msg
 
     def get_drive_modules(self) -> List[DriveModule]:
         # Get the drive module information from the URDF and turn it into a list of drive modules.
@@ -269,7 +280,34 @@ class RoverController(Node):
             f'and drive link: "{drive_joints[right_rear.drive_index]}" ' +
             f'and position: ["{right_rear.x_position}", "{right_rear.y_position}"]'
         )
-        return drive_modules
+        return drive_modules\
+    
+    def cmd_vel_callback(self, msg: Twist):
+        if msg == None:
+            return
+
+        # If this twist message is the same as last time, then we don't need to do anything
+        if self.last_velocity_command is not None:
+            if msg.linear.x == self.last_velocity_command.linear.x and \
+                msg.angular.z == self.last_velocity_command.angular.z:
+
+                # The last command was the same as the current command. So just ignore it and move on.
+                self.get_logger().info(
+                    f'Received a Twist message that is the same as the last message. Taking no action. Message was: "{msg}"'
+                )
+
+                return
+
+        self.get_logger().info(
+            f'Received a Twist message that is different from the last command. Processing message: "{msg}"'
+        )
+
+        self.controller.update_drive_module_states(
+                body_v = msg.linear.x,
+                body_w = msg.angular.z
+            )
+
+        self.last_velocity_command = msg
 
     def timer_callback(self):
         drive_module_states = self.controller.get_desired_states()

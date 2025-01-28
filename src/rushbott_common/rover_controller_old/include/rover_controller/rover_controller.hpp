@@ -65,19 +65,17 @@ private:
     std::reference_wrapper<hardware_interface::LoanedCommandInterface> position_command;
     };
 
-    SteeringController steering_controller_;
-
-    CallbackReturn configure_drive_joints(
-        const std::vector<std::string> & drive_joint_names, std::vector<DriveHandle> & registered_drive_handles);
-    CallbackReturn configure_steering_joints(
-        const std::vector<std::string> & steering_joint_names, std::vector<SteeringHandle> & registered_steering_handles);
+    CallbackReturn get_drive_joints(
+        const std::string & drive_joint_names, std::vector<DriveHandle> & drive_joints);
+    CallbackReturn get_steering_joints(
+        const std::string & steering_joint_name, std::vector<SteeringHandle> & steering_joints);
 
     // Parameters from ROS for rover_controller
     std::shared_ptr<ParamListener> param_listener_;
     Params params_;
 
-    std::vector<DriveHandle> registered_drive_handles_;
-    std::vector<SteeringHandle> registered_steering_handles_;
+    std::vector<DriveHandle> drive_joints_;
+    std::vector<SteeringHandle> steering_joints_;
 
     Odometry odometry_;
 
@@ -89,9 +87,6 @@ private:
 
     bool subscriber_is_active_ = false;
     rclcpp::Subscription<TwistStamped>::SharedPtr velocity_command_subscriber_ = nullptr;
-
-    realtime_tools::RealtimeBox<std::shared_ptr<TwistStamped>> received_velocity_msg_ptr_{nullptr};
-    std::shared_ptr<TwistStamped> last_command_msg_;
     
     rclcpp::Service<std_srvs::srv::Empty>::SharedPtr reset_odom_service_;
 
@@ -105,6 +100,6 @@ private:
     void halt();
 };
 
-}  // namespace rover_controller
+}  // namespace tricycle_controller
 
-#endif  // ROVER_CONTROLLER__ROVER_CONTROLLER_HPP_
+#endif  // TRICYCLE_CONTROLLER__TRICYCLE_CONTROLLER_HPP_

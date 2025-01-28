@@ -29,16 +29,14 @@
 
 #include "rover_controller/rover_controller.hpp"
 
-namespace
+namespace rover_controller
 {
 constexpr auto DEFAULT_COMMAND_TOPIC = "~/cmd_vel";
 constexpr auto DEFAULT_ODOMETRY_TOPIC = "~/odom";
 constexpr auto DEFAULT_TRANSFORM_TOPIC = "/tf";
 constexpr auto DEFAULT_RESET_ODOM_SERVICE = "~/reset_odometry";
-}  // namespace
 
-namespace rover_controller
-{
+
 using namespace std::chrono_literals;
 using controller_interface::interface_configuration_type;
 using controller_interface::InterfaceConfiguration;
@@ -252,145 +250,47 @@ void RoverController::halt()
     registered_steering_handles_[0].position_command.get().set_value(0.0);
 }
 
-CallbackReturn RoverController::configure_drive_joints(
-    const std::vector<std::string> & drive_joint_names, std::vector<DriveHandle> & registered_drive_handles)
+CallbackReturn RoverController::configure_joint(
+    const std::string & joint_name, std::vector<JointHandle> & registered_handles, const char * command_interface)
 {
     auto logger = get_node()->get_logger();
 
-    RCLCPP_INFO(logger, "Get Wheel Joint Instance");
 
-    if (drive_joint_names.empty())
+        // lookup velocity command interface
+        const auto command_handle = std::find_if(
+            command_interfaces_.begin(), command_interfaces_.end(),
+            [&joint_name](const auto & interface)
+            {
+                return interface.get_prefix_name() == joint_name &&
+                    interface.get_interface_name() == command_interface;
+            });
+            
+        if (command_handle == command_interfaces_.end())
         {
-            RCLCPP_ERROR(logger, "No drive joints specified");
+            RCLCPP_ERROR(logger, "Unable to obtain joint command handle for %s", joint_name.c_str());
             return controller_interface::CallbackReturn::ERROR;
         }
 
-    registered_drive_handles.reserve(drive_joint_names.size());
-    for (const auto & drive_joint_name : drive_joint_names)
-    {
-        // lookup position state interface
+                // lookup position state interface
         const auto state_handle = std::find_if(
             state_interfaces_.cbegin(), state_interfaces_.cend(),
-            [&drive_joint_name](const auto & interface)
+            [&joint_name](const auto & interface)
             {
-                return interface.get_prefix_name() == drive_joint_name &&
+                return interface.get_prefix_name() == joint_name &&
                     interface.get_interface_name() == HW_IF_POSITION;
             });
             
         if (state_handle == state_interfaces_.cend())
         {
-            RCLCPP_ERROR(logger, "Unable to obtain joint state handle for %s", drive_joint_name.c_str());
+            RCLCPP_ERROR(logger, "Unable to obtain joint state handle for %s", joint_name.c_str());
             return controller_interface::CallbackReturn::ERROR;
         }
 
-        // lookup velocity command interface
-        const auto command_handle = std::find_if(
-            command_interfaces_.cbegin(), command_interfaces_.cend(),
-            [&drive_joint_name](const auto & interface)
-            {
-                return interface.get_prefix_name() == drive_joint_name &&
-                    interface.get_interface_name() == HW_IF_VELOCITY;
-            });
-            
-        if (command_handle == command_interfaces_.cend())
-        {
-            RCLCPP_ERROR(logger, "Unable to obtain joint command handle for %s", drive_joint_name.c_str());
-            return controller_interface::CallbackReturn::ERROR;
-        }
-
-        registered_drive_handles.emplace_back(
-            DriveHandle{std::ref(*state_handle), std::ref(*command_handle)});
+        registered_handles.emplace_back(
+            JointHandle{std::ref(*state_handle), std::ref(*command_handle)});
 
     }
-
-
-
-    return controller_interface::CallbackReturn::SUCCESS;
-}
-
-
     
-
-
-  // Lookup the velocity state interface
-    const auto state_handle = std::find_if(
-        state_interfaces_.cbegin(), state_interfaces_.cend(),
-        [&drive_joint_names](const auto & interface)
-        {
-        return interface.get_prefix_name() == drive_joint_name &&
-                interface.get_interface_name() == HW_IF_VELOCITY;
-        });
-    if (state_handle == state_interfaces_.cend())
-    {
-        RCLCPP_ERROR(
-        get_node()->get_logger(), "Unable to obtain joint state handle for %s",
-        traction_joint_name.c_str());
-        return CallbackReturn::ERROR;
-    }
-
-    // Lookup the velocity command interface
-    const auto command_handle = std::find_if(
-        command_interfaces_.begin(), command_interfaces_.end(),
-        [&traction_joint_name](const auto & interface)
-        {
-        return interface.get_prefix_name() == traction_joint_name &&
-                interface.get_interface_name() == HW_IF_VELOCITY;
-        });
-    if (command_handle == command_interfaces_.end())
-    {
-        RCLCPP_ERROR(
-        get_node()->get_logger(), "Unable to obtain joint state handle for %s",
-        traction_joint_name.c_str());
-        return CallbackReturn::ERROR;
-    }
-
-    // Create the traction joint instance
-    joint.emplace_back(TractionHandle{std::ref(*state_handle), std::ref(*command_handle)});
-    return CallbackReturn::SUCCESS;
-}
-
-CallbackReturn TricycleController::get_steering(
-  const std::string & steering_joint_name, std::vector<SteeringHandle> & joint)
-{
-  RCLCPP_INFO(get_node()->get_logger(), "Get Steering Joint Instance");
-
-  // Lookup the velocity state interface
-  const auto state_handle = std::find_if(
-    state_interfaces_.cbegin(), state_interfaces_.cend(),
-    [&steering_joint_name](const auto & interface)
-    {
-      return interface.get_prefix_name() == steering_joint_name &&
-             interface.get_interface_name() == HW_IF_POSITION;
-    });
-  if (state_handle == state_interfaces_.cend())
-  {
-    RCLCPP_ERROR(
-      get_node()->get_logger(), "Unable to obtain joint state handle for %s",
-      steering_joint_name.c_str());
-    return CallbackReturn::ERROR;
-  }
-
-  // Lookup the velocity command interface
-  const auto command_handle = std::find_if(
-    command_interfaces_.begin(), command_interfaces_.end(),
-    [&steering_joint_name](const auto & interface)
-    {
-      return interface.get_prefix_name() == steering_joint_name &&
-             interface.get_interface_name() == HW_IF_POSITION;
-    });
-  if (command_handle == command_interfaces_.end())
-  {
-    RCLCPP_ERROR(
-      get_node()->get_logger(), "Unable to obtain joint state handle for %s",
-      steering_joint_name.c_str());
-    return CallbackReturn::ERROR;
-  }
-
-  // Create the steering joint instance
-  joint.emplace_back(SteeringHandle{std::ref(*state_handle), std::ref(*command_handle)});
-  return CallbackReturn::SUCCESS;
-
-}
 
 }  // namespace rover_controller
 

@@ -16,15 +16,15 @@
  * Author: Tony Najjar
  */
 
-#ifndef ROVER_CONTROLLER__ODOMETRY_HPP_
-#define ROVER_CONTROLLER__ODOMETRY_HPP_
+#ifndef TRICYCLE_CONTROLLER__ODOMETRY_HPP_
+#define TRICYCLE_CONTROLLER__ODOMETRY_HPP_
 
 #include <cmath>
 
 #include <rclcpp/duration.hpp>
 #include "rcpputils/rolling_mean_accumulator.hpp"
 
-namespace rover_controller
+namespace tricycle_controller
 {
 class Odometry
 {
@@ -70,6 +70,6 @@ private:
   RollingMeanAccumulator angular_accumulator_;
 };
 
-}  // namespace rover_controller
+}  // namespace tricycle_controller
 
-#endif  // ROVER_CONTROLLER__ODOMETRY_HPP_
+#endif  // TRICYCLE_CONTROLLER__ODOMETRY_HPP_

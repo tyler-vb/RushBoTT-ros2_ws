@@ -14,8 +14,8 @@
 #include "geometry_msgs/msg/twist_stamped.hpp"
 #include "nav_msgs/msg/odometry.hpp"
 #include "rclcpp_lifecycle/state.hpp"
-#include "realtime_tools/realtime_box.hpp"
-#include "realtime_tools/realtime_publisher.hpp"
+// #include "realtime_tools/realtime_box.hpp"
+// #include "realtime_tools/realtime_publisher.hpp"
 #include "std_srvs/srv/empty.hpp"
 #include "tf2_msgs/msg/tf_message.hpp"
 
@@ -55,29 +55,23 @@ public:
     CallbackReturn on_error(const rclcpp_lifecycle::State & previous_state) override;
 
 private:
-    struct DriveHandle
+    struct JointHandle
     {
-    std::reference_wrapper<const hardware_interface::LoanedStateInterface> position_state;
-    std::reference_wrapper<hardware_interface::LoanedCommandInterface> velocity_command;
+    std::reference_wrapper<const hardware_interface::LoanedStateInterface> state;
+    std::reference_wrapper<hardware_interface::LoanedCommandInterface> command;
     };
-    struct SteeringHandle
-    {
-    std::reference_wrapper<hardware_interface::LoanedCommandInterface> position_command;
-    };
+
 
     SteeringController steering_controller_;
 
-    CallbackReturn configure_drive_joints(
-        const std::vector<std::string> & drive_joint_names, std::vector<DriveHandle> & registered_drive_handles);
-    CallbackReturn configure_steering_joints(
-        const std::vector<std::string> & steering_joint_names, std::vector<SteeringHandle> & registered_steering_handles);
+    CallbackReturn configure_joint(
+        const std::string & joint_name, std::vector<JointHandle> & registered_joint_handles, const char * command_interface);
 
     // Parameters from ROS for rover_controller
     std::shared_ptr<ParamListener> param_listener_;
     Params params_;
 
-    std::vector<DriveHandle> registered_drive_handles_;
-    std::vector<SteeringHandle> registered_steering_handles_;
+    std::vector<JointHandle> registered_drive_handles_;
 
     Odometry odometry_;
 

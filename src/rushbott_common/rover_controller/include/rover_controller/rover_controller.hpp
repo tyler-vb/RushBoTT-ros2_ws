@@ -14,8 +14,8 @@
 #include "geometry_msgs/msg/twist_stamped.hpp"
 #include "nav_msgs/msg/odometry.hpp"
 #include "rclcpp_lifecycle/state.hpp"
-#include "realtime_tools/realtime_box.h"
-#include "realtime_tools/realtime_publisher.h"
+#include "realtime_tools/realtime_box.hpp"
+#include "realtime_tools/realtime_publisher.hpp"
 #include "std_srvs/srv/empty.hpp"
 #include "tf2_msgs/msg/tf_message.hpp"
 
@@ -72,7 +72,7 @@ private:
 
     SteeringController steering_controller_;
 
-        // Parameters from ROS for rover_controller
+    //Parameters from ROS for rover_controller
     std::shared_ptr<ParamListener> param_listener_;
     Params params_;
 

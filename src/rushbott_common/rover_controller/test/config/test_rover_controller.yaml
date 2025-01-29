@@ -1,0 +1,18 @@
+test_rover_controller:
+  ros__parameters:
+    drive_joint_names: ["front_left", "front_right"]
+    steering_joint_names: ["front_left", "front_right"]
+
+    wheel_radius: 0.125
+    wheelbase: 1.252
+    track_width: 1.5
+
+    enable_odom_tf: false
+    use_sim_time: false
+    pose_covariance_diagonal: [0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
+    twist_covariance_diagonal: [0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
+
+    cmd_vel_timeout: 1000
+
+    vel_limit: 10.0
+    angle_limit: 1.0

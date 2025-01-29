@@ -1,4 +1,4 @@
-diff_drive_controller:
+rover_controller:
   drive_joint_names: {
     type: string_array,
     default_value: [],
@@ -63,9 +63,9 @@ diff_drive_controller:
     description: "Publish transformation between ``odom_frame_id`` and ``base_frame_id``.",
   }
   cmd_vel_timeout: {
-    type: double,
-    default_value: 0.5, # seconds
-    description: "Timeout in seconds, after which input command on ``cmd_vel`` topic is considered staled.",
+    type: int,
+    default_value: 500, # seconds
+    description: "Timeout in milliseconds, after which input command on ``cmd_vel`` topic is considered staled.",
   }
   velocity_rolling_window_size: {
     type: int,
@@ -77,11 +77,11 @@ diff_drive_controller:
     default_value: 50.0, # Hz
     description: "Publishing rate (Hz) of the odometry and TF messages.",
   }
-  max_velocity: {
+  vel_limit: {
     type: double,
     default_value: .NAN,
   }
-  max_angle: {
+  angle_limit: {
         type: double,
         default_value: .NAN,
   }

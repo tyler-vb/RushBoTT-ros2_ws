@@ -1,53 +1,52 @@
 controller_manager:
   ros__parameters:
-    update_rate: 60
-
-    # diff_drive_controller:
-    #   type: diff_drive_controller/DiffDriveController
+    update_rate: 100
 
     joint_state_broadcaster:
       type: joint_state_broadcaster/JointStateBroadcaster
 
-    rover_joint_velocity_controller:
-      type: velocity_controllers/JointGroupVelocityController
+    rover_controller:
+      type: rover_controller/RoverController
+
+rover_controller:
+  ros__parameters:
+    drive_joint_names: ["front_left_wheel_joint", "front_right_wheel_joint"]
+    steering_joint_names: ["front_left_servo_joint", "front_right_servo_joint"]
+
+    wheel_radius: 0.125
+    wheelbase: 1.252
+    track_width: 1.5
+
+    enable_odom_tf: false
+    use_sim_time: false
+    pose_covariance_diagonal: [0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
+    twist_covariance_diagonal: [0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
+
+    cmd_vel_timeout: 1000
+
+    vel_limit: 10.0
+    angle_limit: 1.0
+
+#     rover_joint_velocity_controller:
+#       type: velocity_controllers/JointGroupVelocityController
     
-    rover_joint_position_controller:
-      type: position_controllers/JointGroupPositionController
+#     rover_joint_position_controller:
+#       type: position_controllers/JointGroupPositionController
 
-rover_joint_velocity_controller:
-  ros__parameters:
-    joints:
-      - left_front_wheel_joint
-      - right_front_wheel_joint
-      - left_middle_wheel_joint
-      - right_middle_wheel_joint
-      - left_rear_wheel_joint
-      - right_rear_wheel_joint
-
-rover_joint_position_controller:
-  ros__parameters:
-    joints:
-      - left_front_servo_joint
-      - right_front_servo_joint
-      - left_rear_servo_joint
-      - right_rear_servo_joint
-
-# diffdrive_controller:
+# rover_joint_velocity_controller:
 #   ros__parameters:
-    
-#     publish_rate: 50.0
-#     use_sim_time: True
+#     joints:
+#       - left_front_wheel_joint
+#       - right_front_wheel_joint
+#       - left_middle_wheel_joint
+#       - right_middle_wheel_joint
+#       - left_rear_wheel_joint
+#       - right_rear_wheel_joint
 
-#     base_frame_id: base_footprint
-
-#     open_loop: false
-#     velocity_rolling_window_size: 10
-#     position_feedback: false
-
-#     front_wheels_names: ['fl_wheel_joint', 'fr_wheel_joint']
-#     rear_wheels_names: ['rl_wheel_joint', 'rr_wheel_joint']
-
-#     wheel_seperation: 0.40
-#     wheel_radius: 7.5
-
-    
+# rover_joint_position_controller:
+#   ros__parameters:
+#     joints:
+#       - left_front_servo_joint
+#       - right_front_servo_joint
+#       - left_rear_servo_joint
+#       - right_rear_servo_joint

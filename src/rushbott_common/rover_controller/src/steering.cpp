@@ -2,32 +2,35 @@
 
 namespace rover_controller
 {
-SteeringController::SteeringController(
-        const std::vector<DriveModule>& drive_modules,
-        double vel_limit,
-        double angle_limit,
-        double wheel_radius,
-        const std::function<void(const std::string&)>& logger)
-    : modules_(drive_modules),
-      vel_limit_(vel_limit),
-      angle_limit_(angle_limit),
-      logger_(logger),
-      wheel_radius_(wheel_radius),
-      COT_limit_(set_COT_limit())
+SteeringController::SteeringController()
+: modules_({}),
+    vel_limit_(0.0),
+    angle_limit_(0.0),
+    wheel_radius_(0.0),
+    COT_limit_(0.0)
 {
 }
 
-// Calculate the Center of Turning (COT) limit
-const double SteeringController::set_COT_limit() 
+void SteeringController::set_limits(double vel_limit, double angle_limit)
 {
-    double limit = 0;
+    vel_limit_ = vel_limit;
+    angle_limit_ = angle_limit;
+    set_COT_limit();
+}
+void SteeringController::set_wheel_radius(double wheel_radius)
+{
+    wheel_radius_ = wheel_radius;
+}
+void SteeringController::set_drive_modules(std::vector<DriveModule> & drive_modules)
+{
+    modules_ = drive_modules;
+}
+void SteeringController::set_COT_limit() 
+{
     for (const auto& module : modules_) {
         double current_limit = std::abs(module.x_position / std::tan(angle_limit_) + module.y_position);
-        limit = std::max(limit, current_limit);
+        COT_limit_ = std::max(COT_limit_, current_limit);
     }
-    limit = std::ceil(limit);
-    logger_("Calculated COT limit: " + std::to_string(limit));
-    return limit;
 }
 
 // Update drive module states
@@ -89,9 +92,6 @@ void SteeringController::update(double body_v, double body_w)
 
     desired_vels_ = drive_velocities;
     desired_angles_ = steering_angles;
-
-    logger_("drive velocities: " + std::to_string(drive_velocities.size()));
-    logger_("steering angles: " + std::to_string(steering_angles.size()));
 }
 
 } // namespace rover_controller

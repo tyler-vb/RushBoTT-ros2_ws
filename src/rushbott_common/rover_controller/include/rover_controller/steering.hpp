@@ -5,7 +5,6 @@
 #include <functional>
 #include <vector>
 #include <string>
-#include <algorithm>
 
 #include "rover_controller/drive_module.hpp"
 

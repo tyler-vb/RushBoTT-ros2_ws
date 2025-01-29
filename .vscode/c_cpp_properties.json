@@ -3,7 +3,7 @@
         {
             "browse": {
                 "databaseFilename": "${default}",
-                "limitSymbolsToIncludedHeaders": false
+                "limitSymbolsToIncludedHeaders": true
             },
             "includePath": [
                 "RushBoTT_ros2_ws/**",

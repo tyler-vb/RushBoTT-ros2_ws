@@ -122,10 +122,8 @@ controller_interface::return_type RoverController::update(
     // update steering controller
     steering_controller_.update(linear_command, angular_command);
 
-    for ()
+    write_to_joints(steering_controller_.get_desired_vels(), steering_controller_.get_desired_angles());
 
-    traction_joint_[0].velocity_command.get().set_value(Ws_write);
-    steering_joint_[0].position_command.get().set_value(alpha_write);
     return controller_interface::return_type::OK;
 }
 
@@ -181,17 +179,30 @@ CallbackReturn RoverController::on_activate(const rclcpp_lifecycle::State &)
 {
     RCLCPP_INFO(get_node()->get_logger(), "On activate: Initialize Joints");
 
-    // Initialize the joints
-    const auto drive_result = get_drive_joints(params_.drive_joint_names, drive_joints_);
-    const auto steering_result = get_steering_joints(params_.steering_joint_names, steering_joints_);
-    if (drive_result == CallbackReturn::ERROR || steering_result == CallbackReturn::ERROR)
+    for (auto & module : drive_modules_)
     {
-        return CallbackReturn::ERROR;
+        if (module.drive_joint_name.empty() == false)
+        {
+            const auto result = configure_joint_handle(module.drive_joint_name, registered_drive_handles_, HW_IF_VELOCITY);
+            if (result == CallbackReturn::ERROR)
+            {
+                return CallbackReturn::ERROR;
+            }
+        }
+        if (module.steering_joint_name.empty() == false)
+        {
+            const auto result = configure_joint_handle(module.steering_joint_name, registered_steering_handles_, HW_IF_POSITION);
+            if (result == CallbackReturn::ERROR)
+            {
+                return CallbackReturn::ERROR;
+            }
+        }
     }
-    if (drive_joints_.empty() || steering_joints_.empty())
+            
+    if (registered_drive_handles_.empty() && registered_steering_handles_.empty())
     {
         RCLCPP_ERROR(
-        get_node()->get_logger(), "Either drive or steering interfaces are non existent");
+        get_node()->get_logger(), "No joints were configured, check your configuration");
         return CallbackReturn::ERROR;
     }
 
@@ -229,9 +240,6 @@ CallbackReturn RoverController::on_error(const rclcpp_lifecycle::State &)
 
 bool RoverController::reset()
 {
-  // release the old queue
-    std::queue<AckermannDrive> empty_ackermann_drive;
-    std::swap(previous_commands_, empty_ackermann_drive);
 
     registered_drive_handles_.clear();
     registered_steering_handles_.clear();
@@ -246,48 +254,153 @@ bool RoverController::reset()
 
 void RoverController::halt()
 {
-    registered_drive_handles_[0].velocity_command.get().set_value(0.0);
-    registered_steering_handles_[0].position_command.get().set_value(0.0);
+    const std::vector<double> desired_angles(registered_steering_handles_.size(), 0.0);
+    const std::vector<double> desired_vels(registered_steering_handles_.size(), 0.0);
+
+    write_to_joints(desired_vels, desired_angles);
 }
 
-CallbackReturn RoverController::configure_joint(
-    const std::string & joint_name, std::vector<JointHandle> & registered_handles, const char * command_interface)
+void RoverController::write_to_joints(
+    const std::vector<double> &desired_vels, const std::vector<double> &desired_angles)
+{
+
+    for (size_t i = 0; i < registered_drive_handles_.size(); i++)
+    {
+        registered_drive_handles_[i].command.get().set_value(desired_vels[i]);
+    }
+
+    for (size_t i = 0; i < registered_steering_handles_.size(); i++)  
+    {  
+        registered_steering_handles_[i].command.get().set_value(desired_angles[i]);
+    }
+}
+
+void RoverController::configure_drive_modules()
+{
+    const float & track_width = params_.track_width;
+    const float & wheelbase = params_.wheelbase;
+    const std::vector<std::string> & steering_joint_names = params_.steering_joint_names;
+    const std::vector<std::string> & drive_joint_names = params_.drive_joint_names;
+
+    // acceptable rover module names
+    std::vector<std::string> rover_module_names = {"front_left", "front_right", "mid_left", "mid_right", "rear_left", "rear_right"};
+
+    for (size_t i = 0; i < rover_module_names.size(); i++)
+    {
+        DriveModule module;
+
+        bool include_steering_joint = true;
+        bool include_drive_joint = true;
+
+        if (rover_module_names[i] == "front_left")
+        {
+            module.x_position = track_width / 2;
+            module.y_position = wheelbase / 2;
+        }
+        else if (rover_module_names[i] == "front_right")
+        {
+            module.x_position = -track_width / 2;
+            module.y_position = wheelbase / 2;
+        }
+        else if (rover_module_names[i] == "mid_left")
+        {
+            module.x_position = track_width / 2;
+            module.y_position = 0;
+            include_steering_joint = false;
+        }
+        else if (rover_module_names[i] == "mid_right")
+        {
+            module.x_position = -track_width / 2;
+            module.y_position = 0;
+            include_steering_joint = false;
+        }
+        else if (rover_module_names[i] == "rear_left")
+        {
+            module.x_position = track_width / 2;
+            module.y_position = -wheelbase / 2;
+        }
+        else if (rover_module_names[i] == "rear_right")
+        {
+            module.x_position = -track_width / 2;
+            module.y_position = -wheelbase / 2;
+        }
+
+        if (include_steering_joint = true)
+        {
+            const auto steering_joint_name = std::find_if(
+            steering_joint_names.cbegin(), steering_joint_names.cend(),
+            [&](const std::string& name)
+            {
+                return name.find(rover_module_names[i]) != std::string::npos;
+            });
+
+            if (steering_joint_name != steering_joint_names.cend())
+            {
+                module.steering_joint_name = *steering_joint_name;
+                module.name = rover_module_names[i];
+            } 
+        }
+
+        if (include_drive_joint = true)
+        {
+            const auto drive_joint_name = std::find_if(
+            drive_joint_names.cbegin(), drive_joint_names.cend(),
+            [&](const std::string& name)
+            {
+                return name.find(rover_module_names[i]) != std::string::npos;
+            });
+
+            if (drive_joint_name != drive_joint_names.cend())
+            {
+                module.steering_joint_name = *drive_joint_name;
+                module.name = rover_module_names[i];
+            }             
+        }  
+
+        if (module.name.empty() == false) 
+        {
+            drive_modules_.push_back(module);
+        }
+    }
+}
+
+CallbackReturn RoverController::configure_joint_handle(
+    const std::string & joint_name, std::vector<JointHandle> & registered_handles, const char * command_interface_type)
 {
     auto logger = get_node()->get_logger();
 
-
-        // lookup velocity command interface
-        const auto command_handle = std::find_if(
-            command_interfaces_.begin(), command_interfaces_.end(),
-            [&joint_name](const auto & interface)
-            {
-                return interface.get_prefix_name() == joint_name &&
-                    interface.get_interface_name() == command_interface;
-            });
-            
-        if (command_handle == command_interfaces_.end())
+    // lookup velocity command interface
+    const auto command_handle = std::find_if(
+        command_interfaces_.begin(), command_interfaces_.end(),
+        [&joint_name](const auto & interface)
         {
-            RCLCPP_ERROR(logger, "Unable to obtain joint command handle for %s", joint_name.c_str());
-            return controller_interface::CallbackReturn::ERROR;
-        }
+            return interface.get_prefix_name() == joint_name &&
+                interface.get_interface_name() == command_interface_type;
+        });
+        
+    if (command_handle == command_interfaces_.end())
+    {
+        RCLCPP_ERROR(logger, "Unable to obtain joint command handle for %s", joint_name.c_str());
+        return controller_interface::CallbackReturn::ERROR;
+    }
 
-                // lookup position state interface
-        const auto state_handle = std::find_if(
-            state_interfaces_.cbegin(), state_interfaces_.cend(),
-            [&joint_name](const auto & interface)
-            {
-                return interface.get_prefix_name() == joint_name &&
-                    interface.get_interface_name() == HW_IF_POSITION;
-            });
-            
-        if (state_handle == state_interfaces_.cend())
+            // lookup position state interface
+    const auto state_handle = std::find_if(
+        state_interfaces_.cbegin(), state_interfaces_.cend(),
+        [&joint_name](const auto & interface)
         {
-            RCLCPP_ERROR(logger, "Unable to obtain joint state handle for %s", joint_name.c_str());
-            return controller_interface::CallbackReturn::ERROR;
-        }
+            return interface.get_prefix_name() == joint_name &&
+                interface.get_interface_name() == HW_IF_POSITION;
+        });
+        
+    if (state_handle == state_interfaces_.cend())
+    {
+        RCLCPP_ERROR(logger, "Unable to obtain joint state handle for %s", joint_name.c_str());
+        return controller_interface::CallbackReturn::ERROR;
+    }
 
-        registered_handles.emplace_back(
-            JointHandle{std::ref(*state_handle), std::ref(*command_handle)});
+    registered_handles.emplace_back(
+        JointHandle{std::ref(*state_handle), std::ref(*command_handle)});
 
     }
     
@@ -296,4 +409,4 @@ CallbackReturn RoverController::configure_joint(
 
 #include <pluginlib/class_list_macros.hpp>
 PLUGINLIB_EXPORT_CLASS(
-  tricycle_controller::TricycleController, controller_interface::ControllerInterface)
+  tricycle_controller::RoverController, controller_interface::ControllerInterface)

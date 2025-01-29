@@ -5,22 +5,14 @@
 
 namespace rover_controller
 {
-struct DriveModule {
-    std::string name;          // Name of the module
-    int steering_index;        // Steering index
-    int drive_index;           // Drive index
-    double x_position;         // X position
-    double y_position;         // Y position
-
-    DriveModule(
-        const std::string &name,
-        int steering_index,
-        int drive_index,
-        double x_position,
-        double y_position
-    )
-        : name(name), steering_index(steering_index), drive_index(drive_index),
-          x_position(x_position), y_position(y_position) {}
+struct DriveModule 
+{
+    // default empy values
+    std::string name;         
+    std::string steering_joint_name;        
+    std::string drive_joint_name;          
+    double x_position;         
+    double y_position;         
 };
 
 } // namespace

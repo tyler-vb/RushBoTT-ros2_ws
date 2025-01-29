@@ -68,9 +68,9 @@ InterfaceConfiguration RoverController::command_interface_configuration() const
     InterfaceConfiguration command_interfaces_config;
     command_interfaces_config.type = interface_configuration_type::INDIVIDUAL;
     for (const auto & joint_name : params_.drive_joint_names)
-        command_interfaces_config.names.push_back(params_.joint_name + "/" + HW_IF_VELOCITY);
+        command_interfaces_config.names.push_back(joint_name + "/" + HW_IF_VELOCITY);
     for (const auto & joint_name : params_.steering_joint_names)
-        command_interfaces_config.names.push_back(params_.joint_name + "/" + HW_IF_POSITION);
+        command_interfaces_config.names.push_back(joint_name + "/" + HW_IF_POSITION);
     return command_interfaces_config;
 }
 
@@ -79,7 +79,7 @@ InterfaceConfiguration RoverController::state_interface_configuration() const
     InterfaceConfiguration state_interfaces_config;
     state_interfaces_config.type = interface_configuration_type::INDIVIDUAL;
     for (const auto & joint_name : params_.drive_joint_names)
-        state_interfaces_config.names.push_back(params_.joint_name + "/" + HW_IF_POSITION);
+        state_interfaces_config.names.push_back(joint_name + "/" + HW_IF_POSITION);
     return state_interfaces_config;
 }
 
@@ -113,7 +113,6 @@ controller_interface::return_type RoverController::update(
         last_command_msg_->twist.angular.z = 0.0;
     }
 
-    // command may be limited further by Limiters,
     // without affecting the stored twist command
     TwistStamped command = *last_command_msg_;
     double & linear_command = command.twist.linear.x;
@@ -137,6 +136,12 @@ CallbackReturn RoverController::on_configure(const rclcpp_lifecycle::State & /*p
         params_ = param_listener_->get_params();
         RCLCPP_INFO(logger, "Parameters were updated");
     }
+
+    configure_drive_modules();
+
+    steering_controller_.set_drive_modules(drive_modules_);
+    steering_controller_.set_limits(params_.vel_limit, params_.angle_limit);
+    steering_controller_.set_wheel_radius(params_.wheel_radius);
 
     cmd_vel_timeout_ = std::chrono::milliseconds{params_.cmd_vel_timeout};
 
@@ -177,6 +182,8 @@ CallbackReturn RoverController::on_configure(const rclcpp_lifecycle::State & /*p
 
 CallbackReturn RoverController::on_activate(const rclcpp_lifecycle::State &)
 {
+    RCLCPP_INFO(get_node()->get_logger() command_interfaces_[0].get_prefix_name())
+    RCLCPP_INFO(get_node()->get_logger(), command_interfaces_[0].get_interface_name())
     RCLCPP_INFO(get_node()->get_logger(), "On activate: Initialize Joints");
 
     for (auto & module : drive_modules_)
@@ -277,10 +284,10 @@ void RoverController::write_to_joints(
 
 void RoverController::configure_drive_modules()
 {
-    const float & track_width = params_.track_width;
-    const float & wheelbase = params_.wheelbase;
-    const std::vector<std::string> & steering_joint_names = params_.steering_joint_names;
-    const std::vector<std::string> & drive_joint_names = params_.drive_joint_names;
+    const double track_width = params_.track_width;
+    const double wheelbase = params_.wheelbase;
+    const std::vector<std::string> steering_joint_names = params_.steering_joint_names;
+    const std::vector<std::string> drive_joint_names = params_.drive_joint_names;
 
     // acceptable rover module names
     std::vector<std::string> rover_module_names = {"front_left", "front_right", "mid_left", "mid_right", "rear_left", "rear_right"};
@@ -325,7 +332,7 @@ void RoverController::configure_drive_modules()
             module.y_position = -wheelbase / 2;
         }
 
-        if (include_steering_joint = true)
+        if (include_steering_joint)
         {
             const auto steering_joint_name = std::find_if(
             steering_joint_names.cbegin(), steering_joint_names.cend(),
@@ -341,7 +348,7 @@ void RoverController::configure_drive_modules()
             } 
         }
 
-        if (include_drive_joint = true)
+        if (include_drive_joint)
         {
             const auto drive_joint_name = std::find_if(
             drive_joint_names.cbegin(), drive_joint_names.cend(),
@@ -372,7 +379,7 @@ CallbackReturn RoverController::configure_joint_handle(
     // lookup velocity command interface
     const auto command_handle = std::find_if(
         command_interfaces_.begin(), command_interfaces_.end(),
-        [&joint_name](const auto & interface)
+        [&joint_name, &command_interface_type](const auto & interface)
         {
             return interface.get_prefix_name() == joint_name &&
                 interface.get_interface_name() == command_interface_type;
@@ -401,6 +408,7 @@ CallbackReturn RoverController::configure_joint_handle(
 
     registered_handles.emplace_back(
         JointHandle{std::ref(*state_handle), std::ref(*command_handle)});
+    return CallbackReturn::SUCCESS;
 
     }
     
@@ -409,4 +417,4 @@ CallbackReturn RoverController::configure_joint_handle(
 
 #include <pluginlib/class_list_macros.hpp>
 PLUGINLIB_EXPORT_CLASS(
-  tricycle_controller::RoverController, controller_interface::ControllerInterface)
+  rover_controller::RoverController, controller_interface::ControllerInterface)

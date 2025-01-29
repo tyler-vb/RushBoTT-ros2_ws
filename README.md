@@ -25,7 +25,7 @@ Here are some ROS2 terminal commands to run once you're in the container:
 ```
 # ROS INITIALIZING (Run this when you start the container)
 rosdep install --from-paths src --ignore-src -r -i -y --rosdistro jazzy
-colcon build --symlink-install --cmake-args -DBUILD_TESTING=ON -DCMAKE_EXPORT_COMPILE_COMMANDS=ON
+colcon build --symlink-install --continue-on-error --cmake-args -DBUILD_TESTING=ON -DCMAKE_EXPORT_COMPILE_COMMANDS=ON 
 
 -----LAUNCH ROBOT DESCRIPTION-----
 . ~/RushBoTT-ros2_ws/install/setup.sh
@@ -53,4 +53,4 @@ sudo add-apt-repository ppa:kisak/kisak-mesa
 sudo apt update
 
 . ~/RushBoTT-ros2_ws/install/setup.sh
-ros2 launch rushbott_rover rover_controller.launch.py
+ros2 launch rushbott_control control.launch.py

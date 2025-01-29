@@ -32,6 +32,7 @@ RUN apt-get update && apt-get install --no-install-recommends -y -o Dpkg::Option
     ros-jazzy-gz-ros2-control \
     ros-jazzy-joint-state-publisher-gui \
     ros-jazzy-tf-transformations \
+    ros-jazzy-hardware-interface-testing \
     # utils
     python3-pip \
     python-is-python3 \

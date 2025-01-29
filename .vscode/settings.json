@@ -90,6 +90,8 @@
         "future": "cpp",
         "shared_mutex": "cpp",
         "stdfloat": "cpp",
-        "csignal": "cpp"
-    }
+        "csignal": "cpp",
+        "regex": "cpp"
+    },
+    "C_Cpp.errorSquiggles": "enabled"
 }

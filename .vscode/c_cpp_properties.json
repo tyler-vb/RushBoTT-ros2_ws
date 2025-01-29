@@ -3,13 +3,14 @@
         {
             "browse": {
                 "databaseFilename": "${default}",
-                "limitSymbolsToIncludedHeaders": true
+                "limitSymbolsToIncludedHeaders": false
             },
             "includePath": [
                 "RushBoTT_ros2_ws/**",
                 "/opt/ros/jazzy/include/**",
                 "/usr/include/**",
-                "${workspaceFolder}/src/rushbott_common/rover_controller/include"
+                "${workspaceFolder}/src/rushbott_common/rover_controller/include",
+                "${workspaceFolder}/build/rover_controller/include"
             ],
             "name": "ROS",
             "intelliSenseMode": "gcc-x64",

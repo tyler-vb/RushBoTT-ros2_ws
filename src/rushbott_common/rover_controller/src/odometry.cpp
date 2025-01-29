@@ -16,9 +16,9 @@
  * Author: Tony Najjar
  */
 
-#include "tricycle_controller/odometry.hpp"
+#include "rover_controller/odometry.hpp"
 
-namespace tricycle_controller 
+namespace rover_controller 
 {
 Odometry::Odometry(size_t velocity_rolling_window_size)
 : x_(0.0),
@@ -118,4 +118,4 @@ void Odometry::resetAccumulators()
   angular_accumulator_ = RollingMeanAccumulator(velocity_rolling_window_size_);
 }
 
-}  // namespace tricycle_controller
+}  // namespace rover_controller

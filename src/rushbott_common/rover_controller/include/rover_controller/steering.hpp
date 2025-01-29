@@ -22,8 +22,8 @@ public:
         const double wheel_radius,
         const std::function<void(const std::string&)>& logger);
 
-    std::vector<double> getDesiredVels() const { return desired_vels_; }
-    std::vector<double> getDesiredAngles() const { return desired_angles_; }
+    std::vector<double> get_desired_vels() const { return desired_vels_; }
+    std::vector<double> get_desired_angles() const { return desired_angles_; }
 
     // Update drive module states based on body velocity and angular velocity
     void update(double body_v, double body_w);
@@ -31,7 +31,7 @@ public:
 private:
 
     // Calculate the COT (Center of Turning) limit
-    const double setCOTLimit();
+    const double set_COT_limit();
 
     const std::vector<DriveModule> modules_;         // List of drive modules
     const double vel_limit_;                         // Velocity limit

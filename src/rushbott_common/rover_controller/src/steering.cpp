@@ -13,12 +13,13 @@ SteeringController::SteeringController(
       angle_limit_(angle_limit),
       logger_(logger),
       wheel_radius_(wheel_radius),
-      COT_limit_(setCOTLimit())
+      COT_limit_(set_COT_limit())
 {
 }
 
 // Calculate the Center of Turning (COT) limit
-const double SteeringController::setCOTLimit() {
+const double SteeringController::set_COT_limit() 
+{
     double limit = 0;
     for (const auto& module : modules_) {
         double current_limit = std::abs(module.x_position / std::tan(angle_limit_) + module.y_position);
@@ -30,26 +31,32 @@ const double SteeringController::setCOTLimit() {
 }
 
 // Update drive module states
-void SteeringController::update(double body_v, double body_w) {
-    std::vector<double> drive_velocities(modules_.size(), NAN);
-    std::vector<double> steering_angles(modules_.size(), NAN);
+void SteeringController::update(double body_v, double body_w) 
+{
+    std::vector<double> drive_velocities;
+    std::vector<double> steering_angles;
 
     double scale = 1.0;
 
-    for (const auto& module : modules_) {
+    for (const auto& module : modules_) 
+    {
         double drive_velocity = 0.0;
         double steering_angle = 0.0;
 
-        if (std::abs(body_v) < 1e-6) {
+        if (std::abs(body_v) < 1e-6) 
+        {
             // Skip when body_v is effectively zero
             continue;
         }
 
-        else if (std::abs(body_w) < 1e-6) {
+        else if (std::abs(body_w) < 1e-6) 
+        {
             drive_velocity = body_v / wheel_radius_;
             scale = std::min(vel_limit_ / std::abs(drive_velocity), scale);
 
-        } else {
+        } 
+        else 
+        {
             double center_of_turning = std::clamp(body_v/body_w,-COT_limit_,COT_limit_);
             body_w = body_v/center_of_turning;
 
@@ -64,16 +71,19 @@ void SteeringController::update(double body_v, double body_w) {
             scale = std::min(vel_limit_ / std::abs(drive_velocity), scale);
         }
 
-        if (module.drive_index != -1) {
-            drive_velocities[module.drive_index] = drive_velocity;
+        if (module.drive_joint_name.empty() == false) 
+        {
+            drive_velocities.push_back(drive_velocity);
         }
 
-        if (module.steering_index != -1) {
-            steering_angles[module.steering_index] = steering_angle;
+        if (module.steering_joint_name.empty() == false) 
+        {
+            steering_angles.push_back(steering_angle);
         }
     }
 
-    for (auto& velocity : drive_velocities) {
+    for (auto& velocity : drive_velocities) 
+    {
         velocity *= scale;
     }
 

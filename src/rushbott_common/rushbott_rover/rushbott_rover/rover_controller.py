@@ -20,7 +20,6 @@ from rclpy.qos import QoSProfile, ReliabilityPolicy, HistoryPolicy, DurabilityPo
 
 import tf2_ros
 from tf2_ros.static_transform_broadcaster import StaticTransformBroadcaster
-from tf_transformations import quaternion_from_euler
 
 from nav_msgs.msg import Odometry
 from tf2_geometry_msgs import TransformStamped
@@ -280,7 +279,7 @@ class RoverController(Node):
             f'and drive link: "{drive_joints[right_rear.drive_index]}" ' +
             f'and position: ["{right_rear.x_position}", "{right_rear.y_position}"]'
         )
-        return drive_modules\
+        return drive_modules
     
     def cmd_vel_callback(self, msg: Twist):
         if msg == None:

@@ -197,6 +197,10 @@ CallbackReturn RoverController::on_configure(const rclcpp_lifecycle::State & /*p
     steering_controller_.set_limits(params_.vel_limit, params_.angle_limit);
     steering_controller_.set_wheel_radius(params_.wheel_radius);
 
+    odometry_.set_drive_modules(drive_modules_);
+    odometry_.set_velocity_rolling_window_size(static_cast<size_t>(params_.velocity_rolling_window_size));
+    odometry_.set_wheel_radius(params_.wheel_radius);
+
     cmd_vel_timeout_ = std::chrono::milliseconds{params_.cmd_vel_timeout};
 
     if (!reset())

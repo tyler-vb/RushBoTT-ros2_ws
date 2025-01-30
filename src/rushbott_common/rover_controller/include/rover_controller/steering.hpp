@@ -27,7 +27,7 @@ class SteeringController
         void set_wheel_radius(double wheel_radius);
         void set_drive_modules(std::vector<DriveModule> &);
 
-        double get_COT();
+        double get_COT() const { return center_of_turning_; }
 
     private:
         // Calculate the COT (Center of Turning) limit

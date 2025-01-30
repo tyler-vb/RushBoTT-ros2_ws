@@ -6,6 +6,8 @@
 #include <rclcpp/duration.hpp>
 #include "rcpputils/rolling_mean_accumulator.hpp"
 
+#include "rover_controller/drive_module.hpp"
+
 namespace rover_controller
 {
 class Odometry
@@ -15,23 +17,24 @@ class Odometry
     public:
         explicit Odometry(size_t velocity_rolling_window_size = 10);
 
-        bool update(double left_vel, double right_vel, const rclcpp::Duration & dt);
-        void updateOpenLoop(double linear, double angular, const rclcpp::Duration & dt);
-        void resetOdometry();
+        bool update(std::vector<double> wheel_positions, double center_of_turning, const rclcpp::Duration & dt);
+        void update_from_velocity(std::vector<double> wheel_speeds, double center_of_turning, const rclcpp::Duration & dt);
+        void reset_odometry();
 
-        double getX() const { return x_; }
-        double getY() const { return y_; }
-        double getHeading() const { return heading_; }
-        double getLinear() const { return linear_; }
-        double getAngular() const { return angular_; }
+        double get_X() const { return x_; }
+        double get_Y() const { return y_; }
+        double get_heading() const { return heading_; }
+        double get_linear_speed() const { return linear_speed_; }
+        double get_angular_speed() const { return angular_speed_; }
 
-        void setWheelParams(double wheel_separation, double wheel_radius);
-        void setVelocityRollingWindowSize(size_t velocity_rolling_window_size);
+        void set_wheel_radius(double wheel_radius);
+        void set_drive_modules(std::vector<DriveModule> & drive_modules);
+        void set_velocity_rolling_window_size(size_t velocity_rolling_window_size);
 
     private:
-        void integrateRungeKutta2(double linear, double angular);
-        void integrateExact(double linear, double angular);
-        void resetAccumulators();
+        void integrate_runge_kutta_2(double ds, double dtheta);
+        void integrate_exact(double ds, double dtheta);
+        void reset_accumulators();
 
         // Current pose:
         double x_;        //   [m]
@@ -39,12 +42,14 @@ class Odometry
         double heading_;  // [rad]
 
         // Current velocity:
-        double linear_;   //   [m/s]
-        double angular_;  // [rad/s]
+        double linear_speed_;   //   [m/s]
+        double angular_speed_;  // [rad/s]
 
         // Wheel kinematic parameters [m]:
-        double wheelbase_;
         double wheel_radius_;
+
+        std::vector<DriveModule> modules_;
+        std::vector<double> old_wheel_positions_;
 
         // Rolling mean accumulators for the linear and angular velocities:
         size_t velocity_rolling_window_size_;

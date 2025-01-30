@@ -7,6 +7,7 @@
 #include <string>
 
 #include "rover_controller/drive_module.hpp"
+#include "rclcpp/logging.hpp"
 
 namespace rover_controller
 {
@@ -20,14 +21,15 @@ class SteeringController
         std::vector<double> get_desired_angles() const { return desired_angles_; }
 
         // Update drive module states based on body velocity and angular velocity
-        void update(double body_v, double body_w);
+        void update(double body_v, double body_w, const rclcpp::Logger& logger);
 
         void set_limits(double vel_limit, double angle_limit);
         void set_wheel_radius(double wheel_radius);
         void set_drive_modules(std::vector<DriveModule> &);
 
-    private:
+        double get_COT();
 
+    private:
         // Calculate the COT (Center of Turning) limit
         void set_COT_limit();
 
@@ -38,6 +40,7 @@ class SteeringController
 
         std::vector<double> desired_vels_;
         std::vector<double> desired_angles_;
+        double center_of_turning_;
         double COT_limit_;                           // Center of Turning limit
 };
 

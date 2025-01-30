@@ -62,6 +62,11 @@ rover_controller:
     default_value: true,
     description: "Publish transformation between ``odom_frame_id`` and ``base_frame_id``.",
   }
+  odom_only_twist: {
+    type: bool,
+    default_value: false,
+    description: "for doing the pose integration in separate node.",
+  }
   cmd_vel_timeout: {
     type: int,
     default_value: 500, # seconds

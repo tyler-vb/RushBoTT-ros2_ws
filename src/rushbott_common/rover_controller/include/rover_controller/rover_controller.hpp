@@ -57,16 +57,21 @@ public:
     CallbackReturn on_error(const rclcpp_lifecycle::State & previous_state) override;
 
 private:
-    struct JointHandle
+    struct DriveJointHandle
     {
     std::reference_wrapper<const hardware_interface::LoanedStateInterface> state;
     std::reference_wrapper<hardware_interface::LoanedCommandInterface> command;
     };
 
+    struct SteeringJointHandle
+    {
+    std::reference_wrapper<hardware_interface::LoanedCommandInterface> command;
+    };
+
     std::vector<DriveModule> drive_modules_;
 
-    std::vector<JointHandle> registered_drive_handles_;
-    std::vector<JointHandle> registered_steering_handles_;
+    std::vector<DriveJointHandle> registered_drive_handles_;
+    std::vector<SteeringJointHandle> registered_steering_handles_;
 
     Odometry odometry_;
 
@@ -79,6 +84,11 @@ private:
     std::shared_ptr<rclcpp::Publisher<nav_msgs::msg::Odometry>> odometry_publisher_ = nullptr;
     std::shared_ptr<realtime_tools::RealtimePublisher<nav_msgs::msg::Odometry>>
         realtime_odometry_publisher_ = nullptr;
+
+    std::shared_ptr<rclcpp::Publisher<tf2_msgs::msg::TFMessage>> odometry_transform_publisher_ =
+        nullptr;
+    std::shared_ptr<realtime_tools::RealtimePublisher<tf2_msgs::msg::TFMessage>>
+        realtime_odometry_transform_publisher_ = nullptr;
 
     std::chrono::milliseconds cmd_vel_timeout_{500};
 
@@ -94,8 +104,13 @@ private:
 
     void configure_drive_modules();
 
-    CallbackReturn configure_joint_handle(
-        const std::string & joint_name, std::vector<JointHandle> & registered_joint_handles, const char * command_interface_type);
+    CallbackReturn configure_drive_joint_handle(
+        const std::string & joint_name, std::vector<DriveJointHandle> & registered_joint_handles);
+
+    CallbackReturn configure_steering_joint_handle(
+        const std::string & joint_name, std::vector<SteeringJointHandle> & registered_joint_handles);
+
+    std::vector<double> read_joint_states();
 
     void write_to_joints(
         const std::vector<double> &desired_vels, const std::vector<double> &desired_angles);

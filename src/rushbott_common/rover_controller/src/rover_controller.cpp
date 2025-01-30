@@ -86,6 +86,8 @@ InterfaceConfiguration RoverController::state_interface_configuration() const
 controller_interface::return_type RoverController::update(
     const rclcpp::Time & time, const rclcpp::Duration & period)
 {
+    auto logger = get_node()->get_logger();
+
     if (get_lifecycle_state().id() == State::PRIMARY_STATE_INACTIVE)
     {
             if (!is_halted)
@@ -101,7 +103,7 @@ controller_interface::return_type RoverController::update(
                                         { last_command_msg_ = msg; });
     if (last_command_msg_ == nullptr)
     {
-            RCLCPP_WARN(get_node()->get_logger(), "Velocity message received was a nullptr.");
+            RCLCPP_WARN(logger, "Velocity message received was a nullptr.");
             return controller_interface::return_type::ERROR;
     }
 
@@ -112,14 +114,66 @@ controller_interface::return_type RoverController::update(
         last_command_msg_->twist.linear.x = 0.0;
         last_command_msg_->twist.angular.z = 0.0;
     }
+    else if (
+        !std::isfinite(last_command_msg_->twist.linear.x) ||
+        !std::isfinite(last_command_msg_->twist.angular.z))
+    {
+        RCLCPP_WARN_SKIPFIRST_THROTTLE(
+        logger, *get_node()->get_clock(), cmd_vel_timeout_.count(),
+        "Command message contains NaNs. Not updating reference interfaces.");
+    }
 
-    // without affecting the stored twist command
     TwistStamped command = *last_command_msg_;
     double & linear_command = command.twist.linear.x;
     double & angular_command = command.twist.angular.z;
+    std::vector<double> wheel_speeds = read_joint_states();
 
-    // update steering controller
-    steering_controller_.update(linear_command, angular_command);
+    for (const auto& speed : wheel_speeds) 
+    {
+        if (std::isnan(speed)) 
+        {
+            RCLCPP_ERROR(get_node()->get_logger(), "Could not read wheel state value");
+            return controller_interface::return_type::ERROR;
+        }
+    }
+
+    // update odometry and steering, we update steering first since center of turning is open loop
+    steering_controller_.update(linear_command, angular_command, logger);
+    odometry_.update(wheel_speeds, steering_controller_.get_COT(), period);
+
+    tf2::Quaternion orientation;
+    orientation.setRPY(0.0, 0.0, odometry_.get_heading());
+
+    if (realtime_odometry_publisher_->trylock())
+        {
+            auto & odometry_message = realtime_odometry_publisher_->msg_;
+            odometry_message.header.stamp = time;
+            if (!params_.odom_only_twist)
+            {
+            odometry_message.pose.pose.position.x = odometry_.get_X();
+            odometry_message.pose.pose.position.y = odometry_.get_Y();
+            odometry_message.pose.pose.orientation.x = orientation.x();
+            odometry_message.pose.pose.orientation.y = orientation.y();
+            odometry_message.pose.pose.orientation.z = orientation.z();
+            odometry_message.pose.pose.orientation.w = orientation.w();
+            }
+            odometry_message.twist.twist.linear.x = odometry_.get_linear_speed();
+            odometry_message.twist.twist.angular.z = odometry_.get_angular_speed();
+            realtime_odometry_publisher_->unlockAndPublish();
+        }
+
+    if (params_.enable_odom_tf && realtime_odometry_transform_publisher_->trylock())
+    {
+        auto & transform = realtime_odometry_transform_publisher_->msg_.transforms.front();
+        transform.header.stamp = time;
+        transform.transform.translation.x = odometry_.get_X();
+        transform.transform.translation.y = odometry_.get_Y();
+        transform.transform.rotation.x = orientation.x();
+        transform.transform.rotation.y = orientation.y();
+        transform.transform.rotation.z = orientation.z();
+        transform.transform.rotation.w = orientation.w();
+        realtime_odometry_transform_publisher_->unlockAndPublish();
+    }
 
     write_to_joints(steering_controller_.get_desired_vels(), steering_controller_.get_desired_angles());
 
@@ -154,7 +208,7 @@ CallbackReturn RoverController::on_configure(const rclcpp_lifecycle::State & /*p
     received_velocity_msg_ptr_.set([this](std::shared_ptr<TwistStamped> & stored_value)
                                     { stored_value = last_command_msg_; });
 
-  // initialize command subscriber
+    // initialize command subscriber
     velocity_command_subscriber_ = get_node()->create_subscription<TwistStamped>(
         DEFAULT_COMMAND_TOPIC, rclcpp::SystemDefaultsQoS(),
         [this](const std::shared_ptr<TwistStamped> msg) -> void
@@ -176,21 +230,62 @@ CallbackReturn RoverController::on_configure(const rclcpp_lifecycle::State & /*p
                                         { stored_value = std::move(msg); });
         });
 
+    // initialize odometry publisher and message
+    odometry_publisher_ = get_node()->create_publisher<nav_msgs::msg::Odometry>(
+        DEFAULT_ODOMETRY_TOPIC, rclcpp::SystemDefaultsQoS());
+    realtime_odometry_publisher_ =
+        std::make_shared<realtime_tools::RealtimePublisher<nav_msgs::msg::Odometry>>(
+        odometry_publisher_);
+
+    auto & odometry_message = realtime_odometry_publisher_->msg_;
+    odometry_message.header.frame_id = params_.odom_frame_id;
+    odometry_message.child_frame_id = params_.base_frame_id;
+
+    // initialize odom values zeros
+    odometry_message.twist =
+        geometry_msgs::msg::TwistWithCovariance(rosidl_runtime_cpp::MessageInitialization::ALL);
+
+    constexpr size_t NUM_DIMENSIONS = 6;
+    for (size_t index = 0; index < 6; ++index)
+    {
+        // 0, 7, 14, 21, 28, 35
+        const size_t diagonal_index = NUM_DIMENSIONS * index + index;
+        odometry_message.pose.covariance[diagonal_index] = params_.pose_covariance_diagonal[index];
+        odometry_message.twist.covariance[diagonal_index] = params_.twist_covariance_diagonal[index];
+    }
+
+    // initialize transform publisher and message
+    if (params_.enable_odom_tf)
+    {
+        odometry_transform_publisher_ = get_node()->create_publisher<tf2_msgs::msg::TFMessage>(
+        DEFAULT_TRANSFORM_TOPIC, rclcpp::SystemDefaultsQoS());
+        realtime_odometry_transform_publisher_ =
+        std::make_shared<realtime_tools::RealtimePublisher<tf2_msgs::msg::TFMessage>>(
+            odometry_transform_publisher_);
+
+        // keeping track of odom and base_link transforms only
+        auto & odometry_transform_message = realtime_odometry_transform_publisher_->msg_;
+        odometry_transform_message.transforms.resize(1);
+        odometry_transform_message.transforms.front().header.frame_id = params_.odom_frame_id;
+        odometry_transform_message.transforms.front().child_frame_id = params_.base_frame_id;
+    }
+
+    // Create odom reset service
+    reset_odom_service_ = get_node()->create_service<std_srvs::srv::Empty>(
+        DEFAULT_RESET_ODOM_SERVICE, std::bind(
+                                    &RoverController::reset_odometry, this, std::placeholders::_1,
+                                    std::placeholders::_2, std::placeholders::_3));
 
     return CallbackReturn::SUCCESS;
 }
 
 CallbackReturn RoverController::on_activate(const rclcpp_lifecycle::State &)
 {
-    RCLCPP_INFO(get_node()->get_logger() command_interfaces_[0].get_prefix_name())
-    RCLCPP_INFO(get_node()->get_logger(), command_interfaces_[0].get_interface_name())
-    RCLCPP_INFO(get_node()->get_logger(), "On activate: Initialize Joints");
-
     for (auto & module : drive_modules_)
     {
         if (module.drive_joint_name.empty() == false)
         {
-            const auto result = configure_joint_handle(module.drive_joint_name, registered_drive_handles_, HW_IF_VELOCITY);
+            const auto result = configure_drive_joint_handle(module.drive_joint_name, registered_drive_handles_);
             if (result == CallbackReturn::ERROR)
             {
                 return CallbackReturn::ERROR;
@@ -198,7 +293,7 @@ CallbackReturn RoverController::on_activate(const rclcpp_lifecycle::State &)
         }
         if (module.steering_joint_name.empty() == false)
         {
-            const auto result = configure_joint_handle(module.steering_joint_name, registered_steering_handles_, HW_IF_POSITION);
+            const auto result = configure_steering_joint_handle(module.steering_joint_name, registered_steering_handles_);
             if (result == CallbackReturn::ERROR)
             {
                 return CallbackReturn::ERROR;
@@ -245,6 +340,15 @@ CallbackReturn RoverController::on_error(const rclcpp_lifecycle::State &)
     return CallbackReturn::SUCCESS;
 }
 
+void RoverController::reset_odometry(
+    const std::shared_ptr<rmw_request_id_t> /*request_header*/,
+    const std::shared_ptr<std_srvs::srv::Empty::Request> /*req*/,
+    std::shared_ptr<std_srvs::srv::Empty::Response> /*res*/)
+{
+    odometry_.reset_odometry();
+    RCLCPP_INFO(get_node()->get_logger(), "Odometry successfully reset");
+}
+
 bool RoverController::reset()
 {
 
@@ -270,7 +374,6 @@ void RoverController::halt()
 void RoverController::write_to_joints(
     const std::vector<double> &desired_vels, const std::vector<double> &desired_angles)
 {
-
     for (size_t i = 0; i < registered_drive_handles_.size(); i++)
     {
         registered_drive_handles_[i].command.get().set_value(desired_vels[i]);
@@ -280,6 +383,18 @@ void RoverController::write_to_joints(
     {  
         registered_steering_handles_[i].command.get().set_value(desired_angles[i]);
     }
+}
+
+std::vector<double> RoverController::read_joint_states()
+{
+    std::vector<double> wheel_speeds(registered_drive_handles_.size(), 0.0);
+
+    for (size_t i = 0; i < registered_drive_handles_.size(); i++)
+    {
+        wheel_speeds[i] = registered_drive_handles_[i].state.get().get_value();
+    }
+
+    return wheel_speeds;
 }
 
 void RoverController::configure_drive_modules()
@@ -301,35 +416,35 @@ void RoverController::configure_drive_modules()
 
         if (rover_module_names[i] == "front_left")
         {
-            module.x_position = track_width / 2;
-            module.y_position = wheelbase / 2;
+            module.y_position = track_width / 2;
+            module.x_position = wheelbase / 2;
         }
         else if (rover_module_names[i] == "front_right")
         {
-            module.x_position = -track_width / 2;
-            module.y_position = wheelbase / 2;
+            module.y_position = -track_width / 2;
+            module.x_position = wheelbase / 2;
         }
         else if (rover_module_names[i] == "mid_left")
         {
-            module.x_position = track_width / 2;
-            module.y_position = 0;
+            module.y_position = track_width / 2;
+            module.x_position = 0;
             include_steering_joint = false;
         }
         else if (rover_module_names[i] == "mid_right")
         {
-            module.x_position = -track_width / 2;
-            module.y_position = 0;
+            module.y_position = -track_width / 2;
+            module.x_position = 0;
             include_steering_joint = false;
         }
         else if (rover_module_names[i] == "rear_left")
         {
-            module.x_position = track_width / 2;
-            module.y_position = -wheelbase / 2;
+            module.y_position = track_width / 2;
+            module.x_position = -wheelbase / 2;
         }
         else if (rover_module_names[i] == "rear_right")
         {
-            module.x_position = -track_width / 2;
-            module.y_position = -wheelbase / 2;
+            module.y_position = -track_width / 2;
+            module.x_position = -wheelbase / 2;
         }
 
         if (include_steering_joint)
@@ -359,7 +474,7 @@ void RoverController::configure_drive_modules()
 
             if (drive_joint_name != drive_joint_names.cend())
             {
-                module.steering_joint_name = *drive_joint_name;
+                module.drive_joint_name = *drive_joint_name;
                 module.name = rover_module_names[i];
             }             
         }  
@@ -371,18 +486,18 @@ void RoverController::configure_drive_modules()
     }
 }
 
-CallbackReturn RoverController::configure_joint_handle(
-    const std::string & joint_name, std::vector<JointHandle> & registered_handles, const char * command_interface_type)
+CallbackReturn RoverController::configure_drive_joint_handle(
+    const std::string & joint_name, std::vector<DriveJointHandle> & registered_handles)
 {
     auto logger = get_node()->get_logger();
 
     // lookup velocity command interface
     const auto command_handle = std::find_if(
         command_interfaces_.begin(), command_interfaces_.end(),
-        [&joint_name, &command_interface_type](const auto & interface)
+        [&joint_name](const auto & interface)
         {
             return interface.get_prefix_name() == joint_name &&
-                interface.get_interface_name() == command_interface_type;
+            interface.get_interface_name() == HW_IF_VELOCITY;
         });
         
     if (command_handle == command_interfaces_.end())
@@ -391,7 +506,7 @@ CallbackReturn RoverController::configure_joint_handle(
         return controller_interface::CallbackReturn::ERROR;
     }
 
-            // lookup position state interface
+    // lookup position state interface
     const auto state_handle = std::find_if(
         state_interfaces_.cbegin(), state_interfaces_.cend(),
         [&joint_name](const auto & interface)
@@ -407,11 +522,35 @@ CallbackReturn RoverController::configure_joint_handle(
     }
 
     registered_handles.emplace_back(
-        JointHandle{std::ref(*state_handle), std::ref(*command_handle)});
+        DriveJointHandle{std::ref(*state_handle), std::ref(*command_handle)});
     return CallbackReturn::SUCCESS;
+} 
 
+CallbackReturn RoverController::configure_steering_joint_handle(
+    const std::string & joint_name, std::vector<SteeringJointHandle> & registered_handles)
+{
+    auto logger = get_node()->get_logger();
+
+    // lookup velocity command interface
+    const auto command_handle = std::find_if(
+        command_interfaces_.begin(), command_interfaces_.end(),
+        [&joint_name](const auto & interface)
+        {   
+            return interface.get_prefix_name() == joint_name &&
+            interface.get_interface_name() == HW_IF_POSITION;            
+        });
+        
+    if (command_handle == command_interfaces_.end())
+    {
+        RCLCPP_ERROR(logger, "Unable to obtain joint command handle for %s", joint_name.c_str());
+        return controller_interface::CallbackReturn::ERROR;
     }
-    
+
+    registered_handles.emplace_back(
+        SteeringJointHandle{std::ref(*command_handle)});
+    return CallbackReturn::SUCCESS;
+} 
+        
 
 }  // namespace rover_controller
 

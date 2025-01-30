@@ -29,8 +29,11 @@ def generate_launch_description():
         emulate_tty=True,
         prefix='xterm -hold -e',
         parameters=[{
-                'stamped': False,
-            }],
+            'stamped': True,
+        }],
+        remappings=[(
+            '/cmd_vel', '/rover_controller/cmd_vel'
+        )]
     )   
 
     # Create launch description and add actions

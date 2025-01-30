@@ -17,10 +17,12 @@ void SteeringController::set_limits(double vel_limit, double angle_limit)
     angle_limit_ = angle_limit;
     set_COT_limit();
 }
+
 void SteeringController::set_wheel_radius(double wheel_radius)
 {
     wheel_radius_ = wheel_radius;
 }
+
 void SteeringController::set_drive_modules(std::vector<DriveModule> & drive_modules)
 {
     modules_ = drive_modules;
@@ -28,16 +30,17 @@ void SteeringController::set_drive_modules(std::vector<DriveModule> & drive_modu
 void SteeringController::set_COT_limit() 
 {
     for (const auto& module : modules_) {
-        double current_limit = std::abs(module.x_position / std::tan(angle_limit_) + module.y_position);
+        double current_limit = std::fabs(module.x_position / std::tan(angle_limit_) + module.y_position);
         COT_limit_ = std::max(COT_limit_, current_limit);
     }
 }
 
 // Update drive module states
-void SteeringController::update(double body_v, double body_w) 
+void SteeringController::update(double body_v, double body_w, const rclcpp::Logger& logger) 
 {
     std::vector<double> drive_velocities;
     std::vector<double> steering_angles;
+    double center_of_turning = NAN;
 
     double scale = 1.0;
 
@@ -46,21 +49,19 @@ void SteeringController::update(double body_v, double body_w)
         double drive_velocity = 0.0;
         double steering_angle = 0.0;
 
-        if (std::abs(body_v) < 1e-6) 
+        if (fabs(body_v) < 1e-6) 
         {
-            // Skip when body_v is effectively zero
-            continue;
+        // Skip when body_v is effectively zero
         }
 
-        else if (std::abs(body_w) < 1e-6) 
+        else if (fabs(body_w) < 1e-6) 
         {
             drive_velocity = body_v / wheel_radius_;
-            scale = std::min(vel_limit_ / std::abs(drive_velocity), scale);
-
+            scale = std::min(vel_limit_ / fabs(drive_velocity), scale);
         } 
         else 
         {
-            double center_of_turning = std::clamp(body_v/body_w,-COT_limit_,COT_limit_);
+            center_of_turning = std::clamp(body_v/body_w,-COT_limit_,COT_limit_);
             body_w = body_v/center_of_turning;
 
             double distance_from_COT = std::sqrt(
@@ -71,15 +72,15 @@ void SteeringController::update(double body_v, double body_w)
             drive_velocity = std::copysign(distance_from_COT * body_w / wheel_radius_, body_v);
             steering_angle = std::atan(-module.x_position / (center_of_turning - module.y_position));
 
-            scale = std::min(vel_limit_ / std::abs(drive_velocity), scale);
+            scale = std::min(vel_limit_ / fabs(drive_velocity), scale);
         }
 
-        if (module.drive_joint_name.empty() == false) 
+        if (!module.drive_joint_name.empty()) 
         {
             drive_velocities.push_back(drive_velocity);
         }
 
-        if (module.steering_joint_name.empty() == false) 
+        if (!module.steering_joint_name.empty()) 
         {
             steering_angles.push_back(steering_angle);
         }
@@ -92,6 +93,7 @@ void SteeringController::update(double body_v, double body_w)
 
     desired_vels_ = drive_velocities;
     desired_angles_ = steering_angles;
+    center_of_turning_ = center_of_turning;
 }
 
 } // namespace rover_controller

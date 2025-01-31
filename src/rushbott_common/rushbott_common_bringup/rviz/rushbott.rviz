@@ -10,6 +10,7 @@ Panels:
         - /TF1
       Splitter Ratio: 0.5
     Tree Height: 497
+    Tree Height: 497
   - Class: rviz_common/Selection
     Name: Selection
   - Class: rviz_common/Tool Properties
@@ -189,6 +190,8 @@ Visualization Manager:
         All Enabled: true
         base_footprint:
           Value: true
+        base_footprint:
+          Value: true
         base_link:
           Value: true
         front_left_servo:
@@ -205,6 +208,8 @@ Visualization Manager:
           Value: true
         mid_right_wheel:
           Value: true
+        rear_left_wheel:
+          Value: true
         rear_left_servo:
           Value: true
         rear_left_wheel:
@@ -212,6 +217,15 @@ Visualization Manager:
         rear_right_servo:
           Value: true
         rear_right_wheel:
+        rear_right_wheel:
+          Value: true
+        suction_head:
+          Value: true
+        upper_arm:
+          Value: true
+        upper_control:
+          Value: true
+        upper_link:
           Value: true
         suction_head:
           Value: true

@@ -101,7 +101,7 @@
     <!-- Lower Arm 
     <xacro:arm name = "lower_arm" parent_link = "base_link">
         <origin xyz = "0 0 0" rpy = "0 0 0"/>
-        <limit lower = "0" upper = "${pi/2}" velocity = "100" effort = "100"/>
+        <limit lower = "0" upper = "${pi/2}"/>
     </xacro:arm> -->
 
     <!-- Upper Arm 

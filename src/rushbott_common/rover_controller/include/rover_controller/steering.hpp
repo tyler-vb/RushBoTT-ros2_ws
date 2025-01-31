@@ -6,6 +6,7 @@
 #include <vector>
 #include <string>
 
+#include <rclcpp/duration.hpp>
 #include "rover_controller/drive_module.hpp"
 #include "rclcpp/logging.hpp"
 
@@ -26,6 +27,7 @@ class SteeringController
         void set_limits(double vel_limit, double angle_limit);
         void set_wheel_radius(double wheel_radius);
         void set_drive_modules(std::vector<DriveModule> &);
+        void set_rise_time(double rise_time);
 
         double get_COT() const { return center_of_turning_; }
 

@@ -7,6 +7,7 @@ SteeringController::SteeringController()
     vel_limit_(0.0),
     angle_limit_(0.0),
     wheel_radius_(0.0),
+    center_of_turning_(0.0),
     COT_limit_(0.0)
 {
 }
@@ -27,6 +28,7 @@ void SteeringController::set_drive_modules(std::vector<DriveModule> & drive_modu
 {
     modules_ = drive_modules;
 }
+
 void SteeringController::set_COT_limit() 
 {
     for (const auto& module : modules_) {
@@ -68,7 +70,7 @@ void SteeringController::update(double body_v, double body_w, const rclcpp::Logg
                 std::pow(center_of_turning_ - module.y_position, 2) +
                 std::pow(-module.x_position, 2))), center_of_turning_);
 
-            drive_velocity = distance_from_COT * body_w / wheel_radius_, body_v;
+            drive_velocity = distance_from_COT * body_w / wheel_radius_;
             steering_angle = std::atan(-module.x_position / (center_of_turning_ - module.y_position));
 
             scale = std::min(vel_limit_ / fabs(drive_velocity), scale);

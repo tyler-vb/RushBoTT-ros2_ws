@@ -1,12 +1,15 @@
 <?xml version="1.0"?>
 <robot xmlns:xacro="http://www.ros.org/wiki/xacro">
 
-<xacro:macro name="arm" params="name parent_link *origin *limit">
+<xacro:macro name="lower_arm" params="parent_link *origin">
 
 
     <!--Properties-->
-    <xacro:property name = "arm_length" value = "1"/>
-    <xacro:property name = "arm_radius" value = "0.05"/>
+    <xacro:property name = "lower_arm_length" value = "1"/>
+    <xacro:property name = "lower_arm_width" value = "0.10"/>
+
+    <xacro:property name = "upper_arm_length" value = "1"/>
+    <xacro:property name = "upper_arm_width" value = "0.10"/>
 
     <!--Joint Definition-->
     <joint name = "lower_arm_joint" type = "revolute">
@@ -14,7 +17,7 @@
         <child link="lower_arm_link"/>
         <xacro:insert_block name = "origin"/>
         <axis xyz = "0 -1 0"/>
-        <xacro:insert_block name = "limit"/>
+        <limit lower = "${-pi}" upper = "${pi}"/>
     </joint>
 
     <!--Link Definition-->

@@ -132,35 +132,35 @@ controller_interface::return_type RoverController::update(
     {
         if (std::isnan(speed)) 
         {
-            RCLCPP_ERROR(get_node()->get_logger(), "Could not read wheel state value");
+            RCLCPP_ERROR(logger, "Could not read wheel state value");
             return controller_interface::return_type::ERROR;
         }
     }
 
     // update odometry and steering, we update steering first since center of turning is open loop
     steering_controller_.update(linear_command, angular_command, logger);
-    odometry_.update(wheel_speeds, steering_controller_.get_COT(), period);
+    odometry_.update(wheel_speeds, steering_controller_.get_COT(), period, logger);
 
     tf2::Quaternion orientation;
     orientation.setRPY(0.0, 0.0, odometry_.get_heading());
 
     if (realtime_odometry_publisher_->trylock())
+    {
+        auto & odometry_message = realtime_odometry_publisher_->msg_;
+        odometry_message.header.stamp = time;
+        if (!params_.odom_only_twist)
         {
-            auto & odometry_message = realtime_odometry_publisher_->msg_;
-            odometry_message.header.stamp = time;
-            if (!params_.odom_only_twist)
-            {
-            odometry_message.pose.pose.position.x = odometry_.get_X();
-            odometry_message.pose.pose.position.y = odometry_.get_Y();
-            odometry_message.pose.pose.orientation.x = orientation.x();
-            odometry_message.pose.pose.orientation.y = orientation.y();
-            odometry_message.pose.pose.orientation.z = orientation.z();
-            odometry_message.pose.pose.orientation.w = orientation.w();
-            }
-            odometry_message.twist.twist.linear.x = odometry_.get_linear_speed();
-            odometry_message.twist.twist.angular.z = odometry_.get_angular_speed();
-            realtime_odometry_publisher_->unlockAndPublish();
+        odometry_message.pose.pose.position.x = odometry_.get_X();
+        odometry_message.pose.pose.position.y = odometry_.get_Y();
+        odometry_message.pose.pose.orientation.x = orientation.x();
+        odometry_message.pose.pose.orientation.y = orientation.y();
+        odometry_message.pose.pose.orientation.z = orientation.z();
+        odometry_message.pose.pose.orientation.w = orientation.w();
         }
+        odometry_message.twist.twist.linear.x = odometry_.get_linear_speed();
+        odometry_message.twist.twist.angular.z = odometry_.get_angular_speed();
+        realtime_odometry_publisher_->unlockAndPublish();
+    }
 
     if (params_.enable_odom_tf && realtime_odometry_transform_publisher_->trylock())
     {

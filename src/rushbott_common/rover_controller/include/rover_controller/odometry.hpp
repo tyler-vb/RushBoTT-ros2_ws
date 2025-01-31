@@ -7,6 +7,7 @@
 #include "rcpputils/rolling_mean_accumulator.hpp"
 
 #include "rover_controller/drive_module.hpp"
+#include "rclcpp/logging.hpp"
 
 namespace rover_controller
 {
@@ -17,8 +18,8 @@ class Odometry
     public:
         explicit Odometry(size_t velocity_rolling_window_size = 10);
 
-        bool update(std::vector<double> wheel_positions, double center_of_turning, const rclcpp::Duration & dt);
-        void update_from_velocity(std::vector<double> wheel_speeds, double center_of_turning, const rclcpp::Duration & dt);
+        bool update(std::vector<double> wheel_positions, double center_of_turning, const rclcpp::Duration & dt, const rclcpp::Logger& logger);
+        void update_from_velocity(std::vector<double> wheel_speeds, double center_of_turning, const rclcpp::Duration & dt, const rclcpp::Logger& logger);
         void reset_odometry();
 
         double get_X() const { return x_; }

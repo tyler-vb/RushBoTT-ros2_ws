@@ -1,6 +1,6 @@
 controller_manager:
   ros__parameters:
-    update_rate: 100
+    update_rate: 500
 
     joint_state_broadcaster:
       type: joint_state_broadcaster/JointStateBroadcaster
@@ -20,8 +20,8 @@ rover_controller:
     track_width: 0.38
     wheelbase: 0.40
 
-    enable_odom_tf: false
-    use_sim_time: false
+    enable_odom_tf: true
+    use_sim_time: true
     pose_covariance_diagonal: [0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
     twist_covariance_diagonal: [0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
 
@@ -29,6 +29,8 @@ rover_controller:
 
     vel_limit: 10.0
     angle_limit: 0.785
+
+    publish_rate: 200.0
 
 joint_state_broadcaster:
   ros__parameters:

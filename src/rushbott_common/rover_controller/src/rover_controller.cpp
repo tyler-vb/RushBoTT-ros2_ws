@@ -380,12 +380,12 @@ void RoverController::write_to_joints(
 {
     for (size_t i = 0; i < registered_drive_handles_.size(); i++)
     {
-        registered_drive_handles_[i].command.get().set_value(desired_vels[i]);
+        (void)registered_drive_handles_[i].command.get().set_value(desired_vels[i]);
     }
 
     for (size_t i = 0; i < registered_steering_handles_.size(); i++)  
     {  
-        registered_steering_handles_[i].command.get().set_value(desired_angles[i]);
+        (void)registered_steering_handles_[i].command.get().set_value(desired_angles[i]);
     }
 }
 

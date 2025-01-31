@@ -84,9 +84,13 @@ rover_controller:
   }
   vel_limit: {
     type: double,
-    default_value: .NAN,
+    default_value: 10.0,
   }
   angle_limit: {
         type: double,
-        default_value: .NAN,
+        default_value: 1.57,
+  }
+  rise_time: {
+        type: double,
+        default_value: 0.25,
   }

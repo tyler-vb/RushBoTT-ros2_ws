@@ -10,8 +10,7 @@
     "DISPLAY": "${localEnv:DISPLAY}",
     "WAYLAND_DISPLAY": "${localEnv:WAYLAND_DISPLAY}",
     "XDG_RUNTIME_DIR": "${localEnv:XDG_RUNTIME_DIR}",
-    "PULSE_SERVER": "${localEnv:PULSE_SERVER}",
-    "LD_LIBRARY_PATH": "/usr/lib/wsl/lib"
+    "PULSE_SERVER": "${localEnv:PULSE_SERVER}"
   },
   "runArgs": [
     "--network=host",
@@ -22,8 +21,7 @@
   "mounts": [
     "source=${localEnv:HOME}${localEnv:USERPROFILE}/.bash_history,target=/home/ttpidelta/.bash_history,type=bind",
     "source=/mnt/wslg,target=/mnt/wslg,type=bind",
-    "source=/tmp/.X11-unix,target=/tmp/.X11-unix,type=bind",
-    "source=/usr/lib/wsl,target=/usr/lib/wsl,type=bind"
+    "source=/tmp/.X11-unix,target=/tmp/.X11-unix,type=bind"
   ],
   "customizations": {
     "vscode": {

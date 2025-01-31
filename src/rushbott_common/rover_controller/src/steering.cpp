@@ -40,7 +40,6 @@ void SteeringController::update(double body_v, double body_w, const rclcpp::Logg
 {
     std::vector<double> drive_velocities;
     std::vector<double> steering_angles;
-    double center_of_turning = NAN;
 
     double scale = 1.0;
 
@@ -51,26 +50,26 @@ void SteeringController::update(double body_v, double body_w, const rclcpp::Logg
 
         if (fabs(body_v) < 1e-6) 
         {
-        // Skip when body_v is effectively zero
+            center_of_turning_ = NAN;
         }
 
         else if (fabs(body_w) < 1e-6) 
         {
+            center_of_turning_ = NAN;
             drive_velocity = body_v / wheel_radius_;
             scale = std::min(vel_limit_ / fabs(drive_velocity), scale);
         } 
         else 
         {
-            center_of_turning = std::clamp(body_v/body_w,-COT_limit_,COT_limit_);
-            body_w = body_v/center_of_turning;
+            center_of_turning_ = std::clamp(body_v/body_w,-COT_limit_,COT_limit_);
+            body_w = body_v/center_of_turning_;
 
-            double distance_from_COT = std::sqrt(
-                std::pow(center_of_turning - module.y_position, 2) +
-                std::pow(-module.x_position, 2)
-            );
+            double distance_from_COT =  std::copysign((std::sqrt(
+                std::pow(center_of_turning_ - module.y_position, 2) +
+                std::pow(-module.x_position, 2))), center_of_turning_);
 
-            drive_velocity = std::copysign(distance_from_COT * body_w / wheel_radius_, body_v);
-            steering_angle = std::atan(-module.x_position / (center_of_turning - module.y_position));
+            drive_velocity = distance_from_COT * body_w / wheel_radius_, body_v;
+            steering_angle = std::atan(-module.x_position / (center_of_turning_ - module.y_position));
 
             scale = std::min(vel_limit_ / fabs(drive_velocity), scale);
         }
@@ -93,7 +92,6 @@ void SteeringController::update(double body_v, double body_w, const rclcpp::Logg
 
     desired_vels_ = drive_velocities;
     desired_angles_ = steering_angles;
-    center_of_turning_ = center_of_turning;
 }
 
 } // namespace rover_controller

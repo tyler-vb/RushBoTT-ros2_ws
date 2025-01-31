@@ -35,7 +35,7 @@ Odometry::Odometry(size_t velocity_rolling_window_size)
 {
 }
 
-bool Odometry::update(std::vector<double> wheel_positions, double center_of_turning, const rclcpp::Duration & dt)
+bool Odometry::update(std::vector<double> wheel_positions, double center_of_turning, const rclcpp::Duration & dt, const rclcpp::Logger& logger)
 {
     std::vector<double> wheel_speeds(old_wheel_positions_.size(), 0.0);
 
@@ -46,17 +46,17 @@ bool Odometry::update(std::vector<double> wheel_positions, double center_of_turn
 
     for (size_t i = 0; i < wheel_positions.size(); i++)
     {
-        wheel_speeds[i] = (wheel_positions[i]-old_wheel_positions_[i])*dt.seconds();
+        wheel_speeds[i] = (wheel_positions[i]-old_wheel_positions_[i])/dt.seconds();
     }
 
     old_wheel_positions_ = wheel_positions;
 
-    update_from_velocity(wheel_speeds, center_of_turning, dt);
+    update_from_velocity(wheel_speeds, center_of_turning, dt, logger);
 
     return true;
 }
 
-void Odometry::update_from_velocity(std::vector<double> wheel_speeds, double center_of_turning, const rclcpp::Duration & dt)
+void Odometry::update_from_velocity(std::vector<double> wheel_speeds, double center_of_turning, const rclcpp::Duration & dt, const rclcpp::Logger& logger)
 {
     // use wheel speeds and center of turning to find linear and angular body movement
     double body_w = 0.0;
@@ -68,15 +68,19 @@ void Odometry::update_from_velocity(std::vector<double> wheel_speeds, double cen
         {
             body_v += wheel_speed;
         }
-        body_v /= static_cast<double>(wheel_speeds.size());
+        body_v *= wheel_radius_/static_cast<double>(wheel_speeds.size());
     }
     else
     {
         for (size_t i = 0; i < modules_.size(); i++)
         {
-            if (!modules_[i].steering_joint_name.empty())
+            if (!modules_[i].drive_joint_name.empty())
             {
-                body_w =+ wheel_speeds[i]*wheel_radius_/(center_of_turning - modules_[i].y_position);
+                double distance_from_COT = std::copysign(std::sqrt(
+                std::pow(center_of_turning - modules_[i].y_position, 2) +
+                std::pow(-modules_[i].x_position, 2)), center_of_turning);
+
+                body_w += wheel_speeds[i]*wheel_radius_/distance_from_COT;
             }
         }
         body_w /= static_cast<double>(wheel_speeds.size());

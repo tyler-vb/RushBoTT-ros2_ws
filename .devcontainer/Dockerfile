@@ -36,6 +36,9 @@ RUN apt-get update && apt-get install --no-install-recommends -y -o Dpkg::Option
     # utils
     python3-pip \
     python-is-python3 \
+    joystick \
+    jstest-gtk \
+    evtest \
     nano \
     less \
     xterm \

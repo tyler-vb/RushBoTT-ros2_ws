@@ -1,44 +1,53 @@
 <?xml version="1.0"?>
 <robot xmlns:xacro="http://www.ros.org/wiki/xacro">
 
-<xacro:macro name="lower_arm" params="parent_link *origin">
+<xacro:macro name="arm" params="parent_link *origin">
 
 
     <!--Properties-->
-    <xacro:property name = "lower_arm_length" value = "1"/>
-    <xacro:property name = "lower_arm_width" value = "0.10"/>
+    <xacro:property name="lower_arm_length" value="1"/>
+    <xacro:property name="lower_arm_width" value="0.10"/>
 
-    <xacro:property name = "upper_arm_length" value = "1"/>
-    <xacro:property name = "upper_arm_width" value = "0.10"/>
+    <xacro:property name="upper_arm_length" value="1"/>
+    <xacro:property name="upper_arm_width" value="0.10"/>
 
-    <!--Joint Definition-->
-    <joint name = "lower_arm_joint" type = "revolute">
+    <!--Lower Arm-->
+    <joint name="lower_arm_joint" type="revolute">
         <parent link="${parent_link}"/>
         <child link="lower_arm_link"/>
-        <xacro:insert_block name = "origin"/>
-        <axis xyz = "0 -1 0"/>
-        <limit lower = "${-pi}" upper = "${pi}"/>
+        <xacro:insert_block name="origin"/>
+        <axis xyz="0 -1 0"/>
+        <limit lower="${-pi}" upper="${pi}"/>
     </joint>
 
-    <!--Link Definition-->
-    <link name = "lower_arm_link">
+    <link name="lower_arm_link">
         <visual>
-            <origin xyz = "${arm_length/2} 0 0" rpy = "0 ${pi/2} 0"/>
+            <origin xyz="0 0 0" rpy="0 ${pi/2} 0"/>
             <geometry>
-                <cylinder length = "${arm_length}" radius = "${arm_radius}"/>
+                <cylinder length="${lower_arm_length}" radius="${lower_arm_radius}"/>
             </geometry>
             <xacro:insert_block name="material_orange"/>
         </visual>
         <collision>
-            <origin xyz = "${arm_length/2} 0 0" rpy = "0 ${pi/2} 0"/>
+            <origin xyz="0 0 0" rpy ="0 ${pi/2} 0"/>
             <geometry>
-                <cylinder length = "${arm_length}" radius = "${arm_radius}"/>
+                <cylinder length="${lower_arm_length}" radius="${lower_arm_radius}"/>
             </geometry>
         </collision>
-        <xacro:inertial_cylinder_with_pose mass = "1.0" length = "${arm_length}" radius = "${arm_radius}">
-            <origin xyz = "${arm_length/2} 0 0" rpy = "0 ${pi/2} 0"/>
+        <xacro:inertial_cylinder mass="1.0" length="${lower_arm_length}" radius="${lower_arm_radius}">
+            <origin xyz="0 0 0" rpy="0 ${pi/2} 0"/>
         </xacro:inertial_cylinder_with_pose>
     </link>
+
+    <!--Upper Arm-->
+    <joint name="upper_arm_joint" type="revolute">
+        <parent link="lower_arm_link"/>
+        <child link="upper_arm_link"/>
+        <origin xyz="${lower_arm_length} 0 0"/>
+        <axis xyz="0 -1 0"/>
+        <limit lower="${-pi}" upper="${pi}"/>
+    </joint>
+
 
 </xacro:macro>   
 </robot>

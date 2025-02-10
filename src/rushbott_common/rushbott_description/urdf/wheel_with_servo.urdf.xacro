@@ -17,7 +17,7 @@
             <child link='${servo_link_name}'/>
             <xacro:insert_block name='origin'/>
             <axis xyz='0 0 -1'/>
-            <limit lower = "${-pi/2}" upper = "${pi/2}" velocity = "100" effort = "100"/>
+            <limit lower = "${-pi/2}" upper = "${pi/2}" velocity = "10"/>
         </joint>
 
         <link name='${servo_link_name}'>

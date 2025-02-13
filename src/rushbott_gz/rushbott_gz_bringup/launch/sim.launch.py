@@ -49,21 +49,21 @@ def generate_launch_description():
         ]
     )
 
-    clock_bridge = Node(
+    gz_bridge_node = Node(
         package='ros_gz_bridge',
         executable='parameter_bridge',
-        name='clock_bridge',
         output='screen',
         parameters=[{
             'use_sim_time': LaunchConfiguration('use_sim_time')
         }],
         arguments=[
-            ['/clock' + '@rosgraph_msgs/msg/Clock' + '[gz.msgs.Clock']
+            '/clock@rosgraph_msgs/msg/Clock[gz.msgs.Clock',
+             "/scan@sensor_msgs/msg/LaserScan[gz.msgs.LaserScan"
         ]
     )
 
     ld = LaunchDescription(ARGUMENTS)
-    ld.add_action(clock_bridge)
+    ld.add_action(gz_bridge_node)
     ld.add_action(gz_resource_path)
     ld.add_action(gz_sim)
     return ld

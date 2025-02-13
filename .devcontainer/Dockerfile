@@ -39,6 +39,8 @@ RUN apt-get update && apt-get install --no-install-recommends -y -o Dpkg::Option
     ros-jazzy-joint-state-publisher-gui \
     # slam_toolbox
     ros-jazzy-slam-toolbox \
+    ros-jazzy-ros-gz-sim-demos \
+    ros-jazzy-ros-gz-bridge \
     # utils
     python3-pip \
     python-is-python3 \
@@ -66,5 +68,3 @@ USER $USERNAME
 
 # Rosdep update
 RUN rosdep update
-
-

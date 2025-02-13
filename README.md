@@ -39,6 +39,10 @@ ros2 launch rushbott_common_bringup rviz2.launch.py
 . ~/RushBoTT-ros2_ws/install/setup.sh
 ros2 run joint_state_publisher_gui joint_state_publisher_gui 
 
+# LAUNCH SLAM
+. ~/RushBoTT-ros2_ws/install/setup.sh
+ros2 launch rushbott_slam slam.launch.py
+
 # START GAZEBO SIM
 . ~/RushBoTT-ros2_ws/install/setup.sh
 ros2 launch rushbott_gz_bringup sim.launch.py
@@ -50,7 +54,7 @@ ros2 launch rushbott_gz_bringup rushbott_spawn.launch.py
 # LAUNCH GAZEBO AND RVIZ2 W/ RUSHBOTT (Run this one to play w/ robot, use teleop terminal to command robot)
 . ~/RushBoTT-ros2_ws/install/setup.sh
 ros2 launch rushbott_gz_bringup rushbott_gz.launch.py
-```
+
 
 sudo chmod 777 /dev/dri/renderD128
 sudo add-apt-repository ppa:kisak/kisak-mesa

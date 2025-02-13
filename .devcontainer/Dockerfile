@@ -25,8 +25,14 @@ RUN sudo apt update && sudo apt upgrade -y
 
 # Install essential packages
 RUN apt-get update && apt-get install --no-install-recommends -y -o Dpkg::Options::="--force-overwrite" \
-    # ros stuff
+    # ros2
+    ros-jazzy-hardware-interface-testing \
+    ros-jazzy-ros-testing \
+    ros-jazzy-rviz-visual-tools \
+    ros-jazzy-joint-state-publisher-gui \
+    ros-jazzy-tf-transformations \
     ros-jazzy-ros-gz \
+    # ros2_control
     ros-jazzy-ros2-control \
     ros-jazzy-ros2-controllers \
     ros-jazzy-gz-ros2-control \
@@ -36,9 +42,7 @@ RUN apt-get update && apt-get install --no-install-recommends -y -o Dpkg::Option
     # utils
     python3-pip \
     python-is-python3 \
-    joystick \
-    jstest-gtk \
-    evtest \
+    python3-vcstool \
     nano \
     less \
     xterm \

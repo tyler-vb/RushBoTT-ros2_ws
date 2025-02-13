@@ -91,6 +91,11 @@ Visualization Manager:
           Show Axes: false
           Show Trail: false
           Value: true
+        lower_arm:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
         mid_left_wheel:
           Alpha: 1
           Show Axes: false
@@ -117,6 +122,26 @@ Visualization Manager:
           Show Trail: false
           Value: true
         rear_right_wheel:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        suction_head:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        upper_arm:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        upper_control:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        upper_link:
           Alpha: 1
           Show Axes: false
           Show Trail: false
@@ -174,6 +199,8 @@ Visualization Manager:
           Value: true
         front_right_wheel:
           Value: true
+        lower_arm:
+          Value: true
         mid_left_wheel:
           Value: true
         mid_right_wheel:
@@ -186,19 +213,50 @@ Visualization Manager:
           Value: true
         rear_right_wheel:
           Value: true
+        suction_head:
+          Value: true
+        upper_arm:
+          Value: true
+        upper_control:
+          Value: true
+        upper_link:
+          Value: true
       Marker Scale: 1
       Name: TF
       Show Arrows: true
       Show Axes: true
       Show Names: false
       Tree:
-        {}
+        base_footprint:
+          base_link:
+            front_left_servo:
+              front_left_wheel:
+                {}
+            front_right_servo:
+              front_right_wheel:
+                {}
+            lower_arm:
+              upper_control:
+                upper_link:
+                  upper_arm:
+                    suction_head:
+                      {}
+            mid_left_wheel:
+              {}
+            mid_right_wheel:
+              {}
+            rear_left_servo:
+              rear_left_wheel:
+                {}
+            rear_right_servo:
+              rear_right_wheel:
+                {}
       Update Interval: 0
       Value: true
   Enabled: true
   Global Options:
     Background Color: 48; 48; 48
-    Fixed Frame: odom
+    Fixed Frame: base_link
     Frame Rate: 30
   Name: root
   Tools:
@@ -241,7 +299,7 @@ Visualization Manager:
   Views:
     Current:
       Class: rviz_default_plugins/Orbit
-      Distance: 2.134185314178467
+      Distance: 3.5446932315826416
       Enable Stereo Rendering:
         Stereo Eye Separation: 0.05999999865889549
         Stereo Focal Distance: 1
@@ -256,10 +314,10 @@ Visualization Manager:
       Invert Z Axis: false
       Name: Current View
       Near Clip Distance: 0.009999999776482582
-      Pitch: 0.5397968888282776
+      Pitch: 0.4997965097427368
       Target Frame: <Fixed Frame>
       Value: Orbit (rviz)
-      Yaw: 4.123575687408447
+      Yaw: 3.8985753059387207
     Saved: ~
 Window Geometry:
   Displays:
@@ -275,5 +333,5 @@ Window Geometry:
   Views:
     collapsed: false
   Width: 958
-  X: 817
-  Y: -28
+  X: 190
+  Y: 51

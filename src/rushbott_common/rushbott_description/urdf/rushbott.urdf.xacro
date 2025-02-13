@@ -135,4 +135,9 @@
         <limit lower='${-pi/2}' upper='${pi/2}' effort='10' velocity='10'/>
     </xacro:arm_link> -->
 
+    <!-- Lidar -->
+    <xacro:lidar parent_link="base_link">
+        <origin xyz="0.122 0 ${body_height}" rpy="0 0 0"/>
+    </xacro:lidar>
+
 </robot>

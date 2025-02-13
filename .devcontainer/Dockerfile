@@ -24,7 +24,7 @@ RUN apt-get update && \
 RUN sudo apt update && sudo apt upgrade -y
 
 # Install essential packages
-RUN apt-get update && apt-get install --no-install-recommends -y -o Dpkg::Options::="--force-overwrite" \
+RUN sudo apt-get update && sudo apt-get install --no-install-recommends -y -o Dpkg::Options::="--force-overwrite" \
     # ros stuff
     ros-jazzy-ros-gz \
     ros-jazzy-ros2-control \
@@ -32,6 +32,8 @@ RUN apt-get update && apt-get install --no-install-recommends -y -o Dpkg::Option
     ros-jazzy-gz-ros2-control \
     ros-jazzy-joint-state-publisher-gui \
     ros-jazzy-slam-toolbox \
+    ros-jazzy-ros-gz-sim-demos \
+    ros-jazzy-ros-gz-bridge \
     # utils
     python3-pip \
     python-is-python3 \
@@ -58,5 +60,3 @@ USER $USERNAME
 
 # Rosdep update
 RUN rosdep update
-
-

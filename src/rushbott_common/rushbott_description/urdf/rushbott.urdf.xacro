@@ -6,6 +6,7 @@
     <xacro:include filename='wheel_with_servo.urdf.xacro'/>
     <xacro:include filename="arm.urdf.xacro"/>
     <xacro:include filename="upperarm.urdf.xacro"/>
+    <xacro:include filename="lidar.urdf.xacro"/>
 
     <!-- Mechanical properties -->
     <xacro:property name='body_mass'               value='2.300' />
@@ -96,7 +97,7 @@
             <parameters>$(find rushbott_control)/config/control.yaml</parameters>
         </plugin>
     </gazebo>
-
+    
     <!-- Lower Arm -->
     <xacro:arm name = "lower_arm" parent_link = "base_link">
         <origin xyz = "0 0 0" rpy = "0 0 0"/>
@@ -107,5 +108,10 @@
     <xacro:upperarm name = "upper_arm" parent_link = "lower_arm_link">
         <origin xyz = "${arm_length} 0 0" rpy = "0 0 0"/>
     </xacro:upperarm>
+
+    <!-- Lidar -->
+    <xacro:lidar name="lidar" parent_link="base_footprint">
+        <origin xyz="0.122 0 ${body_height}" rpy="0 0 0"/>
+    </xacro:lidar>
 
 </robot>

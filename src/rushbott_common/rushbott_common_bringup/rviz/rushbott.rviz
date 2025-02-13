@@ -7,10 +7,10 @@ Panels:
         - /Global Options1
         - /RobotModel1
         - /RobotModel1/Description Topic1
-        - /TF1
-        - /TF1/Status1
+        - /LaserScan1
+        - /LaserScan1/Topic1
       Splitter Ratio: 0.5
-    Tree Height: 793
+    Tree Height: 410
   - Class: rviz_common/Selection
     Name: Selection
   - Class: rviz_common/Tool Properties
@@ -63,6 +63,80 @@ Visualization Manager:
         Expand Link Details: false
         Expand Tree: false
         Link Tree Style: Links in Alphabetic Order
+        base_footprint:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+        base_link:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        fl_servo:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        fl_wheel:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        fr_servo:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        fr_wheel:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        l_wheel:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        lidar_link:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        lower_arm_link:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        r_wheel:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        rl_servo:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        rl_wheel:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        rr_servo:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        rr_wheel:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        upper_arm_link:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
       Mass Properties:
         Inertia: false
         Mass: false
@@ -104,17 +178,37 @@ Visualization Manager:
       Frame Timeout: 15
       Frames:
         All Enabled: true
+        base_footprint:
+          Value: true
         base_link:
+          Value: true
+        fl_servo:
           Value: true
         fl_wheel:
           Value: true
+        fr_servo:
+          Value: true
         fr_wheel:
+          Value: true
+        l_wheel:
+          Value: true
+        lidar_link:
+          Value: true
+        lower_arm_link:
           Value: true
         odom:
           Value: true
+        r_wheel:
+          Value: true
+        rl_servo:
+          Value: true
         rl_wheel:
           Value: true
+        rr_servo:
+          Value: true
         rr_wheel:
+          Value: true
+        upper_arm_link:
           Value: true
       Marker Scale: 1
       Name: TF
@@ -123,16 +217,64 @@ Visualization Manager:
       Show Names: false
       Tree:
         odom:
-          base_link:
-            fl_wheel:
-              {}
-            fr_wheel:
-              {}
-            rl_wheel:
-              {}
-            rr_wheel:
-              {}
+          base_footprint:
+            base_link:
+              fl_servo:
+                fl_wheel:
+                  {}
+              fr_servo:
+                fr_wheel:
+                  {}
+              l_wheel:
+                {}
+              lidar_link:
+                {}
+              lower_arm_link:
+                upper_arm_link:
+                  {}
+              r_wheel:
+                {}
+              rl_servo:
+                rl_wheel:
+                  {}
+              rr_servo:
+                rr_wheel:
+                  {}
       Update Interval: 0
+      Value: true
+    - Alpha: 1
+      Autocompute Intensity Bounds: true
+      Autocompute Value Bounds:
+        Max Value: 10
+        Min Value: -10
+        Value: true
+      Axis: Z
+      Channel Name: intensity
+      Class: rviz_default_plugins/LaserScan
+      Color: 255; 255; 255
+      Color Transformer: ""
+      Decay Time: 0
+      Enabled: true
+      Invert Rainbow: false
+      Max Color: 255; 255; 255
+      Max Intensity: 4096
+      Min Color: 0; 0; 0
+      Min Intensity: 0
+      Name: LaserScan
+      Position Transformer: ""
+      Selectable: true
+      Size (Pixels): 3
+      Size (m): 0.009999999776482582
+      Style: Flat Squares
+      Topic:
+        Depth: 5
+        Durability Policy: Volatile
+        Filter size: 10
+        History Policy: Keep Last
+        Reliability Policy: Reliable
+        Value: /scan
+      Use Fixed Frame: true
+      Use rainbow: true
       Value: true
   Enabled: true
   Global Options:
@@ -200,4 +342,19 @@ Visualization Manager:
       Value: Orbit (rviz)
       Yaw: 4.003573417663574
     Saved: ~
-
+Window Geometry:
+  Displays:
+    collapsed: false
+  Height: 800
+  Hide Left Dock: false
+  Hide Right Dock: false
+  QMainWindow State: 000000ff00000000fd00000001000000000000019b000002cafc0200000004fb000000100044006900730070006c006100790073010000003b00000223000000c700fffffffb0000001200530065006c0065006300740069006f006e0000000140000000760000005c00fffffffb0000001e0054006f006f006c002000500072006f007000650072007400690065007300000001770000008f0000005c00fffffffb0000000a005600690065007700730100000264000000a1000000a000ffffff0000021d000002ca00000004000000040000000800000008fc0000000100000002000000010000000a0054006f006f006c00730100000000ffffffff0000000000000000
+  Selection:
+    collapsed: false
+  Tool Properties:
+    collapsed: false
+  Views:
+    collapsed: false
+  Width: 958
+  X: 253
+  Y: 0

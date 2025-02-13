@@ -208,8 +208,6 @@ Visualization Manager:
           Value: true
         mid_right_wheel:
           Value: true
-        rear_left_wheel:
-          Value: true
         rear_left_servo:
           Value: true
         rear_left_wheel:

@@ -2,7 +2,7 @@
 <robot xmlns:xacro='http://www.ros.org/wiki/xacro'>
 
     <!--Arm Link-->
-    <xacro:macro name='arm_link' params='name parent_link arm_length arm_mass *origin *limit'>
+    <xacro:macro name='arm_link' params='name parent_link arm_length mesh *origin *limit *inertial'>
 
         <xacro:property name='arm_link_name' value='${name}'/>
         <xacro:property name='arm_joint_name' value='${name}_joint'/>
@@ -36,7 +36,7 @@
     </xacro:macro> 
 
     <!--Arm Link Mimic-->
-    <xacro:macro name='arm_link_mimic' params='name parent_link arm_length arm_mass *origin *limit *mimic'>
+    <xacro:macro name='arm_link_mimic' params='name parent_link arm_length mesh *origin *limit *inertial *mimic'>
 
         <xacro:property name='arm_link_name' value='${name}'/>
         <xacro:property name='arm_joint_name' value='${name}_joint'/>

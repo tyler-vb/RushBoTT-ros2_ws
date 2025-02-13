@@ -108,7 +108,7 @@
     </gazebo>
 
     <!-- Arm --> 
-    <xacro:arm_link name='lower_arm' parent_link='base_link' arm_length='${lower_arm_length}' arm_mass='${lower_arm_mass}'>
+    <!-- <xacro:arm_link name='lower_arm' parent_link='base_link' arm_length='${lower_arm_length}' arm_mass='${lower_arm_mass}'>
         <origin xyz='0 0 0.3' rpy='0 0 0'/>
         <limit lower='0' upper='${pi}' effort='10' velocity='10'/>
     </xacro:arm_link>
@@ -130,7 +130,7 @@
         <mimic joint='upper_control_joint' multiplier='1.0' offset='${pi}'/>
     </xacro:arm_link_mimic>
 
-    <!-- <xacro:arm_link name='suction_head' parent_link='upper_arm' arm_length='${suction_head_length}' arm_mass='${suction_head_mass}'>
+    <xacro:arm_link name='suction_head' parent_link='upper_arm' arm_length='${suction_head_length}' arm_mass='${suction_head_mass}'>
         <origin xyz='${upper_arm_length} 0 0' rpy='0 0 0'/>
         <limit lower='${-pi/2}' upper='${pi/2}' effort='10' velocity='10'/>
     </xacro:arm_link> -->

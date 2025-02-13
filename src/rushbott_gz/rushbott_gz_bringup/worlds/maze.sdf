@@ -1,4 +1,4 @@
-<sdf version='1.10'>
+<sdf version='1.11'>
     <world name='maze'>
         <physics name='5ms' type='ignored'>
             <max_step_size>0.005</max_step_size>

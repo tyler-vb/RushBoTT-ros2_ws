@@ -1,22 +1,22 @@
 <?xml version="1.0"?>
 <robot xmlns:xacro="http://www.ros.org/wiki/xacro">
 
-<xacro:macro name = "lidar" params = "name parent_link *origin">
+<xacro:macro name = "lidar" params = "parent_link *origin">
 
     <!--Joint Definition-->
-    <joint name="${name}_joint" type="fixed">
+    <joint name="lidar_joint" type="fixed">
         <parent link="${parent_link}"/>
-        <child link="${name}_link"/>
-        <xacro:insert_block name = "origin"/>
+        <child link="lidar"/>
+        <xacro:insert_block name="origin"/>
     </joint>
 
     <!--Link Definition-->
-    <link name="${name}_link">
+    <link name="lidar">
         <visual>
             <geometry>
                 <cylinder radius="0.05" length="0.04"/>
             </geometry>
-            <xacro:insert_block name = "material_black"/>
+            <xacro:insert_block name="material_black"/>
         </visual>
         <visual>
             <origin xyz="0 0 -0.05"/>
@@ -33,11 +33,11 @@
         <xacro:inertial_cylinder mass="0.1" length="0.04" radius="0.05"/>
     </link>
 
-    <gazebo reference="${name}_link">
-        <sensor name="${name}_link" type="gpu_lidar">
+    <gazebo reference="lidar">
+        <sensor name="lidar" type="gpu_lidar">
+            <gz_frame_id>lidar</gz_frame_id>
             <always_on>true</always_on>
             <visualize>true</visualize>
-
             <update_rate>10</update_rate>
             <topic>scan</topic>
             <lidar>
@@ -54,10 +54,7 @@
                     <resolution>0.01</resolution>
                 </range>
             </lidar>
-            <plugin name="gz::sim::systems::Sensors" filename = "gz-sim-sensors-system">
-                <output_type>sensor_msgs/LaserScan</output_type>
-                <frame_id>"base_footprint"</frame_id>
-            </plugin>
+            <plugin name="gz::sim::systems::Sensors" filename = "gz-sim-sensors-system"></plugin>
         </sensor>
     </gazebo>
 

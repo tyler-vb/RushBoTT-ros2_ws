@@ -110,7 +110,7 @@
     </xacro:upperarm>
 
     <!-- Lidar -->
-    <xacro:lidar name="lidar" parent_link="base_footprint">
+    <xacro:lidar parent_link="base_link">
         <origin xyz="0.122 0 ${body_height}" rpy="0 0 0"/>
     </xacro:lidar>
 

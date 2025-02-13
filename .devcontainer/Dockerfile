@@ -32,7 +32,6 @@ RUN sudo apt-get update && sudo apt-get install --no-install-recommends -y -o Dp
     ros-jazzy-gz-ros2-control \
     ros-jazzy-joint-state-publisher-gui \
     ros-jazzy-slam-toolbox \
-    ros-jazzy-ros-gz-sim-demos \
     ros-jazzy-ros-gz-bridge \
     # utils
     python3-pip \

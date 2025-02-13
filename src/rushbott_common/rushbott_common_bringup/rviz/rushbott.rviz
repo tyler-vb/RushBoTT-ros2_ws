@@ -93,7 +93,7 @@ Visualization Manager:
           Show Axes: false
           Show Trail: false
           Value: true
-        lower_arm:
+        lidar:
           Alpha: 1
           Show Axes: false
           Show Trail: false
@@ -124,100 +124,6 @@ Visualization Manager:
           Show Trail: false
           Value: true
         rear_right_wheel:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-          Value: true
-        suction_head:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-          Value: true
-        upper_arm:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-          Value: true
-        upper_control:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-          Value: true
-        upper_link:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-          Value: true
-        base_footprint:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-        base_link:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-          Value: true
-        fl_servo:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-          Value: true
-        fl_wheel:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-          Value: true
-        fr_servo:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-          Value: true
-        fr_wheel:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-          Value: true
-        l_wheel:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-          Value: true
-        lidar_link:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-          Value: true
-        lower_arm_link:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-          Value: true
-        r_wheel:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-          Value: true
-        rl_servo:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-          Value: true
-        rl_wheel:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-          Value: true
-        rr_servo:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-          Value: true
-        rr_wheel:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-          Value: true
-        upper_arm_link:
           Alpha: 1
           Show Axes: false
           Show Trail: false
@@ -265,13 +171,7 @@ Visualization Manager:
         All Enabled: true
         base_footprint:
           Value: true
-        base_footprint:
-          Value: true
-        base_footprint:
-          Value: true
         base_link:
-          Value: true
-        fl_servo:
           Value: true
         front_left_servo:
           Value: true
@@ -281,11 +181,13 @@ Visualization Manager:
           Value: true
         front_right_wheel:
           Value: true
-        lower_arm:
+        lidar:
           Value: true
         mid_left_wheel:
           Value: true
         mid_right_wheel:
+          Value: true
+        odom:
           Value: true
         rear_left_servo:
           Value: true
@@ -294,43 +196,6 @@ Visualization Manager:
         rear_right_servo:
           Value: true
         rear_right_wheel:
-        rear_right_wheel:
-          Value: true
-        suction_head:
-          Value: true
-        upper_arm:
-          Value: true
-        upper_control:
-          Value: true
-        upper_link:
-        fl_wheel:
-          Value: true
-        fr_servo:
-          Value: true
-        suction_head:
-        fr_wheel:
-          Value: true
-        l_wheel:
-          Value: true
-        lidar_link:
-          Value: true
-        lower_arm_link:
-          Value: true
-        upper_arm:
-        odom:
-          Value: true
-        r_wheel:
-          Value: true
-        rl_servo:
-          Value: true
-        upper_control:
-        rl_wheel:
-          Value: true
-        rr_servo:
-          Value: true
-        upper_link:
-          Value: true
-        upper_arm_link:
           Value: true
       Marker Scale: 1
       Name: TF
@@ -346,12 +211,8 @@ Visualization Manager:
             front_right_servo:
               front_right_wheel:
                 {}
-            lower_arm:
-              upper_control:
-                upper_link:
-                  upper_arm:
-                    suction_head:
-                      {}
+            lidar:
+              {}
             mid_left_wheel:
               {}
             mid_right_wheel:
@@ -363,29 +224,7 @@ Visualization Manager:
               rear_right_wheel:
                 {}
         odom:
-          base_footprint:
-            base_link:
-              fl_servo:
-                fl_wheel:
-                  {}
-              fr_servo:
-                fr_wheel:
-                  {}
-              l_wheel:
-                {}
-              lidar_link:
-                {}
-              lower_arm_link:
-                upper_arm_link:
-                  {}
-              r_wheel:
-                {}
-              rl_servo:
-                rl_wheel:
-                  {}
-              rr_servo:
-                rr_wheel:
-                  {}
+          {}
       Update Interval: 0
       Value: true
     - Alpha: 1
@@ -398,19 +237,19 @@ Visualization Manager:
       Channel Name: intensity
       Class: rviz_default_plugins/LaserScan
       Color: 255; 255; 255
-      Color Transformer: ""
+      Color Transformer: Intensity
       Decay Time: 0
       Enabled: true
       Invert Rainbow: false
       Max Color: 255; 255; 255
-      Max Intensity: 4096
+      Max Intensity: 0
       Min Color: 0; 0; 0
       Min Intensity: 0
       Name: LaserScan
-      Position Transformer: ""
+      Position Transformer: XYZ
       Selectable: true
       Size (Pixels): 3
-      Size (m): 0.009999999776482582
+      Size (m): 0.10000000149011612
       Style: Flat Squares
       Topic:
         Depth: 5
@@ -468,7 +307,7 @@ Visualization Manager:
   Views:
     Current:
       Class: rviz_default_plugins/Orbit
-      Distance: 3.5446932315826416
+      Distance: 25.134899139404297
       Enable Stereo Rendering:
         Stereo Eye Separation: 0.05999999865889549
         Stereo Focal Distance: 1
@@ -483,27 +322,11 @@ Visualization Manager:
       Invert Z Axis: false
       Name: Current View
       Near Clip Distance: 0.009999999776482582
-      Pitch: 0.4997965097427368
+      Pitch: 1.0897963047027588
       Target Frame: <Fixed Frame>
       Value: Orbit (rviz)
-      Yaw: 3.8985753059387207
+      Yaw: 3.2185745239257812
     Saved: ~
-Window Geometry:
-  Displays:
-    collapsed: false
-  Height: 720
-  Hide Left Dock: false
-  Hide Right Dock: false
-  QMainWindow State: 000000ff00000000fd0000000100000000000001560000027afc0200000004fb000000100044006900730070006c006100790073010000003b0000027a000000c700fffffffb0000001200530065006c0065006300740069006f006e0000000123000000680000005c00fffffffb0000001e0054006f006f006c002000500072006f007000650072007400690065007300000001540000007e0000005c00fffffffb0000000a00560069006500770073000000019d00000118000000a000ffffff000002620000027a00000004000000040000000800000008fc0000000100000002000000010000000a0054006f006f006c00730100000000ffffffff0000000000000000
-  Selection:
-    collapsed: false
-  Tool Properties:
-    collapsed: false
-  Views:
-    collapsed: false
-  Width: 958
-  X: 190
-  Y: 51
 Window Geometry:
   Displays:
     collapsed: false
@@ -518,5 +341,5 @@ Window Geometry:
   Views:
     collapsed: false
   Width: 958
-  X: 253
-  Y: 0
+  X: 513
+  Y: -23

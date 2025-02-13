@@ -5,6 +5,7 @@
     <xacro:include filename='wheel.urdf.xacro'/>
     <xacro:include filename='wheel_with_servo.urdf.xacro'/>
     <xacro:include filename='arm_link.urdf.xacro'/>
+    <xacro:include filename='lidar.urdf.xacro'/>
 
     <!-- Mechanical properties -->
     <xacro:property name='body_mass'               value='2.300' />

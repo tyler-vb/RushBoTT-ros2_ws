@@ -8,6 +8,8 @@ Panels:
         - /RobotModel1
         - /RobotModel1/Description Topic1
         - /TF1
+        - /TF1/Frames1
+        - /TF1/Tree1
         - /LaserScan1
         - /LaserScan1/Topic1
       Splitter Ratio: 0.5
@@ -264,7 +266,7 @@ Visualization Manager:
   Enabled: true
   Global Options:
     Background Color: 48; 48; 48
-    Fixed Frame: base_link
+    Fixed Frame: odom
     Frame Rate: 30
   Name: root
   Tools:
@@ -341,5 +343,5 @@ Window Geometry:
   Views:
     collapsed: false
   Width: 958
-  X: 513
-  Y: -23
+  X: 817
+  Y: 4

@@ -8,11 +8,12 @@ from launch.launch_description_sources import PythonLaunchDescriptionSource
 
 def generate_launch_description():
 
-    rover_controller_spawner = Node(
+    controller_spawner = Node(
         package="controller_manager",
         executable="spawner",
         arguments=[
             'rover_controller',
+            'arm_controller',
             '--controller-manager-timeout',
             '30'
         ],
@@ -30,15 +31,15 @@ def generate_launch_description():
         output='screen',
     )
 
-    rover_controller_callback = RegisterEventHandler(
+    controller_callback = RegisterEventHandler(
         event_handler=OnProcessExit(
             target_action=joint_state_broadcaster_spawner,
-            on_exit=[rover_controller_spawner],
+            on_exit=[controller_spawner]
         )
     )
 
     ld = LaunchDescription()
 
     ld.add_action(joint_state_broadcaster_spawner)
-    ld.add_action(rover_controller_callback)
+    ld.add_action(controller_callback)
     return ld

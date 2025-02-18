@@ -4,15 +4,16 @@
     <xacro:include filename='common_properties.urdf.xacro'/>
     <xacro:include filename='wheel.urdf.xacro'/>
     <xacro:include filename='wheel_with_servo.urdf.xacro'/>
-    <xacro:include filename='arm_link.urdf.xacro'/>
+    <xacro:include filename='arm.urdf.xacro'/>
     <xacro:include filename='lidar.urdf.xacro'/>
 
-    <!-- Mechanical properties -->
+    <!-- Body Properties -->
     <xacro:property name='body_mass'               value='2.300' />
     <xacro:property name='body_length'             value='${50*cm2m}' />
     <xacro:property name='body_width'              value='${30*cm2m}' />
     <xacro:property name='body_height'             value='${20*cm2m}' />
 
+    <!--  Wheel Properties -->
     <xacro:property name='wheel_mass'              value='0.2' />
     <xacro:property name='wheel_radius'            value='${7.5*cm2m}' />
     <xacro:property name='wheel_width'             value='${5*cm2m}' />
@@ -20,25 +21,45 @@
     <xacro:property name='wheelbase'               value='${40*cm2m}' />
     <xacro:property name='track_width'             value='${38*cm2m}' />
 
+    <!-- Servo Properties -->
     <xacro:property name='servo_mass'              value='0.2' />
     <xacro:property name='servo_radius'            value='${3*cm2m}' />
     <xacro:property name='servo_width'             value='${4*cm2m}' />
     <xacro:property name='servo_height'            value='${wheel_radius+3*cm2m}' />
 
-    <xacro:property name='lower_arm_length'        value='${50*cm2m}'/>
+    <!-- Arm Properties -->
+    <xacro:property name='lower_arm_length'        value='${22.85*cm2m}'/>
+    <xacro:property name='lower_arm_width'         value='${4.5*cm2m}'/>
     <xacro:property name='lower_arm_mass'          value='0.05'/>
-    <xacro:property name='upper_control_length'    value='${20*cm2m}'/>
-    <xacro:property name='upper_control_mass'      value='0.05'/>
-    <xacro:property name='upper_link_length'       value='${lower_arm_length}'/>
-    <xacro:property name='upper_link_mass'         value='0.05'/>
-    <xacro:property name='upper_arm_length'        value='${100*cm2m}'/>
-    <xacro:property name='upper_arm_mass'          value='0.05'/>
-    <xacro:property name='suction_head_length'     value='${5*cm2m}'/>
-    <xacro:property name='suction_head_mass'       value='0.05'/>
-    <xacro:property name='arm_radius'              value='${2*cm2m}'/>
-    <xacro:property name='arm_x_position'          value='${2*cm2m}'/>
-    <xacro:property name='arm_y_position'          value='${2*cm2m}'/>
+    <xacro:property name='lower_arm_mesh'          value='package://rushbott_description/meshes/lower_arm.STL'/>
 
+    <xacro:property name='upper_control_length'    value='${9.9*cm2m}'/>
+    <xacro:property name='upper_control_width'     value='${2.5*cm2m}'/>
+    <xacro:property name='upper_control_mass'      value='0.05'/>
+    <xacro:property name='upper_control_mesh'      value='package://rushbott_description/meshes/upper_control.STL'/>
+
+    <xacro:property name='upper_link_length'       value='${lower_arm_length}'/>
+    <xacro:property name='upper_link_width'        value='${2.5*cm2m}'/>
+    <xacro:property name='upper_link_mass'         value='0.05'/>
+    <xacro:property name='upper_link_mesh'         value='package://rushbott_description/meshes/upper_link.STL'/>
+
+    <xacro:property name='upper_arm_length'        value='${33.7*cm2m + upper_control_length}'/>
+    <xacro:property name='upper_arm_width'         value='${3.5*cm2m}'/>
+    <xacro:property name='upper_arm_mass'          value='0.05'/>
+    <xacro:property name='upper_arm_mesh'          value='package://rushbott_description/meshes/upper_arm.STL'/>
+
+    <xacro:property name='suction_base_length'     value='${2.5*cm2m}'/>
+    <xacro:property name='suction_base_width'      value='${10*cm2m}'/>
+    <xacro:property name='suction_base_mass'       value='0.05'/>
+    <xacro:property name='suction_base_mesh'       value='package://rushbott_description/meshes/suction_base.STL'/>
+
+    <xacro:property name='suction_head_length'     value='${1.2*cm2m}'/>
+    <xacro:property name='suction_head_width'      value='${16*cm2m}'/>
+    <xacro:property name='suction_head_mass'       value='0.05'/>
+    <xacro:property name='suction_head_mesh'       value='package://rushbott_description/meshes/suction_head.STL'/>
+
+    <xacro:property name='arm_x_position'          value='${32.3*cm2m - body_length/2}'/>
+    <xacro:property name='arm_z_position'          value='${31.18*cm2m}'/>
 
     <!-- Base footprint --> 
     <link name='base_footprint'/>
@@ -109,32 +130,36 @@
     </gazebo>
 
     <!-- Arm --> 
-    <!-- <xacro:arm_link name='lower_arm' parent_link='base_link' arm_length='${lower_arm_length}' arm_mass='${lower_arm_mass}'>
-        <origin xyz='0 0 0.3' rpy='0 0 0'/>
+    <xacro:arm_link name='lower_arm' parent_link='base_link' length='${lower_arm_length}' width='${lower_arm_width}' mass='${lower_arm_mass}' mesh='${lower_arm_mesh}'>
+        <origin xyz='${arm_x_position} 0 ${arm_z_position}' rpy='0 0 0'/>
         <limit lower='0' upper='${pi}' effort='10' velocity='10'/>
     </xacro:arm_link>
 
-    <xacro:arm_link name='upper_control' parent_link='lower_arm' arm_length='${upper_control_length}' arm_mass='${upper_control_mass}'>
+    <xacro:arm_link name='upper_control' parent_link='lower_arm' length='${upper_control_length}' width='${upper_control_width}' mass='${upper_control_mass}' mesh='${upper_control_mesh}'>
         <origin xyz='0 0 0' rpy='0 0 0'/>
         <limit lower='${-pi/2}' upper='${pi/2}' effort='10' velocity='10'/>
     </xacro:arm_link>
 
-    <xacro:arm_link_mimic name='upper_link' parent_link='upper_control' arm_length='${lower_arm_length}' arm_mass='${upper_link_mass}'>
+    <xacro:arm_link_mimic name='upper_link' parent_link='upper_control' length='${upper_link_length}' width='${upper_link_width}' mass='${upper_link_mass}' mesh='${upper_link_mesh}'>
         <origin xyz='${-upper_control_length} 0 0' rpy='0 0 0'/>
         <limit lower='${-pi/2}' upper='${pi/2}' effort='10' velocity='10'/>
         <mimic joint='upper_control_joint' multiplier='-1.0'/>
     </xacro:arm_link_mimic>
 
-    <xacro:arm_link_mimic name='upper_arm' parent_link='upper_link' arm_length='${lower_arm_length}' arm_mass='${upper_arm_mass}'>
+    <xacro:arm_link_mimic name='upper_arm' parent_link='upper_link' length='${upper_arm_length}' width='${upper_arm_width}' mass='${upper_arm_mass}' mesh='${upper_arm_mesh}'>
         <origin xyz='${-upper_link_length} 0 0' rpy='0 0 0'/>
         <limit lower='${-pi/2}' upper='${pi/2}' effort='10' velocity='10'/>
         <mimic joint='upper_control_joint' multiplier='1.0' offset='${pi}'/>
     </xacro:arm_link_mimic>
 
-    <xacro:arm_link name='suction_head' parent_link='upper_arm' arm_length='${suction_head_length}' arm_mass='${suction_head_mass}'>
-        <origin xyz='${upper_arm_length} 0 0' rpy='0 0 0'/>
+    <xacro:arm_link name='suction_base' parent_link='upper_arm' length='${suction_base_length}' width='${suction_base_width}' mass='${suction_base_mass}' mesh='${suction_base_mesh}'>
+        <origin xyz='${-upper_arm_length} 0 0' rpy='0 0 0'/>
         <limit lower='${-pi/2}' upper='${pi/2}' effort='10' velocity='10'/>
-    </xacro:arm_link> -->
+    </xacro:arm_link>
+
+    <xacro:end_effector name='suction_head' parent_link='suction_base' length='${suction_head_length}' width='${suction_head_width}' mass='${suction_head_mass}' mesh='${suction_head_mesh}'>
+        <origin xyz='${-suction_base_length-suction_head_length} 0 0' rpy='0 0 0'/>
+    </xacro:end_effector>
 
     <!-- Lidar -->
     <xacro:lidar parent_link="base_link">

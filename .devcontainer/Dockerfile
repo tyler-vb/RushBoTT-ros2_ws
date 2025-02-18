@@ -39,6 +39,9 @@ RUN apt-get update && apt-get install --no-install-recommends -y -o Dpkg::Option
     ros-jazzy-joint-state-publisher-gui \
     # slam_toolbox
     ros-jazzy-slam-toolbox \
+    # moveit2
+    ros-jazzy-moveit \
+    ros-jazzy-moveit-servo \
     # utils
     python3-pip \
     python-is-python3 \

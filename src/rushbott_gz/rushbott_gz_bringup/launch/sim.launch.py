@@ -24,6 +24,9 @@ def generate_launch_description():
         'ros_gz_sim')
     pkg_rushbott_gz_bringup = get_package_share_directory(
         'rushbott_gz_bringup')
+    pkg_rushbott_description = get_package_share_directory(
+        'rushbott_description')
+    
     
     # Paths
     gz_sim_launch = PathJoinSubstitution(
@@ -33,7 +36,11 @@ def generate_launch_description():
     # Set Gazebo resource path
     gz_resource_path = SetEnvironmentVariable(
         name='GZ_SIM_RESOURCE_PATH',
-        value=PathJoinSubstitution([pkg_rushbott_gz_bringup, 'worlds'])
+        value=[
+            PathJoinSubstitution([pkg_rushbott_gz_bringup, 'worlds']),
+            ':',
+            PathJoinSubstitution([pkg_rushbott_description, '..'])
+        ]
     )
 
     gz_sim = IncludeLaunchDescription(

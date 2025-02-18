@@ -23,7 +23,7 @@ You will know you were successful if you see "Dev Container: RushBoTT ROS2 Intel
 Here are some ROS2 terminal commands to run once you're in the container:
 
 ```
-# ROS INITIALIZING (Run this when you start the container)
+# REBUILD (Run this when you start the container)
 rosdep install --from-paths src --ignore-src -r -i -y --rosdistro jazzy
 colcon build --symlink-install --continue-on-error --cmake-args -DBUILD_TESTING=ON
 
@@ -62,3 +62,6 @@ sudo apt update
 
 . ~/RushBoTT-ros2_ws/install/setup.sh
 ros2 launch rushbott_control control.launch.py
+
+. ~/RushBoTT-ros2_ws/install/setup.sh
+ros2 launch moveit_setup_assistant setup_assistant.launch.py

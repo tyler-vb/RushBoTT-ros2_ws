@@ -1,0 +1,110 @@
+<?xml version='1.0'?>
+<robot xmlns:xacro='http://www.ros.org/wiki/xacro'>
+
+    <!--Arm Link-->
+    <xacro:macro name='arm_link' params='name parent_link length width mass mesh *origin *limit'>
+
+        <xacro:property name='arm_joint_name' value='${name}_joint'/>
+
+        <joint name='${arm_joint_name}' type='revolute'>
+            <parent link='${parent_link}'/>
+            <child link='${name}'/>
+            <xacro:insert_block name='origin'/>
+            <xacro:insert_block name='limit'/>
+            <axis xyz='0 1 0'/>
+        </joint>
+
+        <link name='${name}'>
+            <visual>
+                <origin xyz="0 0 0" rpy="${-pi/2} 0 ${-pi/2}"/>
+                <geometry>
+                    <mesh filename='${mesh}' scale='0.001 0.001 0.001'/>
+                </geometry>
+            </visual>
+            <collision>
+                <origin xyz='${-length/2} 0 0' rpy ='0 ${pi/2} 0'/>
+                <geometry>
+                    <box size='${width} ${width} ${length}'/>
+                </geometry>
+            </collision>
+            <xacro:inertial_cuboid_with_pose mass='${mass}' x='${width}' y='${width}' z='${length}'>
+                <origin xyz='${-length/2} 0 0' rpy='0 ${pi/2} 0'/>
+            </xacro:inertial_cuboid_with_pose>
+        </link>
+
+        <ros2_control name='${arm_joint_name}' type='system'>
+            <hardware>
+                <plugin>gz_ros2_control/GazeboSimSystem</plugin>
+            </hardware>
+            <joint name='${arm_joint_name}'>
+                <command_interface name='position'/>
+                <state_interface name='position'/>
+            </joint>
+        </ros2_control>
+    </xacro:macro> 
+
+    <!--Arm Link Mimic-->
+    <xacro:macro name='arm_link_mimic' params='name parent_link length width mass mesh *origin *limit *mimic'>
+
+        <xacro:property name='arm_joint_name' value='${name}_joint'/>
+
+        <joint name='${arm_joint_name}' type='revolute'>
+            <parent link='${parent_link}'/>
+            <child link='${name}'/>
+            <xacro:insert_block name='origin'/>
+            <xacro:insert_block name='limit'/>
+            <xacro:insert_block name='mimic'/>
+            <axis xyz='0 1 0'/>
+        </joint>
+
+        <link name='${name}'>
+            <visual>
+                <origin xyz="0 0 0" rpy="${-pi/2} 0 ${-pi/2}"/>
+                <geometry>
+                    <mesh filename='${mesh}' scale='0.001 0.001 0.001'/>
+                </geometry>
+            </visual>
+            <collision>
+                <origin xyz='${-length/2} 0 0' rpy ='0 ${pi/2} 0'/>
+                <geometry>
+                    <box size='${width} ${width} ${length}'/>
+                </geometry>
+            </collision>
+            <xacro:inertial_cuboid_with_pose mass='${mass}' x='${width}' y='${width}' z='${length}'>
+                <origin xyz='${-length/2} 0 0' rpy='0 ${pi/2} 0'/>
+            </xacro:inertial_cuboid_with_pose>
+        </link>
+
+    </xacro:macro> 
+
+     <!--End Effector-->
+    <xacro:macro name='end_effector' params='name parent_link length width mass mesh *origin'>
+
+        <xacro:property name='arm_joint_name' value='${name}_joint'/>
+
+        <joint name='${arm_joint_name}' type='fixed'>
+            <parent link='${parent_link}'/>
+            <child link='${name}'/>
+            <xacro:insert_block name='origin'/>
+        </joint>
+
+        <link name='${name}'>
+            <visual>
+                <origin xyz="0 0 0" rpy="${pi/2} 0 ${pi/2}"/>
+                <geometry>
+                    <mesh filename='${mesh}' scale='0.001 0.001 0.001'/>
+                </geometry>
+            </visual>
+            <collision>
+                <origin xyz='${length/2} 0 0' rpy ='0 ${pi/2} 0'/>
+                <geometry>
+                    <box size='${width} ${width} ${length}'/>
+                </geometry>
+            </collision>
+            <xacro:inertial_cuboid_with_pose mass='${mass}' x='${width}' y='${width}' z='${length}'>
+                <origin xyz='${length/2} 0 0' rpy='0 ${pi/2} 0'/>
+            </xacro:inertial_cuboid_with_pose>
+        </link>
+    </xacro:macro> 
+
+</robot>

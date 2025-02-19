@@ -2,7 +2,7 @@
 <robot xmlns:xacro='http://www.ros.org/wiki/xacro'>
 
     <!--Arm Link-->
-    <xacro:macro name='arm_link' params='name parent_link length width mass mesh initial_value *origin *limit'>
+    <xacro:macro name='arm_link' params='name parent_link length width mass mesh *origin *limit'>
 
         <xacro:property name='arm_joint_name' value='${name}_joint'/>
 
@@ -20,6 +20,7 @@
                 <geometry>
                     <mesh filename='${mesh}' scale='0.001 0.001 0.001'/>
                 </geometry>
+                <xacro:insert_block name='material_orange'/>
             </visual>
             <collision>
                 <origin xyz='${-length/2} 0 0' rpy ='0 ${pi/2} 0'/>
@@ -37,9 +38,7 @@
                 <plugin>gz_ros2_control/GazeboSimSystem</plugin>
             </hardware>
             <joint name='${arm_joint_name}'>
-                <command_interface name='position'>
-                    <param name="initial_value">${initial_value}</param>
-                </command_interface>
+                <command_interface name='position'/>
                 <state_interface name='position'/>
             </joint>
         </ros2_control>
@@ -65,6 +64,7 @@
                 <geometry>
                     <mesh filename='${mesh}' scale='0.001 0.001 0.001'/>
                 </geometry>
+                <xacro:insert_block name='material_orange'/>
             </visual>
             <collision>
                 <origin xyz='${-length/2} 0 0' rpy ='0 ${pi/2} 0'/>
@@ -96,6 +96,7 @@
                 <geometry>
                     <mesh filename='${mesh}' scale='0.001 0.001 0.001'/>
                 </geometry>
+                <xacro:insert_block name='material_orange'/>
             </visual>
             <collision>
                 <origin xyz='${length/2} 0 0' rpy ='0 ${pi/2} 0'/>

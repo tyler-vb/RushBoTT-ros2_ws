@@ -39,10 +39,12 @@ arm_controller:
       - lower_arm_joint
       - upper_control_joint
       - suction_base_joint
+    open_loop_control: false
     command_interfaces:
       - position
     state_interfaces:
       - position
+    allow_integration_in_goal_trajectories: true
     allow_nonzero_velocity_at_trajectory_end: true
 
 joint_state_broadcaster:

@@ -8,18 +8,3 @@ moveit_setup_assistant_config:
     author_name: Tyler Buffa
     author_email: buffatyler@gmail.com
     generated_timestamp: 1739920912
-  control_xacro:
-    command:
-      - position
-    state:
-      - position
-      - velocity
-  modified_urdf:
-    xacros:
-      - control_xacro
-  control_xacro:
-    command:
-      - position
-    state:
-      - position
-      - velocity

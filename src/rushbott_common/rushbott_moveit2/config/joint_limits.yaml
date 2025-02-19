@@ -11,25 +11,15 @@ joint_limits:
   lower_arm_joint:
     has_velocity_limits: true
     max_velocity: 10.0
-    has_acceleration_limits: false
-    max_acceleration: 0.0
+    has_acceleration_limits: true
+    max_acceleration: 0.5
   suction_base_joint:
     has_velocity_limits: true
     max_velocity: 10.0
-    has_acceleration_limits: false
-    max_acceleration: 0.0
-  upper_arm_joint:
-    has_velocity_limits: true
-    max_velocity: 10.0
-    has_acceleration_limits: false
-    max_acceleration: 0.0
+    has_acceleration_limits: true
+    max_acceleration: 0.5
   upper_control_joint:
     has_velocity_limits: true
     max_velocity: 10.0
-    has_acceleration_limits: false
-    max_acceleration: 0.0
-  upper_link_joint:
-    has_velocity_limits: true
-    max_velocity: 10.0
-    has_acceleration_limits: false
-    max_acceleration: 0.0
+    has_acceleration_limits: true
+    max_acceleration: 0.5

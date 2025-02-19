@@ -7,9 +7,6 @@ from launch.launch_description_sources import PythonLaunchDescriptionSource
 from launch.substitutions import LaunchConfiguration, PathJoinSubstitution
 
 ARGUMENTS = [
-    DeclareLaunchArgument('use_rviz', default_value='true',
-                          choices=['true', 'false'],
-                          description='Start rviz.'),
     DeclareLaunchArgument('use_sim_time', default_value='true',
                           choices=['true', 'false'],
                           description='use_sim_time'),
@@ -39,10 +36,7 @@ def generate_launch_description():
 
     # Spawn robot
     rushbott_spawn = IncludeLaunchDescription(
-        PythonLaunchDescriptionSource(rushbott_spawn_launch),
-        launch_arguments=[
-        ('use_rviz', LaunchConfiguration('use_rviz'))
-        ]
+        PythonLaunchDescriptionSource(rushbott_spawn_launch)
     )
 
     # Create launch description and add actions

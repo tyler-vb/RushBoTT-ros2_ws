@@ -1,0 +1,185 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--This does not replace URDF, and is not an extension of URDF.
+    This is a format for representing semantic information about the robot structure.
+    A URDF file must exist for this robot as well, where the joints and the links that are referenced are defined
+-->
+<robot name="rushbott">
+    <!--GROUPS: Representation of a set of joints and links. This can be useful for specifying DOF to plan for, defining arms, end effectors, etc-->
+    <!--LINKS: When a link is specified, the parent joint of that link (if it exists) is automatically included-->
+    <!--JOINTS: When a joint is specified, the child link of that joint (which will always exist) is automatically included-->
+    <!--CHAINS: When a chain is specified, all the links along the chain (including endpoints) are included in the group. Additionally, all the joints that are parents to included links are also included. This means that joints along the chain and the parent joint of the base link are included in the group-->
+    <!--SUBGROUPS: Groups can also be formed by referencing to already defined group names-->
+    <group name="arm">
+        <joint name="lower_arm_joint"/>
+        <joint name="upper_control_joint"/>
+        <joint name="upper_link_joint"/>
+        <joint name="upper_arm_joint"/>
+        <joint name="suction_base_joint"/>
+    </group>
+    <group name="end_effector">
+        <link name="suction_head"/>
+    </group>
+    <!--GROUP STATES: Purpose: Define a named state for a particular group, in terms of joint values. This is useful to define states like 'folded arms'-->
+    <group_state name="ready" group="arm">
+        <joint name="lower_arm_joint" value="0.5"/>
+        <joint name="suction_base_joint" value="0"/>
+        <joint name="upper_control_joint" value="-0.5"/>
+    </group_state>
+    <!--END EFFECTOR: Purpose: Represent information about an end effector.-->
+    <end_effector name="end_effector" parent_link="suction_base" group="end_effector"/>
+    <!--PASSIVE JOINT: Purpose: this element is used to mark joints that are not actuated-->
+    <passive_joint name="front_left_servo_joint"/>
+    <passive_joint name="front_left_wheel_joint"/>
+    <passive_joint name="front_right_servo_joint"/>
+    <passive_joint name="front_right_wheel_joint"/>
+    <passive_joint name="mid_left_wheel_joint"/>
+    <passive_joint name="mid_right_wheel_joint"/>
+    <passive_joint name="rear_left_servo_joint"/>
+    <passive_joint name="rear_left_wheel_joint"/>
+    <passive_joint name="rear_right_servo_joint"/>
+    <passive_joint name="rear_right_wheel_joint"/>
+    <passive_joint name="upper_link_joint"/>
+    <passive_joint name="upper_arm_joint"/>
+    <!--DISABLE COLLISIONS: By default it is assumed that any link of the robot could potentially come into collision with any other link in the robot. This tag disables collision checking between a specified pair of links. -->
+    <disable_collisions link1="base_link" link2="front_left_servo" reason="Adjacent"/>
+    <disable_collisions link1="base_link" link2="front_left_wheel" reason="Never"/>
+    <disable_collisions link1="base_link" link2="front_right_servo" reason="Adjacent"/>
+    <disable_collisions link1="base_link" link2="front_right_wheel" reason="Never"/>
+    <disable_collisions link1="base_link" link2="lidar" reason="Adjacent"/>
+    <disable_collisions link1="base_link" link2="mid_left_wheel" reason="Adjacent"/>
+    <disable_collisions link1="base_link" link2="mid_right_wheel" reason="Adjacent"/>
+    <disable_collisions link1="base_link" link2="rear_left_servo" reason="Adjacent"/>
+    <disable_collisions link1="base_link" link2="rear_left_wheel" reason="Never"/>
+    <disable_collisions link1="base_link" link2="rear_right_servo" reason="Adjacent"/>
+    <disable_collisions link1="base_link" link2="rear_right_wheel" reason="Never"/>
+    <disable_collisions link1="front_left_servo" link2="front_left_wheel" reason="Adjacent"/>
+    <disable_collisions link1="front_left_servo" link2="front_right_servo" reason="Never"/>
+    <disable_collisions link1="front_left_servo" link2="front_right_wheel" reason="Never"/>
+    <disable_collisions link1="front_left_servo" link2="lidar" reason="Never"/>
+    <disable_collisions link1="front_left_servo" link2="lower_arm" reason="Never"/>
+    <disable_collisions link1="front_left_servo" link2="mid_left_wheel" reason="Never"/>
+    <disable_collisions link1="front_left_servo" link2="mid_right_wheel" reason="Never"/>
+    <disable_collisions link1="front_left_servo" link2="rear_left_servo" reason="Never"/>
+    <disable_collisions link1="front_left_servo" link2="rear_left_wheel" reason="Never"/>
+    <disable_collisions link1="front_left_servo" link2="rear_right_servo" reason="Never"/>
+    <disable_collisions link1="front_left_servo" link2="rear_right_wheel" reason="Never"/>
+    <disable_collisions link1="front_left_servo" link2="suction_base" reason="Never"/>
+    <disable_collisions link1="front_left_servo" link2="suction_head" reason="Never"/>
+    <disable_collisions link1="front_left_servo" link2="upper_arm" reason="Never"/>
+    <disable_collisions link1="front_left_servo" link2="upper_control" reason="Never"/>
+    <disable_collisions link1="front_left_servo" link2="upper_link" reason="Never"/>
+    <disable_collisions link1="front_left_wheel" link2="front_right_servo" reason="Never"/>
+    <disable_collisions link1="front_left_wheel" link2="front_right_wheel" reason="Never"/>
+    <disable_collisions link1="front_left_wheel" link2="lidar" reason="Never"/>
+    <disable_collisions link1="front_left_wheel" link2="lower_arm" reason="Never"/>
+    <disable_collisions link1="front_left_wheel" link2="mid_left_wheel" reason="Never"/>
+    <disable_collisions link1="front_left_wheel" link2="mid_right_wheel" reason="Never"/>
+    <disable_collisions link1="front_left_wheel" link2="rear_left_servo" reason="Never"/>
+    <disable_collisions link1="front_left_wheel" link2="rear_left_wheel" reason="Never"/>
+    <disable_collisions link1="front_left_wheel" link2="rear_right_servo" reason="Never"/>
+    <disable_collisions link1="front_left_wheel" link2="rear_right_wheel" reason="Never"/>
+    <disable_collisions link1="front_left_wheel" link2="suction_base" reason="Never"/>
+    <disable_collisions link1="front_left_wheel" link2="suction_head" reason="Never"/>
+    <disable_collisions link1="front_left_wheel" link2="upper_arm" reason="Never"/>
+    <disable_collisions link1="front_left_wheel" link2="upper_control" reason="Never"/>
+    <disable_collisions link1="front_left_wheel" link2="upper_link" reason="Never"/>
+    <disable_collisions link1="front_right_servo" link2="front_right_wheel" reason="Adjacent"/>
+    <disable_collisions link1="front_right_servo" link2="lidar" reason="Never"/>
+    <disable_collisions link1="front_right_servo" link2="lower_arm" reason="Never"/>
+    <disable_collisions link1="front_right_servo" link2="mid_left_wheel" reason="Never"/>
+    <disable_collisions link1="front_right_servo" link2="mid_right_wheel" reason="Never"/>
+    <disable_collisions link1="front_right_servo" link2="rear_left_servo" reason="Never"/>
+    <disable_collisions link1="front_right_servo" link2="rear_left_wheel" reason="Never"/>
+    <disable_collisions link1="front_right_servo" link2="rear_right_servo" reason="Never"/>
+    <disable_collisions link1="front_right_servo" link2="rear_right_wheel" reason="Never"/>
+    <disable_collisions link1="front_right_servo" link2="suction_base" reason="Never"/>
+    <disable_collisions link1="front_right_servo" link2="suction_head" reason="Never"/>
+    <disable_collisions link1="front_right_servo" link2="upper_arm" reason="Never"/>
+    <disable_collisions link1="front_right_servo" link2="upper_control" reason="Never"/>
+    <disable_collisions link1="front_right_servo" link2="upper_link" reason="Never"/>
+    <disable_collisions link1="front_right_wheel" link2="lidar" reason="Never"/>
+    <disable_collisions link1="front_right_wheel" link2="lower_arm" reason="Never"/>
+    <disable_collisions link1="front_right_wheel" link2="mid_left_wheel" reason="Never"/>
+    <disable_collisions link1="front_right_wheel" link2="mid_right_wheel" reason="Never"/>
+    <disable_collisions link1="front_right_wheel" link2="rear_left_servo" reason="Never"/>
+    <disable_collisions link1="front_right_wheel" link2="rear_left_wheel" reason="Never"/>
+    <disable_collisions link1="front_right_wheel" link2="rear_right_servo" reason="Never"/>
+    <disable_collisions link1="front_right_wheel" link2="rear_right_wheel" reason="Never"/>
+    <disable_collisions link1="front_right_wheel" link2="suction_base" reason="Never"/>
+    <disable_collisions link1="front_right_wheel" link2="suction_head" reason="Never"/>
+    <disable_collisions link1="front_right_wheel" link2="upper_arm" reason="Never"/>
+    <disable_collisions link1="front_right_wheel" link2="upper_control" reason="Never"/>
+    <disable_collisions link1="front_right_wheel" link2="upper_link" reason="Never"/>
+    <disable_collisions link1="lidar" link2="mid_left_wheel" reason="Never"/>
+    <disable_collisions link1="lidar" link2="mid_right_wheel" reason="Never"/>
+    <disable_collisions link1="lidar" link2="rear_left_servo" reason="Never"/>
+    <disable_collisions link1="lidar" link2="rear_left_wheel" reason="Never"/>
+    <disable_collisions link1="lidar" link2="rear_right_servo" reason="Never"/>
+    <disable_collisions link1="lidar" link2="rear_right_wheel" reason="Never"/>
+    <disable_collisions link1="lower_arm" link2="mid_left_wheel" reason="Never"/>
+    <disable_collisions link1="lower_arm" link2="mid_right_wheel" reason="Never"/>
+    <disable_collisions link1="lower_arm" link2="rear_left_servo" reason="Never"/>
+    <disable_collisions link1="lower_arm" link2="rear_left_wheel" reason="Never"/>
+    <disable_collisions link1="lower_arm" link2="rear_right_servo" reason="Never"/>
+    <disable_collisions link1="lower_arm" link2="rear_right_wheel" reason="Never"/>
+    <disable_collisions link1="lower_arm" link2="suction_base" reason="Never"/>
+    <disable_collisions link1="lower_arm" link2="suction_head" reason="Never"/>
+    <disable_collisions link1="lower_arm" link2="upper_arm" reason="Default"/>
+    <disable_collisions link1="lower_arm" link2="upper_control" reason="Adjacent"/>
+    <disable_collisions link1="lower_arm" link2="upper_link" reason="Default"/>
+    <disable_collisions link1="mid_left_wheel" link2="mid_right_wheel" reason="Never"/>
+    <disable_collisions link1="mid_left_wheel" link2="rear_left_servo" reason="Never"/>
+    <disable_collisions link1="mid_left_wheel" link2="rear_left_wheel" reason="Never"/>
+    <disable_collisions link1="mid_left_wheel" link2="rear_right_servo" reason="Never"/>
+    <disable_collisions link1="mid_left_wheel" link2="rear_right_wheel" reason="Never"/>
+    <disable_collisions link1="mid_left_wheel" link2="suction_base" reason="Never"/>
+    <disable_collisions link1="mid_left_wheel" link2="suction_head" reason="Never"/>
+    <disable_collisions link1="mid_left_wheel" link2="upper_arm" reason="Never"/>
+    <disable_collisions link1="mid_left_wheel" link2="upper_control" reason="Never"/>
+    <disable_collisions link1="mid_left_wheel" link2="upper_link" reason="Never"/>
+    <disable_collisions link1="mid_right_wheel" link2="rear_left_servo" reason="Never"/>
+    <disable_collisions link1="mid_right_wheel" link2="rear_left_wheel" reason="Never"/>
+    <disable_collisions link1="mid_right_wheel" link2="rear_right_servo" reason="Never"/>
+    <disable_collisions link1="mid_right_wheel" link2="rear_right_wheel" reason="Never"/>
+    <disable_collisions link1="mid_right_wheel" link2="suction_base" reason="Never"/>
+    <disable_collisions link1="mid_right_wheel" link2="suction_head" reason="Never"/>
+    <disable_collisions link1="mid_right_wheel" link2="upper_arm" reason="Never"/>
+    <disable_collisions link1="mid_right_wheel" link2="upper_control" reason="Never"/>
+    <disable_collisions link1="mid_right_wheel" link2="upper_link" reason="Never"/>
+    <disable_collisions link1="rear_left_servo" link2="rear_left_wheel" reason="Adjacent"/>
+    <disable_collisions link1="rear_left_servo" link2="rear_right_servo" reason="Never"/>
+    <disable_collisions link1="rear_left_servo" link2="rear_right_wheel" reason="Never"/>
+    <disable_collisions link1="rear_left_servo" link2="suction_base" reason="Never"/>
+    <disable_collisions link1="rear_left_servo" link2="suction_head" reason="Never"/>
+    <disable_collisions link1="rear_left_servo" link2="upper_arm" reason="Never"/>
+    <disable_collisions link1="rear_left_servo" link2="upper_control" reason="Never"/>
+    <disable_collisions link1="rear_left_servo" link2="upper_link" reason="Never"/>
+    <disable_collisions link1="rear_left_wheel" link2="rear_right_servo" reason="Never"/>
+    <disable_collisions link1="rear_left_wheel" link2="rear_right_wheel" reason="Never"/>
+    <disable_collisions link1="rear_left_wheel" link2="suction_base" reason="Never"/>
+    <disable_collisions link1="rear_left_wheel" link2="suction_head" reason="Never"/>
+    <disable_collisions link1="rear_left_wheel" link2="upper_arm" reason="Never"/>
+    <disable_collisions link1="rear_left_wheel" link2="upper_control" reason="Never"/>
+    <disable_collisions link1="rear_left_wheel" link2="upper_link" reason="Never"/>
+    <disable_collisions link1="rear_right_servo" link2="rear_right_wheel" reason="Adjacent"/>
+    <disable_collisions link1="rear_right_servo" link2="suction_base" reason="Never"/>
+    <disable_collisions link1="rear_right_servo" link2="suction_head" reason="Never"/>
+    <disable_collisions link1="rear_right_servo" link2="upper_arm" reason="Never"/>
+    <disable_collisions link1="rear_right_servo" link2="upper_control" reason="Never"/>
+    <disable_collisions link1="rear_right_servo" link2="upper_link" reason="Never"/>
+    <disable_collisions link1="rear_right_wheel" link2="suction_base" reason="Never"/>
+    <disable_collisions link1="rear_right_wheel" link2="suction_head" reason="Never"/>
+    <disable_collisions link1="rear_right_wheel" link2="upper_arm" reason="Never"/>
+    <disable_collisions link1="rear_right_wheel" link2="upper_control" reason="Never"/>
+    <disable_collisions link1="rear_right_wheel" link2="upper_link" reason="Never"/>
+    <disable_collisions link1="suction_base" link2="suction_head" reason="Adjacent"/>
+    <disable_collisions link1="suction_base" link2="upper_arm" reason="Adjacent"/>
+    <disable_collisions link1="suction_base" link2="upper_control" reason="Never"/>
+    <disable_collisions link1="suction_base" link2="upper_link" reason="Never"/>
+    <disable_collisions link1="suction_head" link2="upper_arm" reason="Never"/>
+    <disable_collisions link1="suction_head" link2="upper_control" reason="Never"/>
+    <disable_collisions link1="suction_head" link2="upper_link" reason="Never"/>
+    <disable_collisions link1="upper_arm" link2="upper_control" reason="Default"/>
+    <disable_collisions link1="upper_arm" link2="upper_link" reason="Adjacent"/>
+    <disable_collisions link1="upper_control" link2="upper_link" reason="Adjacent"/>
+</robot>

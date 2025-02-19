@@ -55,6 +55,9 @@ ros2 launch rushbott_gz_bringup rushbott_spawn.launch.py
 . ~/RushBoTT-ros2_ws/install/setup.sh
 ros2 launch rushbott_gz_bringup rushbott_gz.launch.py
 
+# LAUNCH MOVEIT2
+. ~/RushBoTT-ros2_ws/install/setup.sh
+ros2 launch rushbott_moveit2 move_group.launch.py
 
 sudo chmod 777 /dev/dri/renderD128
 sudo add-apt-repository ppa:kisak/kisak-mesa

@@ -2,7 +2,7 @@
 <robot xmlns:xacro='http://www.ros.org/wiki/xacro'>
 
     <!--Arm Link-->
-    <xacro:macro name='arm_link' params='name parent_link length width mass mesh *origin *limit'>
+    <xacro:macro name='arm_link' params='name parent_link length width mass mesh initial_value *origin *limit'>
 
         <xacro:property name='arm_joint_name' value='${name}_joint'/>
 
@@ -37,7 +37,9 @@
                 <plugin>gz_ros2_control/GazeboSimSystem</plugin>
             </hardware>
             <joint name='${arm_joint_name}'>
-                <command_interface name='position'/>
+                <command_interface name='position'>
+                    <param name="initial_value">${initial_value}</param>
+                </command_interface>
                 <state_interface name='position'/>
             </joint>
         </ros2_control>

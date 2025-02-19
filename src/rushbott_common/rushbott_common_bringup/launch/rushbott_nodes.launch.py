@@ -8,18 +8,29 @@ from launch_ros.actions import Node
 def generate_launch_description():
 
     # Directories
+    pkg_rushbott_common_bringup = get_package_share_directory('rushbott_common_bringup')
     pkg_rushbott_control = get_package_share_directory('rushbott_control')
+    pkg_rushbott_moveit2 = get_package_share_directory('rushbott_moveit2')
 
     # Paths
+    robot_description_launch = PathJoinSubstitution(
+        [pkg_rushbott_common_bringup, 'launch', 'robot_description.launch.py'])
+    rviz2_launch = PathJoinSubstitution(
+        [pkg_rushbott_common_bringup, 'launch', 'rviz2.launch.py'])
     control_launch = PathJoinSubstitution(
-        [pkg_rushbott_control, 'launch', 'control.launch.py']
-    )
+        [pkg_rushbott_control, 'launch', 'control.launch.py'])
+    moveit2_launch = PathJoinSubstitution(
+        [pkg_rushbott_moveit2, 'launch', 'move_group.launch.py'])
 
-    # Controllers
+    robot_description = IncludeLaunchDescription(
+        PythonLaunchDescriptionSource(robot_description_launch))
+    
     controllers = IncludeLaunchDescription(
-        PythonLaunchDescriptionSource(control_launch)
-    )
-
+        PythonLaunchDescriptionSource(control_launch))
+    
+    moveit2_interface = IncludeLaunchDescription(
+        PythonLaunchDescriptionSource(moveit2_launch))
+    
     # Teleop
     teleop = Node(
         package='teleop_twist_keyboard',
@@ -39,6 +50,8 @@ def generate_launch_description():
     # Create launch description and add actions
     ld = LaunchDescription()
     ld.add_action(teleop)
+    ld.add_action(robot_description)
     ld.add_action(controllers)
+    ld.add_action(moveit2_interface)
 
     return ld

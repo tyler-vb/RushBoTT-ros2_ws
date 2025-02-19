@@ -59,6 +59,7 @@ def generate_launch_description():
     gz_bridge_node = Node(
         package='ros_gz_bridge',
         executable='parameter_bridge',
+        name='ros_gz_bridge_2',
         output='screen',
         parameters=[{
             'use_sim_time': LaunchConfiguration('use_sim_time')

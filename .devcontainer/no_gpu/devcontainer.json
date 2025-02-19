@@ -32,7 +32,9 @@
         "ms-vscode.cmake-tools",
         "tomoki1207.pdf",
         "DotJoshJohnson.xml",
-        "ms-vscode.cpptools-extension-pack"
+        "ms-vscode.cpptools-extension-pack",
+        "ms-python.vscode-pylance",
+        "ms-python.isort"
       ]
     }
   }

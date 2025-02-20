@@ -4,6 +4,7 @@ from launch.actions import DeclareLaunchArgument, IncludeLaunchDescription
 from launch.launch_description_sources import PythonLaunchDescriptionSource
 from launch.substitutions import LaunchConfiguration, PathJoinSubstitution
 from launch_ros.actions import Node
+from moveit_configs_utils import MoveItConfigsBuilder
 
 def generate_launch_description(): 
     # Directories
@@ -17,25 +18,45 @@ def generate_launch_description():
     control_launch = PathJoinSubstitution(
         [pkg_rushbott_control, 'launch', 'control.launch.py'])
     moveit2_launch = PathJoinSubstitution(
-        [pkg_rushbott_moveit_config, 'launch', 'move_group.launch.py'])
+        [pkg_rushbott_moveit_config, 'launch', 'servo.launch.py'])
 
     robot_description = IncludeLaunchDescription(
-        PythonLaunchDescriptionSource(robot_description_launch))
+        PythonLaunchDescriptionSource(robot_description_launch)
+    )
     
     controllers = IncludeLaunchDescription(
-        PythonLaunchDescriptionSource(control_launch))
+        PythonLaunchDescriptionSource(control_launch)
+    )
     
     moveit2_interface = IncludeLaunchDescription(
-        PythonLaunchDescriptionSource(moveit2_launch))
+        PythonLaunchDescriptionSource(moveit2_launch)
+    )
     
     # Rviz
     rviz_config = PathJoinSubstitution([pkg_rushbott_common_bringup, 'rviz', 'rushbott.rviz']) 
+    moveit_config = (
+        MoveItConfigsBuilder(robot_name='rushbott', package_name='rushbott_moveit_config')
+        .planning_pipelines(
+            pipelines=["ompl", "pilz_industrial_motion_planner", "stomp"],
+            default_planning_pipeline="pilz_industrial_motion_planner"
+        )
+        .to_moveit_configs()
+    )
     rviz = Node(
         package='rviz2',
         executable='rviz2',
         arguments=[
-            '-d', rviz_config])
-    
+            '-d', rviz_config],
+        parameters=[
+            {'use_sim_time': LaunchConfiguration('use_sim_time')},
+            moveit_config.robot_description,
+            moveit_config.robot_description_semantic,
+            moveit_config.planning_pipelines,
+            moveit_config.robot_description_kinematics,
+            moveit_config.joint_limits
+        ]
+    )
+
     # Teleop
     teleop = Node(
         package='teleop_twist_keyboard',
@@ -57,6 +78,6 @@ def generate_launch_description():
     ld.add_action(robot_description)
     ld.add_action(controllers)
     ld.add_action(moveit2_interface)
-    # ld.add_action(rviz)
+    ld.add_action(rviz)
 
     return ld

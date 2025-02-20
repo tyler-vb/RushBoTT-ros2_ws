@@ -231,12 +231,13 @@ Visualization Manager:
             lidar:
               {}
             lower_arm:
+              upper_arm:
+                suction_base:
+                  suction_head:
+                    {}
               upper_control:
                 upper_link:
-                  upper_arm:
-                    suction_base:
-                      suction_head:
-                        {}
+                  {}
             mid_left_wheel:
               {}
             mid_right_wheel:
@@ -419,7 +420,7 @@ Visualization Manager:
         State Display Time: 3x
         Trail Step Size: 1
         Trajectory Topic: /display_planned_path
-        Use Sim Time: false
+        Use Sim Time: true
       Planning Metrics:
         Payload: 1
         Show Joint Torques: false
@@ -435,7 +436,7 @@ Visualization Manager:
         Joint Violation Color: 255; 0; 255
         Planning Group: arm
         Query Goal State: true
-        Query Start State: true
+        Query Start State: false
         Show Workspace: false
         Start State Alpha: 1
         Start State Color: 0; 255; 0
@@ -601,25 +602,25 @@ Visualization Manager:
   Views:
     Current:
       Class: rviz_default_plugins/Orbit
-      Distance: 3.328392505645752
+      Distance: 2.7916245460510254
       Enable Stereo Rendering:
         Stereo Eye Separation: 0.05999999865889549
         Stereo Focal Distance: 1
         Swap Stereo Eyes: false
         Value: false
       Focal Point:
-        X: -0.10445841401815414
-        Y: -0.06654482334852219
-        Z: -0.062464095652103424
+        X: -0.03734036535024643
+        Y: -0.15115194022655487
+        Z: -0.12250971049070358
       Focal Shape Fixed Size: true
       Focal Shape Size: 0.05000000074505806
       Invert Z Axis: false
       Name: Current View
       Near Clip Distance: 0.009999999776482582
-      Pitch: 0.3897953927516937
+      Pitch: 0.584794819355011
       Target Frame: <Fixed Frame>
       Value: Orbit (rviz)
-      Yaw: 4.848601818084717
+      Yaw: 4.628596782684326
     Saved: ~
 Window Geometry:
   Displays:
@@ -631,7 +632,7 @@ Window Geometry:
     collapsed: false
   MotionPlanning - Trajectory Slider:
     collapsed: false
-  QMainWindow State: 000000ff00000000fd0000000100000000000001c9000002e7fc0200000007fb000000100044006900730070006c006100790073010000003b0000016c000000c700fffffffb0000001200530065006c0065006300740069006f006e0000000140000000760000005c00fffffffb0000001e0054006f006f006c002000500072006f007000650072007400690065007300000001770000008f0000005c00fffffffb0000000a005600690065007700730000000113000000a0000000a000fffffffb000000280020002d0020005400720061006a006500630074006f0072007900200053006c00690064006500720000000000ffffffff0000000000000000fb00000044004d006f00740069006f006e0050006c0061006e006e0069006e00670020002d0020005400720061006a006500630074006f0072007900200053006c00690064006500720000000000ffffffff0000001600000016fb0000001c004d006f00740069006f006e0050006c0061006e006e0069006e006701000001ad000001750000016a00ffffff000001ef000002e700000004000000040000000800000008fc0000000100000002000000010000000a0054006f006f006c00730100000000ffffffff0000000000000000
+  QMainWindow State: 000000ff00000000fd0000000100000000000001c9000002e7fc0200000007fb000000100044006900730070006c006100790073010000003b0000016c000000c700fffffffb0000001200530065006c0065006300740069006f006e0000000140000000760000005c00fffffffb0000001e0054006f006f006c002000500072006f007000650072007400690065007300000001770000008f0000005c00fffffffb0000000a005600690065007700730000000113000000a0000000a000fffffffb000000280020002d0020005400720061006a006500630074006f0072007900200053006c00690064006500720000000000ffffffff0000000000000000fb00000044004d006f00740069006f006e0050006c0061006e006e0069006e00670020002d0020005400720061006a006500630074006f0072007900200053006c00690064006500720000000000ffffffff0000003f00fffffffb0000001c004d006f00740069006f006e0050006c0061006e006e0069006e006701000001ad000001750000016a00ffffff000001ef000002e700000004000000040000000800000008fc0000000100000002000000010000000a0054006f006f006c00730100000000ffffffff0000000000000000
   Selection:
     collapsed: false
   Tool Properties:
@@ -639,5 +640,5 @@ Window Geometry:
   Views:
     collapsed: false
   Width: 958
-  X: 315
-  Y: 81
+  X: 466
+  Y: 1

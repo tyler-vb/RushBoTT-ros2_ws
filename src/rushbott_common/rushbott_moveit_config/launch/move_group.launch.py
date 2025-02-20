@@ -12,7 +12,7 @@ def generate_launch_description():
     pkg_rushbott_common_bringup = get_package_share_directory('rushbott_common_bringup')
 
     moveit_config = (
-        MoveItConfigsBuilder(robot_name='rushbott', package_name='rushbott_moveit2')
+        MoveItConfigsBuilder(robot_name='rushbott', package_name='rushbott_moveit_config')
         .robot_description_semantic(file_path="config/rushbott.srdf")
         .robot_description_kinematics(file_path="config/kinematics.yaml")
         .planning_scene_monitor(

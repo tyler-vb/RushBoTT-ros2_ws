@@ -9,7 +9,7 @@ def generate_launch_description():
     # Directories
     pkg_rushbott_common_bringup = get_package_share_directory('rushbott_common_bringup')
     pkg_rushbott_control = get_package_share_directory('rushbott_control')
-    pkg_rushbott_moveit2 = get_package_share_directory('rushbott_moveit2')
+    pkg_rushbott_moveit_config = get_package_share_directory('rushbott_moveit_config')
 
     # Paths
     robot_description_launch = PathJoinSubstitution(
@@ -17,7 +17,7 @@ def generate_launch_description():
     control_launch = PathJoinSubstitution(
         [pkg_rushbott_control, 'launch', 'control.launch.py'])
     moveit2_launch = PathJoinSubstitution(
-        [pkg_rushbott_moveit2, 'launch', 'move_group.launch.py'])
+        [pkg_rushbott_moveit_config, 'launch', 'move_group.launch.py'])
 
     robot_description = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(robot_description_launch))

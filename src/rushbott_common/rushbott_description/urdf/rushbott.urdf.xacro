@@ -135,22 +135,21 @@
         <limit lower='${-pi}' upper='${pi}' effort='10' velocity='10'/>
     </xacro:arm_link>
 
-    <xacro:arm_link name='upper_control' parent_link='lower_arm' length='${upper_control_length}' width='${upper_control_width}' mass='${upper_control_mass}' mesh='${upper_control_mesh}'>
+    <xacro:arm_link name='upper_arm' parent_link='lower_arm' length='${upper_arm_length}' width='${upper_arm_width}' mass='${upper_arm_mass}' mesh='${upper_arm_mesh}'>
+        <origin xyz='${-lower_arm_length} 0 0' rpy='0 ${pi} 0'/>
+        <limit lower='${-pi}' upper='${pi}' effort='10' velocity='10'/>
+    </xacro:arm_link>
+
+    <xacro:arm_link_mimic name='upper_control' parent_link='lower_arm' length='${upper_control_length}' width='${upper_control_width}' mass='${upper_control_mass}' mesh='${upper_control_mesh}'>
         <origin xyz='0 0 0' rpy='0 0 0'/>
         <limit lower='${-pi}' upper='0' effort='10' velocity='10'/>
-    </xacro:arm_link>
+        <mimic joint='upper_arm_joint' multiplier='1.0'/>
+    </xacro:arm_link_mimic>
 
     <xacro:arm_link_mimic name='upper_link' parent_link='upper_control' length='${upper_link_length}' width='${upper_link_width}' mass='${upper_link_mass}' mesh='${upper_link_mesh}'>
         <origin xyz='${-upper_control_length} 0 0' rpy='0 0 0'/>
         <limit lower='${-pi}' upper='${pi}' effort='10' velocity='10'/>
         <mimic joint='upper_control_joint' multiplier='-1.0'/>
-        
-    </xacro:arm_link_mimic>
-
-    <xacro:arm_link_mimic name='upper_arm' parent_link='upper_link' length='${upper_arm_length}' width='${upper_arm_width}' mass='${upper_arm_mass}' mesh='${upper_arm_mesh}'>
-        <origin xyz='${-upper_link_length} 0 0' rpy='0 0 0'/>
-        <limit lower='${-pi}' upper='${pi}' effort='10' velocity='10'/>
-        <mimic joint='upper_control_joint' multiplier='1.0' offset='${pi}'/>
     </xacro:arm_link_mimic>
 
     <xacro:arm_link name='suction_base' parent_link='upper_arm' length='${suction_base_length}' width='${suction_base_width}' mass='${suction_base_mass}' mesh='${suction_base_mesh}'>

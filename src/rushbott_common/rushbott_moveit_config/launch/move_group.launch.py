@@ -21,8 +21,7 @@ def generate_launch_description():
         output="screen",
         arguments=["--ros-args", "--log-level", "info"],
         parameters=[moveit_config.to_dict(),
-            {'use_sim_time': LaunchConfiguration('use_sim_time')},
-            {'start_state': {'content': 'config/initial_positions.yaml'}},
+            {'use_sim_time': LaunchConfiguration('use_sim_time')}
         ]
     )
     

@@ -91,7 +91,8 @@
         "shared_mutex": "cpp",
         "stdfloat": "cpp",
         "csignal": "cpp",
-        "regex": "cpp"
+        "regex": "cpp",
+        "valarray": "cpp"
     },
     "C_Cpp.errorSquiggles": "enabled"
 }

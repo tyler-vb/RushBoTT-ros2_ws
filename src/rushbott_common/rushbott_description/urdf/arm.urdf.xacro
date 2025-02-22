@@ -2,7 +2,7 @@
 <robot xmlns:xacro='http://www.ros.org/wiki/xacro'>
 
     <!--Arm Link-->
-    <xacro:macro name='arm_link' params='name parent_link length width mass mesh *origin *limit'>
+    <xacro:macro name='arm_link' params='name parent_link length width offset mass mesh *origin *limit'>
 
         <xacro:property name='arm_joint_name' value='${name}_joint'/>
 
@@ -16,20 +16,20 @@
 
         <link name='${name}'>
             <visual>
-                <origin xyz="0 0 0" rpy="${-pi/2} 0 ${-pi/2}"/>
+                <origin xyz="0 0 0" rpy="${-pi/2} ${-pi} ${-pi/2}"/>
                 <geometry>
                     <mesh filename='${mesh}' scale='0.001 0.001 0.001'/>
                 </geometry>
                 <xacro:insert_block name='material_orange'/>
             </visual>
             <collision>
-                <origin xyz='${-length/2} 0 0' rpy ='0 ${pi/2} 0'/>
+                <origin xyz='${offset-length/2} 0 0' rpy ='0 ${pi/2} 0'/>
                 <geometry>
                     <box size='${width} ${width} ${length}'/>
                 </geometry>
             </collision>
             <xacro:inertial_cuboid_with_pose mass='${mass}' x='${width}' y='${width}' z='${length}'>
-                <origin xyz='${-length/2} 0 0' rpy='0 ${pi/2} 0'/>
+                <origin xyz='${offset-length/2} 0 0' rpy='0 ${pi/2} 0'/>
             </xacro:inertial_cuboid_with_pose>
         </link>
 
@@ -39,28 +39,28 @@
             </hardware>
             <joint name='${arm_joint_name}'>
                 <command_interface name='position'/>
+                    <!-- <param name='initial_value'>0.3</param> -->
                 <state_interface name='position'/>
             </joint>
         </ros2_control>
     </xacro:macro> 
 
     <!--Arm Link Mimic-->
-    <xacro:macro name='arm_link_mimic' params='name parent_link length width mass mesh *origin *limit *mimic'>
+    <xacro:macro name='arm_link_mimic' params='name parent_link length width mass mesh *origin *mimic'>
 
         <xacro:property name='arm_joint_name' value='${name}_joint'/>
 
-        <joint name='${arm_joint_name}' type='revolute'>
+        <joint name='${arm_joint_name}' type='continuous'>
             <parent link='${parent_link}'/>
             <child link='${name}'/>
             <xacro:insert_block name='origin'/>
-            <xacro:insert_block name='limit'/>
             <xacro:insert_block name='mimic'/>
             <axis xyz='0 1 0'/>
         </joint>
 
         <link name='${name}'>
             <visual>
-                <origin xyz="0 0 0" rpy="${-pi/2} 0 ${-pi/2}"/>
+                <origin xyz="0 0 0" rpy="${-pi/2} ${-pi} ${-pi/2}"/>
                 <geometry>
                     <mesh filename='${mesh}' scale='0.001 0.001 0.001'/>
                 </geometry>
@@ -92,7 +92,7 @@
 
         <link name='${name}'>
             <visual>
-                <origin xyz="0 0 0" rpy="${pi/2} 0 ${pi/2}"/>
+                <origin xyz="0 0 0" rpy="${-pi/2} ${-pi} ${-pi/2}"/>
                 <geometry>
                     <mesh filename='${mesh}' scale='0.001 0.001 0.001'/>
                 </geometry>

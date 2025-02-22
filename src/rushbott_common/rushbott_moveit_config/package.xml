@@ -30,6 +30,8 @@
   <exec_depend>moveit_configs_utils</exec_depend>
   <exec_depend>pilz_industrial_motion_planner</exec_depend>
 
+  <depend>moveit_servo</depend>
+
   <export>
       <build_type>ament_cmake</build_type>
   </export>

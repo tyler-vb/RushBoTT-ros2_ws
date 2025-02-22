@@ -58,23 +58,33 @@ def generate_launch_description():
     )
 
     # Teleop
-    teleop = Node(
+    rover_teleop = Node(
         package='teleop_twist_keyboard',
         executable='teleop_twist_keyboard',
-        name='teleop_twist_keyboard',
         output='screen',
         emulate_tty=True,
         prefix='xterm -hold -e',
         parameters=[{
             'stamped': True,
+            'frame_id': "base_link"
         }],
         remappings=[(
-            '/cmd_vel', '/rover_controller/cmd_vel'
+            # '/cmd_vel', '/rover_controller/cmd_vel'
+            '/cmd_vel', '/servo_node/delta_twist_cmds'
         )])   
+    
+    arm_teleop = Node(
+        package='rushbott_moveit_config',
+        executable='servo_keyboard_input',
+        output='screen',
+        emulate_tty=True,
+        prefix='xterm -hold -e',
+        )   
 
     # Create launch description and add actions
     ld = LaunchDescription()
-    ld.add_action(teleop)
+    ld.add_action(rover_teleop)
+    ld.add_action(arm_teleop)
     ld.add_action(robot_description)
     ld.add_action(controllers)
     ld.add_action(moveit2_interface)

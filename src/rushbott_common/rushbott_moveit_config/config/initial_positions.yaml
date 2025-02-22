@@ -1,4 +1,4 @@
 initial_positions:
-  lower_arm_joint: 0
-  upper_arm_joint: 0
-  suction_base: 0
+  lower_arm: 0.3
+  upper_arm: 0.3
+  suction_base: 0.3

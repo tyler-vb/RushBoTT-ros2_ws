@@ -66,11 +66,9 @@ def generate_launch_description():
         prefix='xterm -hold -e',
         parameters=[{
             'stamped': True,
-            'frame_id': "base_link"
         }],
         remappings=[(
-            # '/cmd_vel', '/rover_controller/cmd_vel'
-            '/cmd_vel', '/servo_node/delta_twist_cmds'
+            '/cmd_vel', '/rover_controller/cmd_vel'
         )])   
     
     arm_teleop = Node(

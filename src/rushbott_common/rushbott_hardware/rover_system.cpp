@@ -30,8 +30,8 @@
 namespace rushbott_hardware
 {
 hardware_interface::CallbackReturn RoverSystemHardware::on_init(
-  const hardware_interface::HardwareInfo & info)
-    {
+    const hardware_interface::HardwareInfo & info)
+{
     if (
         hardware_interface::SystemInterface::on_init(info) !=
         hardware_interface::CallbackReturn::SUCCESS)
@@ -39,9 +39,17 @@ hardware_interface::CallbackReturn RoverSystemHardware::on_init(
         return hardware_interface::CallbackReturn::ERROR;
     }
 
+    cfg_.loop_rate = std::stof(info_.hardware_parameters["loop_rate"]);
+    cfg_.device = info_.hardware_parameters["device"];
+    cfg_.baud_rate = std::stoi(info_.hardware_parameters["baud_rate"]);
+    cfg_.timeout_ms = std::stoi(info_.hardware_parameters["timeout_ms"]);
+    cfg_.step_enc_counts_per_rev = std::stoi(info_.hardware_parameters["step_enc_counts_per_rev"]);
+    cfg_.bldc_enc_counts_per_rev = std::stoi(info_.hardware_parameters["bldc_enc_counts_per_rev"]);
+
     for (const hardware_interface::ComponentInfo & joint : info_.joints)
     {
-        // DiffBotSystem has exactly two states and one command interface on each joint
+        Motor motor;
+
         if (joint.command_interfaces.size() != 1)
         {
         RCLCPP_FATAL(
@@ -50,34 +58,72 @@ hardware_interface::CallbackReturn RoverSystemHardware::on_init(
         return hardware_interface::CallbackReturn::ERROR;
         }
 
-        if (joint.command_interfaces[0].name != hardware_interface::HW_IF_VELOCITY)
+        if (joint.name.find("arm") != std::string::npos &&
+            joint.state_interfaces.size() != 1 &&
+            joint.state_interfaces[0].name == hardware_interface::HW_IF_POSITION &&
+            joint.command_interfaces[0].name == hardware_interface::HW_IF_POSITION)
         {
-        RCLCPP_FATAL(
-            get_logger(), "Joint '%s' have %s command interfaces found. '%s' expected.",
-            joint.name.c_str(), joint.command_interfaces[0].name.c_str(),
-            hardware_interface::HW_IF_VELOCITY);
-        return hardware_interface::CallbackReturn::ERROR;
+            motor.setup(joint.name, hardware_interface::HW_IF_POSITION, 0, NAN, cfg_.step_enc_counts_per_rev);
+        }
+        else if (joint.name.find("wheel") != std::string::npos &&
+            joint.state_interfaces.size() == 1 &&
+            joint.state_interfaces[0].name == hardware_interface::HW_IF_POSITION &&
+            joint.command_interfaces[0].name == hardware_interface::HW_IF_VELOCITY)
+        {
+            motor.setup(joint.name, hardware_interface::HW_IF_VELOCITY, 0, NAN, cfg_.bldc_enc_counts_per_rev);
+        }
+        else if (joint.name.find("servo") != std::string::npos &&
+            joint.state_interfaces.size() == 0 &&
+            joint.command_interfaces[0].name == hardware_interface::HW_IF_POSITION)
+        {
+            motor.setup(joint.name, hardware_interface::HW_IF_POSITION, NAN, NAN, 0);
+        }
+        else
+        {
+            RCLCPP_FATAL(
+                get_logger(), "Joint '%s' is incorrectly configured, check name or interfaces.",
+                joint.name.c_str());
+            return hardware_interface::CallbackReturn::ERROR;
         }
 
-        if (joint.state_interfaces.size() != 1)
-        {
-        RCLCPP_FATAL(
-            get_logger(), "Joint '%s' has %zu state interface. 1 expected.", joint.name.c_str(),
-            joint.state_interfaces.size());
-        return hardware_interface::CallbackReturn::ERROR;
-        }
-
-        if (joint.state_interfaces[0].name != hardware_interface::HW_IF_POSITION)
-        {
-        RCLCPP_FATAL(
-            get_logger(), "Joint '%s' have %s state interfaces found. '%s' expected.",
-            joint.name.c_str(), joint.state_interfaces[0].name.c_str(),
-            hardware_interface::HW_IF_POSITION);
-        return hardware_interface::CallbackReturn::ERROR;
-        }
+        motors_.emplace_back(motor);
     }
 
     return hardware_interface::CallbackReturn::SUCCESS;
+}
+
+std::vector<hardware_interface::StateInterface> RoverSystemHardware::export_state_interfaces()
+{
+    std::vector<hardware_interface::StateInterface> state_interfaces;
+
+    for (auto i = 0u; i < motors_.size(); i++)
+    {
+        if (motors_[i].pos != NAN)
+        {
+            state_interfaces.emplace_back(hardware_interface::StateInterface(
+                motors_[i].name, hardware_interface::HW_IF_POSITION, &motors_[i].pos));
+        }
+        if (motors_[i].vel != NAN)
+        {
+            state_interfaces.emplace_back(hardware_interface::StateInterface(
+                motors_[i].name, hardware_interface::HW_IF_VELOCITY, &motors_[i].vel));
+        }
+    }
+
+  return state_interfaces;
+}
+
+std::vector<hardware_interface::CommandInterface> RoverSystemHardware::export_command_interfaces()
+{
+  std::vector<hardware_interface::CommandInterface> command_interfaces;
+
+  for (auto i = 0u; i < motors_.size(); i++)
+  {
+    command_interfaces.emplace_back(hardware_interface::CommandInterface(
+        motors_[i].name, motors_[i].type, &motors_[i].cmd));
+  }
+
+  return command_interfaces;
 }
 
 hardware_interface::CallbackReturn RoverSystemHardware::on_configure(
@@ -101,9 +147,11 @@ hardware_interface::CallbackReturn RoverSystemHardware::on_configure(
 }
 
 hardware_interface::CallbackReturn RoverSystemHardware::on_activate(
-  const rclcpp_lifecycle::State & /*previous_state*/)
+    const rclcpp_lifecycle::State & /*previous_state*/)
 {
     RCLCPP_INFO(get_logger(), "Activating rover interfaces");
+
+    comms_.connect(cfg_.device, cfg_.baud_rate, cfg_.timeout_ms);
 
     // command and state should be equal when starting
     for (const auto & [name, descr] : joint_command_interfaces_)
@@ -120,8 +168,7 @@ hardware_interface::CallbackReturn RoverSystemHardware::on_deactivate(
   const rclcpp_lifecycle::State & /*previous_state*/)
 {
     RCLCPP_INFO(get_logger(), "Deactivating rover interfaces");
-
-
+    comms_.disconnect();
     RCLCPP_INFO(get_logger(), "Successfully deactivated!");
 
     return hardware_interface::CallbackReturn::SUCCESS;

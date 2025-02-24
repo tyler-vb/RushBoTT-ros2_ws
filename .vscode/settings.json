@@ -92,7 +92,8 @@
         "stdfloat": "cpp",
         "csignal": "cpp",
         "regex": "cpp",
-        "valarray": "cpp"
+        "valarray": "cpp",
+        "any": "cpp"
     },
     "C_Cpp.errorSquiggles": "enabled"
 }

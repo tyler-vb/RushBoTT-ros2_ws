@@ -6,9 +6,6 @@
             <real_time_update_rate>200</real_time_update_rate>
         </physics>
         <plugin name='gz::sim::systems::Physics' filename='gz-sim-physics-system'>
-            <engine>
-                <filename>gz-physics-bullet-featherstone-plugin</filename>
-             </engine>
         </plugin>
         <plugin name='gz::sim::systems::UserCommands' filename='gz-sim-user-commands-system' />
         <plugin name='gz::sim::systems::SceneBroadcaster' filename='gz-sim-scene-broadcaster-system' />

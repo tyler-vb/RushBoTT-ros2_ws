@@ -45,9 +45,9 @@
     </ros2_control>
 
     <gazebo reference='${wheel_link_name}'>
-        <mu1 value="0.5"/>
-        <mu2 value="0.3"/>
-        <kp value="10000000.0"/>
+        <mu1 value="1.0"/>
+        <mu2 value="1.0"/>
+        <kp value="1.0"/>
         <kd value="1.0"/>
         <fdir1 value="1 0 0"/>
     </gazebo>

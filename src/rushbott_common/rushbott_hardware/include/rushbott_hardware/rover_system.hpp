@@ -31,16 +31,32 @@
 #include "rclcpp_lifecycle/state.hpp"
 
 #include "rushbott_hardware/arduino_comms.hpp"
+#include "rushbott_hardware/motor.hpp"
 
 namespace rushbott_hardware
 {
 class RoverSystemHardware : public hardware_interface::SystemInterface
 {
+
+struct Config
+{
+    float loop_rate = 0.0;
+    std::string device = "";
+    int baud_rate = 0;
+    int timeout_ms = 0;
+    int step_enc_counts_per_rev = 0;
+    int bldc_enc_counts_per_rev = 0;
+};
+
 public:
     RCLCPP_SHARED_PTR_DEFINITIONS(RoverSystemHardware);
 
     hardware_interface::CallbackReturn on_init(
         const hardware_interface::HardwareInfo & info) override;
+
+    std::vector<hardware_interface::StateInterface> export_state_interfaces() override;
+      
+    std::vector<hardware_interface::CommandInterface> export_command_interfaces() override;
 
     hardware_interface::CallbackReturn on_configure(
         const rclcpp_lifecycle::State & previous_state) override;
@@ -60,7 +76,8 @@ public:
 private:
         
     ArduinoComms comms_;
-
+    Config cfg_;
+    std::vector<Motor> motors_;
 
 };
 

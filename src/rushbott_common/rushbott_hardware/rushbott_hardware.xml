@@ -1,0 +1,10 @@
+
+<library path="rushbott_hardware">
+  <class name="rushbott_hardware/RoverSystemHardware"
+         type="rushbott_hardware::RoverSystemHardware"
+         base_class_type="hardware_interface::SystemInterface">
+    <description>
+      ros2_control hardware component for RushBoTT
+    </description>
+  </class>
+</library>

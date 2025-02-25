@@ -6,7 +6,7 @@
     <xacro:include filename='wheel_with_servo.urdf.xacro'/>
     <xacro:include filename='arm.urdf.xacro'/>
     <xacro:include filename='lidar.urdf.xacro'/>
-    
+
     <!-- Body Properties -->
     <xacro:property name='body_mass'               value='2.300' />
     <xacro:property name='body_length'             value='${50*cm2m}' />
@@ -90,13 +90,52 @@
         </xacro:inertial_cuboid_with_pose>
     </link>
 
+    <!-- Wheels with servos--> 
+    <xacro:wheel_with_servo name='front_left' parent_link='base_link'>
+        <origin xyz='${wheelbase/2} ${track_width/2} ${-wheel_depth+servo_height}' rpy='0 0 0'/>
+        <axis xyz='0 0 1'/>
+    </xacro:wheel_with_servo>
+
+    <xacro:wheel_with_servo name='front_right' parent_link='base_link'>
+        <origin xyz='${wheelbase/2} ${-track_width/2} ${-wheel_depth+servo_height}' rpy='0 0 ${pi}'/>
+        <axis xyz='0 0 -1'/>
+    </xacro:wheel_with_servo>
+
+    <xacro:wheel_with_servo name='rear_left' parent_link='base_link'>
+        <origin xyz='${-wheelbase/2} ${track_width/2} ${-wheel_depth+servo_height}' rpy='0 0 0'/>
+        <axis xyz='0 0 1'/>
+    </xacro:wheel_with_servo>
+
+    <xacro:wheel_with_servo name='rear_right' parent_link='base_link'>
+        <origin xyz='${-wheelbase/2} ${-track_width/2} ${-wheel_depth+servo_height}' rpy='0 0 ${pi}'/>
+        <axis xyz='0 0 -1'/>
+    </xacro:wheel_with_servo>
+    
+    <!-- Wheels--> 
+    <xacro:wheel name='mid_left' parent_link='base_link'>
+        <origin xyz='0 ${track_width/2} ${-wheel_depth}' rpy='${-pi/2} 0 0'/>
+        <axis xyz='0 0 1'/>
+    </xacro:wheel>
+
+    <xacro:wheel name='mid_right' parent_link='base_link'>
+        <origin xyz='0 ${-track_width/2} ${-wheel_depth}' rpy='${-pi/2} 0 ${pi}'/>
+        <axis xyz='0 0 -1'/>
+    </xacro:wheel>
+
+    <!-- Gazebo (make this conditional later on)-->
+    <gazebo>
+        <plugin filename='libgz_ros2_control-system.so' name='gz_ros2_control::GazeboSimROS2ControlPlugin'>
+            <parameters>$(find rushbott_control)/config/control.yaml</parameters>
+        </plugin>
+    </gazebo>
+
     <!-- Arm --> 
     <xacro:arm_link name='lower_arm' parent_link='base_link' length='${lower_arm_length}' width='${lower_arm_width}' mass='${lower_arm_mass}' offset='0' mesh='${lower_arm_mesh}'>
         <origin xyz='${arm_x_position} 0 ${arm_z_position}' rpy='0 0 0'/>
         <limit lower='${0.3}' upper='${pi-0.3}' effort='10' velocity='10'/>
     </xacro:arm_link>
 
-    <!-- <xacro:arm_link name='upper_arm' parent_link='lower_arm' length='${upper_arm_length}' width='${upper_arm_width}' mass='${upper_arm_mass}' offset='${upper_control_length}' mesh='${upper_arm_mesh}'>
+    <xacro:arm_link name='upper_arm' parent_link='lower_arm' length='${upper_arm_length}' width='${upper_arm_width}' mass='${upper_arm_mass}' offset='${upper_control_length}' mesh='${upper_arm_mesh}'>
         <origin xyz='${-lower_arm_length} 0 0' rpy='0 0 0'/>
         <limit lower='${-pi+0.3}' upper='${-0.3}' effort='10' velocity='10'/>
     </xacro:arm_link>
@@ -118,23 +157,11 @@
 
     <xacro:end_effector name='suction_head' parent_link='suction_base' length='${suction_head_length}' width='${suction_head_width}' mass='${suction_head_mass}' mesh='${suction_head_mesh}'>
         <origin xyz='${suction_base_length} 0 0' rpy='0 0 0'/>
-    </xacro:end_effector> -->
+    </xacro:end_effector>
 
-    <ros2_control name="rushbott_control" type="system">
-      <hardware>
-        <plugin>rushbott_hardware/RoverSystemHardware</plugin>
-        <param name="loop_rate">30</param>
-        <param name="device">/dev/serial/by-path/platform-fd500000.pcie-pci-0000:01:00.0-usb-0:1.3:1.0-port0</param>
-        <param name="baud_rate">57600</param>
-        <param name="timeout_ms">1000</param>
-        <param name="step_enc_counts_per_rev">100</param>
-        <param name="bldc_enc_counts_per_rev">3436</param>
-        
-      </hardware>
-      <joint name="lower_arm_joint">
-        <command_interface name="position"/>
-        <state_interface name="position"/>
-      </joint>
-    </ros2_control>
+    <!-- Lidar -->
+    <xacro:lidar parent_link="base_link">
+        <origin xyz="0.122 0 ${body_height}" rpy="0 0 0"/>
+    </xacro:lidar>
 
 </robot>

@@ -61,6 +61,9 @@ public:
     hardware_interface::CallbackReturn on_configure(
         const rclcpp_lifecycle::State & previous_state) override;
 
+    hardware_interface::CallbackReturn on_cleanup(
+        const rclcpp_lifecycle::State & previous_state) override;
+
     hardware_interface::CallbackReturn on_activate(
         const rclcpp_lifecycle::State & previous_state) override;
 

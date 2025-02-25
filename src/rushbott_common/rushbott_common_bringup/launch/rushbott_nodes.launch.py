@@ -85,7 +85,7 @@ def generate_launch_description():
     ld.add_action(arm_teleop)
     ld.add_action(robot_description)
     ld.add_action(controllers)
-    ld.add_action(moveit2_interface)
+    # ld.add_action(moveit2_interface)
     ld.add_action(rviz)
 
     return ld

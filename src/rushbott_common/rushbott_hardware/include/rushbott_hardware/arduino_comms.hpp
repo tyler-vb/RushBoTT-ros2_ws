@@ -84,22 +84,34 @@ public:
     std::string response = send_msg("\r");
   }
 
-  void read_encoder_values(int &val_1, int &val_2)
+  std::vector<int> read_encoder_values()
   {
     std::string response = send_msg("e\r");
 
-    std::string delimiter = " ";
-    size_t del_pos = response.find(delimiter);
-    std::string token_1 = response.substr(0, del_pos);
-    std::string token_2 = response.substr(del_pos + delimiter.length());
+    std::vector<int> values;
+    std::stringstream ss(response);
+    std::string token;
 
-    val_1 = std::atoi(token_1.c_str());
-    val_2 = std::atoi(token_2.c_str());
+    // Split response by spaces and convert to integers
+    while (std::getline(ss, token, ' '))
+    {
+        values.push_back(std::atoi(token.c_str()));  // Convert token to int and add to vector
+    }
+
+    return values;  // Return vector of encoder values
   }
-  void set_motor_values(int val_1, int val_2)
+
+  void set_motor_values(std::vector<double> cmd_values)
   {
     std::stringstream ss;
-    ss << "m " << val_1 << " " << val_2 << "\r";
+    ss << "m";
+
+    for (const auto &val : cmd_values)
+    {
+        ss << " " << val;
+    }
+
+    ss << "\r";
     send_msg(ss.str());
   }
 

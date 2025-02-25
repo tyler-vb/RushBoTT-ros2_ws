@@ -2,6 +2,7 @@
 #define RUSHBOTT_HARDWARE_Motor_HPP
 
 #include <string>
+#include <vector>
 #include <cmath>
 
 
@@ -10,8 +11,6 @@ class Motor
     public:
 
     std::string name = "";
-    std::string type = "";
-    int enc = 0;
     double cmd = 0.0;
     double pos = 0.0;
     double vel = 0.0;
@@ -19,17 +18,14 @@ class Motor
 
     Motor() = default;
 
-    Motor(const std::string &motor_name, const auto &cmd_type, double pos_init, double vel_init, int counts_per_rev)
+    Motor(const std::string &joint_name, int counts_per_rev)
     {
-      setup(motor_name, cmd_type, pos_init, vel_init, counts_per_rev);
+      setup(joint_name, counts_per_rev);
     }
     
-    void setup(const std::string &motor_name, const auto &cmd_type, double pos_init, double vel_init, int counts_per_rev)
+    void setup(const std::string &joint_name, int counts_per_rev)
     {
-      name = motor_name;
-      type = cmd_type;
-      pos = pos_init;
-      vel = vel_init;
+      name = joint_name;
 
       if (counts_per_rev > 0) 
       {
@@ -41,9 +37,9 @@ class Motor
       }
     }
 
-    double calc_enc_angle()
+    void calc_enc_angle(int enc)
     {
-      return enc * rads_per_count;
+      pos = enc * rads_per_count;
     }
 };
 

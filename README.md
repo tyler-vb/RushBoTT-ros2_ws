@@ -68,3 +68,6 @@ ros2 launch rushbott_control control.launch.py
 
 . ~/RushBoTT-ros2_ws/install/setup.sh
 ros2 launch moveit_setup_assistant setup_assistant.launch.py
+
+. ~/RushBoTT-ros2_ws/install/setup.sh
+ros2 launch rushbott_common_bringup rushbott_nodes.launch.py

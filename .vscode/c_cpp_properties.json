@@ -11,7 +11,10 @@
                 "/usr/include/**",
                 "${workspaceFolder}/src/rushbott_common/rover_controller/include",
                 "${workspaceFolder}/build/rover_controller/include",
-                "${workspaceFolder}/src/rushbott_common/rushbott_hardware/include"
+                "${workspaceFolder}/src/rushbott_common/rushbott_hardware/include",
+                "${workspaceFolder}/src/rushbott_common/rushbott_hardware/hardware/include",
+                "/opt/ros/jazzy/include/joint_limits",
+                "/opt/ros/jazzy/include/lifecycle_msgs"
             ],
             "name": "ROS",
             "intelliSenseMode": "gcc-x64",

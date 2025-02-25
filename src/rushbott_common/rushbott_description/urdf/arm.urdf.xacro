@@ -33,16 +33,15 @@
             </xacro:inertial_cuboid_with_pose>
         </link>
 
-        <ros2_control name='${arm_joint_name}' type='system'>
+        <!-- <ros2_control name='${arm_joint_name}' type='system'>
             <hardware>
                 <plugin>gz_ros2_control/GazeboSimSystem</plugin>
             </hardware>
             <joint name='${arm_joint_name}'>
                 <command_interface name='position'/>
-                    <!-- <param name='initial_value'>0.3</param> -->
                 <state_interface name='position'/>
             </joint>
-        </ros2_control>
+        </ros2_control> -->
     </xacro:macro> 
 
     <!--Arm Link Mimic-->

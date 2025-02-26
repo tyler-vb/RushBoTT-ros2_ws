@@ -41,6 +41,39 @@ public:
     timeout_ms_ = timeout_ms;
     serial_conn_.Open(serial_device);
     serial_conn_.SetBaudRate(convert_baud_rate(baud_rate));
+
+    std::string response;
+    
+    for (int attempt = 0; attempt < 5; attempt++)  // Retry up to 5 times
+    {
+        serial_conn_.FlushIOBuffers();
+        serial_conn_.Write("h");  // Send handshake request
+        std::cout << "Waiting for Arduino to respond..." << std::endl;
+
+        try
+        {
+          serial_conn_.ReadLine(response, '\n', timeout_ms);
+          response.erase(std::remove(response.begin(), response.end(), '\r'), response.end());
+          response.erase(std::remove(response.begin(), response.end(), '\n'), response.end());
+
+          if (response == "h")
+          {
+            std::cout << "Handshake successful! Arduino is ready." << std::endl;
+              return;
+          }
+          else {
+            std::cerr << "[WARNING] Invalid response: " << response << std::endl;
+          }
+        } 
+        catch (const LibSerial::ReadTimeout&)
+        {
+          std::cerr << "[WARNING] Handshake attempt timed out. Retrying..." << std::endl;
+        }
+    }
+
+    std::cerr << "[ERROR] Handshake failed! Could not establish connection with Arduino." << std::endl;
+    serial_conn_.Close(); // Close connection if handshake fails
+
   }
 
   void disconnect()
@@ -60,6 +93,7 @@ public:
     serial_conn_.Write(msg_to_send);
 
     std::string response = "";
+
     try
     {
       // Responses end with \r\n so we will read up to (and including) the \n.
@@ -67,7 +101,7 @@ public:
     }
     catch (const LibSerial::ReadTimeout&)
     {
-        std::cerr << "The ReadByte() call has timed out." << std::endl ;
+      std::cerr << "[WARNING] The ReadLine() call has timed out" << std::endl;
     }
 
     if (print_output)
@@ -81,12 +115,12 @@ public:
 
   void send_empty_msg()
   {
-    std::string response = send_msg("\r");
+    std::string response = send_msg("");
   }
 
   std::vector<int> read_encoder_values()
   {
-    std::string response = send_msg("e\r");
+    std::string response = send_msg("e", true);
 
     std::vector<int> values;
     std::stringstream ss(response);
@@ -95,7 +129,8 @@ public:
     // Split response by spaces and convert to integers
     while (std::getline(ss, token, ' '))
     {
-        values.push_back(std::atoi(token.c_str()));  // Convert token to int and add to vector
+      values.push_back(std::atoi(token.c_str()));  // Convert token to int and add to vector
+
     }
 
     return values;  // Return vector of encoder values
@@ -111,8 +146,7 @@ public:
         ss << " " << val;
     }
 
-    ss << "\r";
-    send_msg(ss.str());
+    // send_msg(ss.str());
   }
 
   void set_pid_values(int k_p, int k_d, int k_i, int k_o)

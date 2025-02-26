@@ -6,6 +6,12 @@ from launch.substitutions import LaunchConfiguration, PathJoinSubstitution
 from launch_ros.actions import Node
 from moveit_configs_utils import MoveItConfigsBuilder
 
+ARGUMENTS = [
+    DeclareLaunchArgument('use_sim_time', default_value='false',
+                          choices=['true', 'false'],
+                          description='use_sim_time'),
+]
+
 def generate_launch_description(): 
     # Directories
     pkg_rushbott_common_bringup = get_package_share_directory('rushbott_common_bringup')

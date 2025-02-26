@@ -18,7 +18,7 @@ def generate_launch_description():
         package="controller_manager",
         executable="ros2_control_node",
         parameters=[control_config],
-        output="both"
+        output="screen"
     )
 
     controller_spawner = Node(

@@ -12,9 +12,9 @@ class Motor
 
     std::string name = "";
     double cmd = 0.0;
-    double pos = 0.0;
-    double vel = 0.0;
-    double rads_per_count = 0.0;
+    double pos = NAN;
+    double vel = NAN;
+    double rads_per_count = NAN;
 
     Motor() = default;
 
@@ -31,10 +31,6 @@ class Motor
       {
         rads_per_count = (2 * M_PI) / counts_per_rev;
       } 
-      else 
-      {
-        rads_per_count = 0;
-      }
     }
 
     void calc_enc_angle(int enc)

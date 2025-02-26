@@ -124,9 +124,9 @@
       <hardware>
         <plugin>rushbott_hardware/RoverSystemHardware</plugin>
         <param name="loop_rate">30</param>
-        <param name="device">/dev/serial/by-path/platform-fd500000.pcie-pci-0000:01:00.0-usb-0:1.3:1.0-port0</param>
-        <param name="baud_rate">57600</param>
-        <param name="timeout_ms">1000</param>
+        <param name="device">/dev/ttyACM0</param>
+        <param name="baud_rate">9600</param>
+        <param name="timeout_ms">2000</param>
         <param name="step_enc_counts_per_rev">100</param>
         <param name="bldc_enc_counts_per_rev">3436</param>
         

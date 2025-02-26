@@ -49,7 +49,6 @@ hardware_interface::CallbackReturn RoverSystemHardware::on_init(
     for (const hardware_interface::ComponentInfo & joint : info_.joints)
     {
         Motor motor;
-        int enc_counts_per_rev;
 
         if (joint.command_interfaces.size() != 1)
         {
@@ -64,21 +63,22 @@ hardware_interface::CallbackReturn RoverSystemHardware::on_init(
             joint.state_interfaces[0].name == hardware_interface::HW_IF_POSITION &&
             joint.command_interfaces[0].name == hardware_interface::HW_IF_POSITION)
         {
-            enc_counts_per_rev = cfg_.step_enc_counts_per_rev;
+            motor.setup(joint.name, cfg_.step_enc_counts_per_rev);
+            motor.pos = 0.0;
         }
         else if (joint.name.find("wheel") != std::string::npos &&
-            joint.state_interfaces.size() == 2 &&
+            joint.state_interfaces.size() == 1 &&
             joint.state_interfaces[0].name == hardware_interface::HW_IF_POSITION &&
-            joint.state_interfaces[1].name == hardware_interface::HW_IF_VELOCITY &&
             joint.command_interfaces[0].name == hardware_interface::HW_IF_VELOCITY)
         {
-            enc_counts_per_rev = cfg_.bldc_enc_counts_per_rev;
+            motor.setup(joint.name, cfg_.bldc_enc_counts_per_rev);
+            motor.pos = 0.0;
         }
         else if (joint.name.find("servo") != std::string::npos &&
             joint.state_interfaces.size() == 0 &&
             joint.command_interfaces[0].name == hardware_interface::HW_IF_POSITION)
         {
-            enc_counts_per_rev = 0;
+            motor.setup(joint.name, 0);
         }
         else
         {
@@ -94,7 +94,6 @@ hardware_interface::CallbackReturn RoverSystemHardware::on_init(
             state_interface_names.push_back(state_interface.name);
         }
 
-        motor.setup(joint.name, enc_counts_per_rev);
         motors_.emplace_back(motor);
     }
 
@@ -193,7 +192,13 @@ hardware_interface::return_type RoverSystemHardware::read(
 
     for (auto i = 0u; i < motors_.size(); i++)
     {
-        if (motors_[i].rads_per_count != 0)
+        if (i > enc_values.size())
+        {
+            RCLCPP_ERROR(get_logger(), "Not enough encoder values recieved");
+            return hardware_interface::return_type::ERROR;
+        }
+
+        if (motors_[i].rads_per_count != NAN)
         {
             motors_[i].calc_enc_angle(enc_values[i]);
         }

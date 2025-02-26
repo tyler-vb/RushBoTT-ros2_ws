@@ -12,7 +12,9 @@ RUN if id -u $USER_UID >/dev/null 2>&1; then \
         userdel -r $(getent passwd 1000 | cut -d: -f1); \
     fi && \
     groupadd --gid $USER_GID $USERNAME && \
-    useradd -s /bin/bash --uid $USER_UID --gid $USER_GID --groups video -m $USERNAME;
+    useradd -s /bin/bash --uid $USER_UID --gid $USER_GID --groups video -m $USERNAME; \
+    usermod -aG dialout $USERNAME
+
 
 # Add sudo support for the non-root user
 RUN apt-get update && \
@@ -51,6 +53,7 @@ RUN apt-get update && apt-get install --no-install-recommends -y -o Dpkg::Option
     less \
     xterm \
     libdrm-dev \
+    screen \
     mesa-utils &&\
     rm -rf /var/lib/apt/lists/*
     

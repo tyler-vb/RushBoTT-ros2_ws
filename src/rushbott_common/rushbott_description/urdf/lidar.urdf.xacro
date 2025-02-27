@@ -30,30 +30,32 @@
         </xacro:inertial_cylinder_with_pose>
     </link>
 
-    <gazebo reference="lidar">
-        <sensor name="lidar" type="gpu_lidar">
-            <gz_frame_id>lidar</gz_frame_id>
-            <always_on>true</always_on>
-            <visualize>true</visualize>
-            <update_rate>10</update_rate>
-            <topic>scan</topic>
-            <lidar>
-                <scan>
-                    <horizontal>
-                        <samples>360</samples>
-                        <min_angle>-3.14</min_angle>
-                        <max_angle>3.14</max_angle>
-                    </horizontal>
-                </scan>
-                <range>
-                    <min>0.3</min>
-                    <max>12</max>
-                    <resolution>0.01</resolution>
-                </range>
-            </lidar>
-            <plugin name="gz::sim::systems::Sensors" filename = "gz-sim-sensors-system"></plugin>
-        </sensor>
-    </gazebo>
+    <xacro:if is_sim="true">
+        <gazebo reference="lidar">
+            <sensor name="lidar" type="gpu_lidar">
+                <gz_frame_id>lidar</gz_frame_id>
+                <always_on>true</always_on>
+                <visualize>true</visualize>
+                <update_rate>10</update_rate>
+                <topic>scan</topic>
+                <lidar>
+                    <scan>
+                        <horizontal>
+                            <samples>360</samples>
+                            <min_angle>-3.14</min_angle>
+                            <max_angle>3.14</max_angle>
+                        </horizontal>
+                    </scan>
+                    <range>
+                        <min>0.3</min>
+                        <max>12</max>
+                        <resolution>0.01</resolution>
+                    </range>
+                </lidar>
+                <plugin name="gz::sim::systems::Sensors" filename = "gz-sim-sensors-system"></plugin>
+            </sensor>
+        </gazebo>
+    </xacro:if>
 
 </xacro:macro>
 </robot>

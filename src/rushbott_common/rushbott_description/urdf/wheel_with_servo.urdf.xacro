@@ -37,6 +37,7 @@
             <xacro:inertial_cylinder mass='${servo_mass}' radius='${servo_radius}' length='${servo_width}'/>
         </link>
 
+    <xacro:if is_sim="true">
         <ros2_control name='${servo_joint_name}' type='system'>
             <hardware>
                 <plugin>gz_ros2_control/GazeboSimSystem</plugin>
@@ -50,6 +51,7 @@
             <origin xyz='0 0 ${-servo_height}' rpy='${-pi/2} 0 0'/>
             <xacro:insert_block name='axis'/>
         </xacro:wheel>
+    </xacro:if>
 
     </xacro:macro>   
 </robot>

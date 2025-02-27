@@ -36,23 +36,24 @@ public:
 
   ArduinoComms() = default;
 
-  void connect(const std::string &serial_device, int32_t baud_rate, int32_t timeout_ms)
+  void connect(const std::string &serial_device, int32_t baud_rate, int32_t msg_attempts, int32_t timeout_ms)
   {  
+    msg_attempts_ = msg_attempts;
     timeout_ms_ = timeout_ms;
     serial_conn_.Open(serial_device);
     serial_conn_.SetBaudRate(convert_baud_rate(baud_rate));
 
     std::string response;
     
-    for (int attempt = 0; attempt < 5; attempt++)  // Retry up to 5 times
+    for (int attempt = 0; attempt < 10; attempt++)  // Retry up to 10 times
     {
         serial_conn_.FlushIOBuffers();
-        serial_conn_.Write("h");  // Send handshake request
+        serial_conn_.Write("h\n");  // Send handshake request
         std::cout << "Waiting for Arduino to respond..." << std::endl;
 
         try
         {
-          serial_conn_.ReadLine(response, '\n', timeout_ms);
+          serial_conn_.ReadLine(response, '\n', timeout_ms*3);
           response.erase(std::remove(response.begin(), response.end(), '\r'), response.end());
           response.erase(std::remove(response.begin(), response.end(), '\n'), response.end());
 
@@ -89,19 +90,24 @@ public:
 
   std::string send_msg(const std::string &msg_to_send, bool print_output = false)
   {
-    serial_conn_.FlushIOBuffers(); // Just in case
-    serial_conn_.Write(msg_to_send);
 
-    std::string response = "";
+    std::string response;
 
-    try
+    for (int attempt = 1; attempt < msg_attempts_; attempt++)
     {
-      // Responses end with \r\n so we will read up to (and including) the \n.
-      serial_conn_.ReadLine(response, '\n', timeout_ms_);
-    }
-    catch (const LibSerial::ReadTimeout&)
-    {
-      std::cerr << "[WARNING] The ReadLine() call has timed out" << std::endl;
+        serial_conn_.FlushIOBuffers();
+        serial_conn_.Write(msg_to_send); 
+
+        try
+        {
+          serial_conn_.ReadLine(response, '\n', timeout_ms_);
+        } 
+        catch (const LibSerial::ReadTimeout&)
+        {
+          std::cerr << "[WARNING] Msg timed out, retrying... (attempt " << attempt << ")" << std::endl;
+          continue;
+        }
+        break;
     }
 
     if (print_output)
@@ -120,7 +126,7 @@ public:
 
   std::vector<int> read_encoder_values()
   {
-    std::string response = send_msg("e", true);
+    std::string response = send_msg("e\n", true);
 
     std::vector<int> values;
     std::stringstream ss(response);
@@ -138,6 +144,7 @@ public:
 
   void set_motor_values(std::vector<double> cmd_values)
   {
+
     std::stringstream ss;
     ss << "m";
 
@@ -146,19 +153,16 @@ public:
         ss << " " << val;
     }
 
-    // send_msg(ss.str());
-  }
+    ss << "\n";
 
-  void set_pid_values(int k_p, int k_d, int k_i, int k_o)
-  {
-    std::stringstream ss;
-    ss << "u " << k_p << ":" << k_d << ":" << k_i << ":" << k_o << "\r";
-    send_msg(ss.str());
+    send_msg(ss.str(), true);
+    
   }
 
 private:
     LibSerial::SerialPort serial_conn_;
     int timeout_ms_;
+    int msg_attempts_;
 };
 
 #endif // RUSHBOTT_HARDWARE_ARDUINO_COMMS_HPP

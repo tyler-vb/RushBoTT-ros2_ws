@@ -33,15 +33,18 @@
             </xacro:inertial_cuboid_with_pose>
         </link>
 
-        <!-- <ros2_control name='${arm_joint_name}' type='system'>
-            <hardware>
-                <plugin>gz_ros2_control/GazeboSimSystem</plugin>
-            </hardware>
-            <joint name='${arm_joint_name}'>
-                <command_interface name='position'/>
-                <state_interface name='position'/>
-            </joint>
-        </ros2_control> -->
+        <xacro:if is_sim="true">
+            <ros2_control name='${arm_joint_name}' type='system'>
+                <hardware>
+                    <plugin>gz_ros2_control/GazeboSimSystem</plugin>
+                </hardware>
+                <joint name='${arm_joint_name}'>
+                    <command_interface name='position'/>
+                    <state_interface name='position'/>
+                </joint>
+            </ros2_control>
+        </xacro:if>
+        
     </xacro:macro> 
 
     <!--Arm Link Mimic-->
@@ -107,6 +110,19 @@
                 <origin xyz='${length/2} 0 0' rpy='0 ${pi/2} 0'/>
             </xacro:inertial_cuboid_with_pose>
         </link>
+
+        <xacro:if is_sim="true">
+            <ros2_control name='${arm_joint_name}' type='system'>
+                <hardware>
+                    <plugin>gz_ros2_control/GazeboSimSystem</plugin>
+                </hardware>
+                <joint name='${arm_joint_name}'>
+                    <command_interface name='position'/>
+                    <state_interface name='position'/>
+                </joint>
+            </ros2_control>
+        </xacro:if>
+
     </xacro:macro> 
 
 </robot>

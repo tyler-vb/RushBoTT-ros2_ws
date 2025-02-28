@@ -18,6 +18,7 @@
             <xacro:insert_block name='origin'/>
             <axis xyz='0 0 -1'/>
             <limit lower = "${-pi/2}" upper = "${pi/2}" effort='10' velocity='10'/>
+            <dynamics damping="0.1" friction="0.2"/>
         </joint>
 
         <link name='${servo_link_name}'>
@@ -37,21 +38,21 @@
             <xacro:inertial_cylinder mass='${servo_mass}' radius='${servo_radius}' length='${servo_width}'/>
         </link>
 
-    <xacro:if is_sim="true">
-        <ros2_control name='${servo_joint_name}' type='system'>
-            <hardware>
-                <plugin>gz_ros2_control/GazeboSimSystem</plugin>
-            </hardware>
-            <joint name='${servo_joint_name}'>
-                <command_interface name='position'/>
-            </joint>
-        </ros2_control>
-
         <xacro:wheel name='${name}' parent_link='${servo_link_name}'>
             <origin xyz='0 0 ${-servo_height}' rpy='${-pi/2} 0 0'/>
             <xacro:insert_block name='axis'/>
         </xacro:wheel>
-    </xacro:if>
+
+        <xacro:if value="${is_sim == True}">
+            <ros2_control name='${servo_joint_name}' type='system'>
+                <hardware>
+                    <plugin>gz_ros2_control/GazeboSimSystem</plugin>
+                </hardware>
+                <joint name='${servo_joint_name}'>
+                    <command_interface name='position'/>
+                </joint>
+            </ros2_control>
+        </xacro:if>
 
     </xacro:macro>   
 </robot>

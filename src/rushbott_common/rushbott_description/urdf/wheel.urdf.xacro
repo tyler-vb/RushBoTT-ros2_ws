@@ -15,6 +15,7 @@
         <child link='${wheel_link_name}'/>
         <xacro:insert_block name='origin'/>
         <xacro:insert_block name='axis'/>
+        <dynamics damping="0.1" friction="0.2"/>
     </joint>
 
     <link name='${wheel_link_name}'>
@@ -34,7 +35,7 @@
         <xacro:inertial_cylinder mass='${wheel_mass}' radius='${wheel_radius}' length='${wheel_width}'/>
     </link>
 
-    <xacro:if is_sim="true">
+    <xacro:if value="${is_sim == True}">
         <ros2_control name='${wheel_joint_name}' type='system'>
             <hardware>
                 <plugin>gz_ros2_control/GazeboSimSystem</plugin>
@@ -51,6 +52,17 @@
             <kp value="1.0"/>
             <kd value="1.0"/>
             <fdir1 value="1 0 0"/>
+
+            <collision name="${wheel_link_name}_collision">
+                <surface>
+                    <friction>
+                        <torsional>
+                            <coefficient>0.0</coefficient>
+                        </torsional>
+                    </friction>
+                </surface>
+            </collision>
+            
         </gazebo>
     </xacro:if>
 

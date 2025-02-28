@@ -6,6 +6,7 @@ Panels:
       Expanded:
         - /Global Options1
         - /RobotModel1/Description Topic1
+        - /TF1
         - /TF1/Frames1
         - /TF1/Tree1
         - /LaserScan1/Topic1
@@ -173,41 +174,41 @@ Visualization Manager:
       Filter (whitelist): ""
       Frame Timeout: 15
       Frames:
-        All Enabled: true
+        All Enabled: false
         base_footprint:
-          Value: true
+          Value: false
         base_link:
-          Value: true
+          Value: false
         front_left_servo:
-          Value: true
+          Value: false
         front_left_wheel:
-          Value: true
+          Value: false
         front_right_servo:
-          Value: true
+          Value: false
         front_right_wheel:
-          Value: true
+          Value: false
         lidar:
-          Value: true
+          Value: false
         lower_arm:
           Value: true
         mid_left_wheel:
-          Value: true
+          Value: false
         mid_right_wheel:
-          Value: true
+          Value: false
         odom:
           Value: true
         rear_left_servo:
-          Value: true
+          Value: false
         rear_left_wheel:
-          Value: true
+          Value: false
         rear_right_servo:
-          Value: true
+          Value: false
         rear_right_wheel:
-          Value: true
+          Value: false
         suction_base:
           Value: true
         suction_head:
-          Value: true
+          Value: false
         upper_arm:
           Value: true
         upper_control:
@@ -220,36 +221,35 @@ Visualization Manager:
       Show Axes: true
       Show Names: false
       Tree:
-        base_footprint:
-          base_link:
-            front_left_servo:
-              front_left_wheel:
-                {}
-            front_right_servo:
-              front_right_wheel:
-                {}
-            lidar:
-              {}
-            lower_arm:
-              upper_arm:
-                suction_base:
-                  suction_head:
-                    {}
-              upper_control:
-                upper_link:
-                  {}
-            mid_left_wheel:
-              {}
-            mid_right_wheel:
-              {}
-            rear_left_servo:
-              rear_left_wheel:
-                {}
-            rear_right_servo:
-              rear_right_wheel:
-                {}
         odom:
-          {}
+          base_footprint:
+            base_link:
+              front_left_servo:
+                front_left_wheel:
+                  {}
+              front_right_servo:
+                front_right_wheel:
+                  {}
+              lidar:
+                {}
+              lower_arm:
+                upper_arm:
+                  suction_base:
+                    suction_head:
+                      {}
+                upper_control:
+                  upper_link:
+                    {}
+              mid_left_wheel:
+                {}
+              mid_right_wheel:
+                {}
+              rear_left_servo:
+                rear_left_wheel:
+                  {}
+              rear_right_servo:
+                rear_right_wheel:
+                  {}
       Update Interval: 0
       Value: true
     - Alpha: 1
@@ -264,7 +264,7 @@ Visualization Manager:
       Color: 255; 255; 255
       Color Transformer: Intensity
       Decay Time: 0
-      Enabled: true
+      Enabled: false
       Invert Rainbow: false
       Max Color: 255; 255; 255
       Max Intensity: 0
@@ -285,7 +285,7 @@ Visualization Manager:
         Value: /scan
       Use Fixed Frame: true
       Use rainbow: true
-      Value: true
+      Value: false
     - Acceleration_Scaling_Factor: 0.1
       Class: moveit_rviz_plugin/MotionPlanning
       Enabled: false
@@ -371,7 +371,7 @@ Visualization Manager:
   Enabled: true
   Global Options:
     Background Color: 48; 48; 48
-    Fixed Frame: base_link
+    Fixed Frame: odom
     Frame Rate: 30
   Name: root
   Tools:
@@ -414,25 +414,25 @@ Visualization Manager:
   Views:
     Current:
       Class: rviz_default_plugins/Orbit
-      Distance: 2.0165581703186035
+      Distance: 3.099402904510498
       Enable Stereo Rendering:
         Stereo Eye Separation: 0.05999999865889549
         Stereo Focal Distance: 1
         Swap Stereo Eyes: false
         Value: false
       Focal Point:
-        X: -0.03734036535024643
-        Y: -0.15115194022655487
-        Z: -0.12250971049070358
+        X: 0.026783347129821777
+        Y: -0.024682044982910156
+        Z: 0.4720708131790161
       Focal Shape Fixed Size: true
       Focal Shape Size: 0.05000000074505806
       Invert Z Axis: false
       Name: Current View
       Near Clip Distance: 0.009999999776482582
-      Pitch: 0.3847949206829071
+      Pitch: 0.029128458350896835
       Target Frame: <Fixed Frame>
       Value: Orbit (rviz)
-      Yaw: 4.638598918914795
+      Yaw: 4.69135856628418
     Saved: ~
 Window Geometry:
   Displays:
@@ -452,5 +452,5 @@ Window Geometry:
   Views:
     collapsed: false
   Width: 958
-  X: 315
-  Y: 5
+  X: 283
+  Y: -27

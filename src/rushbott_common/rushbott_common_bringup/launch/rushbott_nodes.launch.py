@@ -9,7 +9,7 @@ from moveit_configs_utils import MoveItConfigsBuilder
 ARGUMENTS = [
     DeclareLaunchArgument('use_sim_time', default_value='false',
                           choices=['true', 'false'],
-                          description='use_sim_time'),
+                          description='use_sim_time')                 
 ]
 
 def generate_launch_description(): 
@@ -91,7 +91,7 @@ def generate_launch_description():
     ld.add_action(arm_teleop)
     ld.add_action(robot_description)
     ld.add_action(controllers)
-    # ld.add_action(moveit2_interface)
+    ld.add_action(moveit2_interface)
     ld.add_action(rviz)
 
     return ld

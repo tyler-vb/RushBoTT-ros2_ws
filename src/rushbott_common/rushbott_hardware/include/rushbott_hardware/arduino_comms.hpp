@@ -110,6 +110,15 @@ public:
         break;
     }
 
+    if (response == f)
+    {
+      std::cerr << "[WARNING] Msg returned an error" << std::endl;
+    }
+    else if (response == "")
+    {
+      std::cerr << "[WARNING] Msg was empty" << std::endl;
+    }
+
     if (print_output)
     {
       std::cout << "Sent: " << msg_to_send << " Recv: " << response << std::endl;
@@ -142,11 +151,11 @@ public:
     return values;  // Return vector of encoder values
   }
 
-  void set_motor_values(std::vector<double> cmd_values)
+  void set_motor_values(std::vector<int> cmd_values, int check_sum)
   {
 
     std::stringstream ss;
-    ss << "m";
+    ss << "m" << check_sum;
 
     for (const auto &val : cmd_values)
     {

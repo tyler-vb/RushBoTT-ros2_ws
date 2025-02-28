@@ -12,6 +12,7 @@
             <xacro:insert_block name='origin'/>
             <xacro:insert_block name='limit'/>
             <axis xyz='0 1 0'/>
+            <dynamics damping="0.1" friction="0.2"/>
         </joint>
 
         <link name='${name}'>
@@ -33,7 +34,7 @@
             </xacro:inertial_cuboid_with_pose>
         </link>
 
-        <xacro:if is_sim="true">
+        <xacro:if value="${is_sim == True}">
             <ros2_control name='${arm_joint_name}' type='system'>
                 <hardware>
                     <plugin>gz_ros2_control/GazeboSimSystem</plugin>
@@ -58,6 +59,7 @@
             <xacro:insert_block name='origin'/>
             <xacro:insert_block name='mimic'/>
             <axis xyz='0 1 0'/>
+            <dynamics damping="0.1" friction="0.2"/>
         </joint>
 
         <link name='${name}'>
@@ -110,18 +112,6 @@
                 <origin xyz='${length/2} 0 0' rpy='0 ${pi/2} 0'/>
             </xacro:inertial_cuboid_with_pose>
         </link>
-
-        <xacro:if is_sim="true">
-            <ros2_control name='${arm_joint_name}' type='system'>
-                <hardware>
-                    <plugin>gz_ros2_control/GazeboSimSystem</plugin>
-                </hardware>
-                <joint name='${arm_joint_name}'>
-                    <command_interface name='position'/>
-                    <state_interface name='position'/>
-                </joint>
-            </ros2_control>
-        </xacro:if>
 
     </xacro:macro> 
 

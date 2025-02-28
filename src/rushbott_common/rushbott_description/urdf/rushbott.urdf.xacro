@@ -8,7 +8,7 @@
     <xacro:include filename='lidar.urdf.xacro'/>
 
     <!-- Simulation Check-->
-    <xacro:property name='is_sim'               value='false' />
+    <xacro:property name='is_sim'               value='true' />
 
     <!-- Body Properties -->
     <xacro:property name='body_mass'               value='2.300' />
@@ -93,7 +93,7 @@
         </xacro:inertial_cuboid_with_pose>
     </link>
 
-    <!-- Wheels with servos 
+    <!-- Wheels with servos -->
     <xacro:wheel_with_servo name='front_left' parent_link='base_link'>
         <origin xyz='${wheelbase/2} ${track_width/2} ${-wheel_depth+servo_height}' rpy='0 0 0'/>
         <axis xyz='0 0 1'/>
@@ -114,7 +114,7 @@
         <axis xyz='0 0 -1'/>
     </xacro:wheel_with_servo>
     
-    Wheels
+    <!-- Wheels -->
     <xacro:wheel name='mid_left' parent_link='base_link'>
         <origin xyz='0 ${track_width/2} ${-wheel_depth}' rpy='${-pi/2} 0 0'/>
         <axis xyz='0 0 1'/>
@@ -123,16 +123,7 @@
     <xacro:wheel name='mid_right' parent_link='base_link'>
         <origin xyz='0 ${-track_width/2} ${-wheel_depth}' rpy='${-pi/2} 0 ${pi}'/>
         <axis xyz='0 0 -1'/>
-    </xacro:wheel> -->
-
-    <!-- Gazebo (make this conditional later on) -->
-    <xacro:if is_sim="true">
-        <gazebo>
-            <plugin filename='libgz_ros2_control-system.so' name='gz_ros2_control::GazeboSimROS2ControlPlugin'>
-                <parameters>$(find rushbott_control)/config/control.yaml</parameters>
-            </plugin>
-        </gazebo>
-    </xacro:if>
+    </xacro:wheel>
 
     <!-- Arm --> 
     <xacro:arm_link name='lower_arm' parent_link='base_link' length='${lower_arm_length}' width='${lower_arm_width}' mass='${lower_arm_mass}' offset='0' mesh='${lower_arm_mesh}'>
@@ -140,7 +131,7 @@
         <limit lower='${0.3}' upper='${pi-0.3}' effort='10' velocity='10'/>
     </xacro:arm_link>
 
-    <!-- <xacro:arm_link name='upper_arm' parent_link='lower_arm' length='${upper_arm_length}' width='${upper_arm_width}' mass='${upper_arm_mass}' offset='${upper_control_length}' mesh='${upper_arm_mesh}'>
+    <xacro:arm_link name='upper_arm' parent_link='lower_arm' length='${upper_arm_length}' width='${upper_arm_width}' mass='${upper_arm_mass}' offset='${upper_control_length}' mesh='${upper_arm_mesh}'>
         <origin xyz='${-lower_arm_length} 0 0' rpy='0 0 0'/>
         <limit lower='${-pi+0.3}' upper='${-0.3}' effort='10' velocity='10'/>
     </xacro:arm_link>
@@ -162,14 +153,14 @@
 
     <xacro:end_effector name='suction_head' parent_link='suction_base' length='${suction_head_length}' width='${suction_head_width}' mass='${suction_head_mass}' mesh='${suction_head_mesh}'>
         <origin xyz='${suction_base_length} 0 0' rpy='0 0 0'/>
-    </xacro:end_effector> -->
+    </xacro:end_effector>
 
-    <!-- Lidar
+    <!-- Lidar -->
     <xacro:lidar parent_link="base_link">
         <origin xyz="0.122 0 ${body_height}" rpy="0 0 0"/>
-    </xacro:lidar> -->
+    </xacro:lidar>
 
-    <xacro:if is_sim="false">
+    <xacro:if value="${is_sim == False}">
         <ros2_control name="rushbott_control" type="system">
         <hardware>
             <plugin>rushbott_hardware/RoverSystemHardware</plugin>
@@ -189,6 +180,16 @@
         </joint>
         </ros2_control>
     </xacro:if>
+
+        <!-- Gazebo (make this conditional later on) -->
+    <xacro:if value="${is_sim == True}">
+        <gazebo>
+            <plugin filename='libgz_ros2_control-system.so' name='gz_ros2_control::GazeboSimROS2ControlPlugin'>
+                <parameters>$(find rushbott_control)/config/control.yaml</parameters>
+            </plugin>
+        </gazebo>
+    </xacro:if>
+
     
 
 </robot>

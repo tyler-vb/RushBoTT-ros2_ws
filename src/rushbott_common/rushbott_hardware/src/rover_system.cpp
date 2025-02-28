@@ -220,17 +220,19 @@ hardware_interface::return_type rushbott_hardware::RoverSystemHardware::write(
         return hardware_interface::return_type::ERROR;
     }
 
-    std::vector<double> cmd_values(motors_.size());
+    std::vector<int> cmd_values(motors_.size());
+    int check_sum = 0;
 
     for (auto i = 0u; i < motors_.size(); i++)
     {
         if (motors_[i].rads_per_step > 0)
             {
                 cmd_values[i] = motors_[i].calc_angle_step();
+                check_sum += cmd_values[i];
             }
     }
 
-    comms_.set_motor_values(cmd_values);
+    comms_.set_motor_values(cmd_values, check_sum);
     return hardware_interface::return_type::OK;
 }
     

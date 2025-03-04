@@ -44,14 +44,17 @@ hardware_interface::CallbackReturn RoverSystemHardware::on_init(
     cfg_.baud_rate = std::stoi(info_.hardware_parameters["baud_rate"]);
     cfg_.msg_attempts = std::stof(info_.hardware_parameters["msg_attempts"]);
     cfg_.timeout_ms = std::stoi(info_.hardware_parameters["timeout_ms"]);
+
+    cfg_.stepper_lower_initial = std::stoi(info_.hardware_parameters["stepper_lower_initial"]);
+    cfg_.stepper_upper_initial = std::stoi(info_.hardware_parameters["stepper_upper_initial"]);
+    cfg_.stepper_gear_ratio = std::stoi(info_.hardware_parameters["stepper_gear_ratio"]);
     cfg_.stepper_enc_per_rev = std::stoi(info_.hardware_parameters["stepper_enc_per_rev"]);
     cfg_.stepper_step_per_rev = std::stoi(info_.hardware_parameters["stepper_step_per_rev"]);
+
     cfg_.bldc_enc_per_rev = std::stoi(info_.hardware_parameters["bldc_enc_per_rev"]);
 
     for (const hardware_interface::ComponentInfo & joint : info_.joints)
     {
-        Motor motor;
-
         if (joint.command_interfaces.size() != 1)
         {
         RCLCPP_FATAL(
@@ -65,23 +68,22 @@ hardware_interface::CallbackReturn RoverSystemHardware::on_init(
             joint.state_interfaces[0].name == hardware_interface::HW_IF_POSITION &&
             joint.command_interfaces[0].name == hardware_interface::HW_IF_POSITION)
         {
-            motor.setup(joint.name, cfg_.stepper_enc_per_rev, cfg_.stepper_step_per_rev);
-            motor.pos = 0.0;
-            // RCLCPP_INFO(get_logger(), "test!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! %f", motor.rads_per_step);
+            Stepper stepper;
+            stepper.setup(joint.name, cfg_.stepper_enc_per_rev, cfg_.stepper_step_per_rev, cfg_.stepper_gear_ratio);
+            steppers_.emplace_back(stepper);
         }
         else if (joint.name.find("wheel") != std::string::npos &&
             joint.state_interfaces.size() == 1 &&
             joint.state_interfaces[0].name == hardware_interface::HW_IF_POSITION &&
             joint.command_interfaces[0].name == hardware_interface::HW_IF_VELOCITY)
         {
-            motor.setup(joint.name, cfg_.bldc_enc_per_rev, 0);
-            motor.pos = 0.0;
+
         }
         else if (joint.name.find("servo") != std::string::npos &&
             joint.state_interfaces.size() == 0 &&
             joint.command_interfaces[0].name == hardware_interface::HW_IF_POSITION)
         {
-            motor.setup(joint.name, 0, 0);
+      
         }
         else
         {
@@ -96,8 +98,6 @@ hardware_interface::CallbackReturn RoverSystemHardware::on_init(
         {
             state_interface_names.push_back(state_interface.name);
         }
-
-        motors_.emplace_back(motor);
     }
 
     return hardware_interface::CallbackReturn::SUCCESS;
@@ -107,13 +107,10 @@ std::vector<hardware_interface::StateInterface> RoverSystemHardware::export_stat
 {
     std::vector<hardware_interface::StateInterface> state_interfaces;
 
-    for (auto i = 0u; i < info_.joints.size(); i++)
+    for (auto i = 0u; i < steppers_.size(); i++)
     {
-        for (hardware_interface::InterfaceInfo state_interface : info_.joints[i].state_interfaces)
-        {
-            state_interfaces.emplace_back(hardware_interface::StateInterface(
-                info_.joints[i].name, state_interface.name, &motors_[i].pos));
-        }
+        state_interfaces.emplace_back(hardware_interface::StateInterface(
+            steppers_[i].name, hardware_interface::HW_IF_POSITION, &steppers_[i].pos));
     }
 
     return state_interfaces;
@@ -123,10 +120,10 @@ std::vector<hardware_interface::CommandInterface> RoverSystemHardware::export_co
 {
     std::vector<hardware_interface::CommandInterface> command_interfaces;
 
-    for (auto i = 0u; i < info_.joints.size(); i++)
+    for (auto i = 0u; i < steppers_.size(); i++)
     {
         command_interfaces.emplace_back(hardware_interface::CommandInterface(
-            info_.joints[i].name, info_.joints[i].command_interfaces[0].name, &motors_[i].cmd));
+            steppers_[i].name, hardware_interface::HW_IF_POSITION, &steppers_[i].cmd));
     }
 
     return command_interfaces;
@@ -142,6 +139,9 @@ hardware_interface::CallbackReturn RoverSystemHardware::on_configure(
         comms_.disconnect();
     }
     comms_.connect(cfg_.device, cfg_.baud_rate, cfg_.msg_attempts, cfg_.timeout_ms);
+
+    steppers_[0].cmd = cfg_.stepper_lower_initial * M_PI / 180 / cfg_.stepper_gear_ratio;
+    steppers_[1].cmd = cfg_.stepper_upper_initial * M_PI / 180 / cfg_.stepper_gear_ratio;
 
     return hardware_interface::CallbackReturn::SUCCESS;
 }
@@ -168,8 +168,10 @@ hardware_interface::CallbackReturn RoverSystemHardware::on_activate(
     {
         return hardware_interface::CallbackReturn::ERROR;
     }
-    
     RCLCPP_INFO(get_logger(), "Successfully activated!");
+
+    steppers_[0].pos = steppers_[0].cmd;
+    steppers_[1].pos = steppers_[1].cmd;
 
     return hardware_interface::CallbackReturn::SUCCESS;
 }
@@ -191,22 +193,14 @@ hardware_interface::return_type RoverSystemHardware::read(
         return hardware_interface::return_type::ERROR;
     }
 
-    // std::vector<int> enc_values = comms_.read_encoder_values();
+    std::vector<int> enc_values = comms_.read_encoder_values(steppers_.size());
 
-    for (auto i = 0u; i < motors_.size(); i++)
+    if (!enc_values.empty())
     {
-        // if (i > enc_values.size())
-        // {
-        //     RCLCPP_ERROR(get_logger(), "Not enough encoder values recieved");
-        //     return hardware_interface::return_type::ERROR;
-        // }
-
-        // if (motors_[i].rads_per_enc != NAN)
-        // {
-        //     motors_[i].calc_enc_angle(enc_values[i]);
-        // }
-
-        motors_[i].calc_enc_angle(motors_[i].cmd*(cfg_.stepper_enc_per_rev/cfg_.stepper_step_per_rev));
+        for (auto i = 0u; i < steppers_.size(); i++)
+        {
+            steppers_[i].calc_angle_from_enc(enc_values[i]);
+        }
     }
 
   return hardware_interface::return_type::OK;
@@ -220,19 +214,15 @@ hardware_interface::return_type rushbott_hardware::RoverSystemHardware::write(
         return hardware_interface::return_type::ERROR;
     }
 
-    std::vector<int> cmd_values(motors_.size());
-    int check_sum = 0;
+    std::vector<int> cmd_values(steppers_.size());
 
-    for (auto i = 0u; i < motors_.size(); i++)
+    for (auto i = 0u; i < steppers_.size(); i++)
     {
-        if (motors_[i].rads_per_step > 0)
-            {
-                cmd_values[i] = motors_[i].calc_angle_step();
-                check_sum += cmd_values[i];
-            }
+        cmd_values[i] = steppers_[i].calc_step_from_angle();
     }
 
-    comms_.set_motor_values(cmd_values, check_sum);
+    comms_.set_motor_values(cmd_values);
+
     return hardware_interface::return_type::OK;
 }
     

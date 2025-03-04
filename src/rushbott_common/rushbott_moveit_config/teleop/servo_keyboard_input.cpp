@@ -50,6 +50,7 @@
 #ifndef WIN32
 #include <termios.h>
 #include <unistd.h>
+#include <fcntl.h>
 #else
 #include <conio.h>
 #endif
@@ -90,29 +91,52 @@ public:
   KeyboardReader() : file_descriptor_(0)
   {
 #ifndef WIN32
-    // get the console in raw mode
+    // Get the console in raw mode
     tcgetattr(file_descriptor_, &cooked_);
     struct termios raw;
     memcpy(&raw, &cooked_, sizeof(struct termios));
     raw.c_lflag &= ~(ICANON | ECHO);
-    // Setting a new line, then end of file
-    raw.c_cc[VEOL] = 1;
-    raw.c_cc[VEOF] = 2;
     tcsetattr(file_descriptor_, TCSANOW, &raw);
 #endif
   }
+
   void readOne(char* c)
   {
 #ifndef WIN32
-    int rc = read(file_descriptor_, c, 1);
-    if (rc < 0)
+    struct timeval timeout;
+    timeout.tv_sec = 0;
+    timeout.tv_usec = 50000; // 50ms timeout
+
+    fd_set read_fds;
+    FD_ZERO(&read_fds);
+    FD_SET(file_descriptor_, &read_fds);
+
+    int ret = select(file_descriptor_ + 1, &read_fds, NULL, NULL, &timeout);
+
+    if (ret > 0 && FD_ISSET(file_descriptor_, &read_fds))
     {
-      throw std::runtime_error("read failed");
+      int rc = read(file_descriptor_, c, 1);
+      if (rc < 0)
+      {
+        throw std::runtime_error("read failed");
+      }
+    }
+    else
+    {
+      *c = '\0'; // No key pressed
     }
 #else
-    *c = static_cast<char>(_getch());
+    if (_kbhit()) // Check if key is available
+    {
+      *c = static_cast<char>(_getch());
+    }
+    else
+    {
+      *c = '\0'; // No key pressed
+    }
 #endif
   }
+
   void shutdown()
   {
 #ifndef WIN32
@@ -142,10 +166,8 @@ private:
   rclcpp::Publisher<geometry_msgs::msg::TwistStamped>::SharedPtr twist_pub_;
   rclcpp::Publisher<control_msgs::msg::JointJog>::SharedPtr joint_pub_;
   rclcpp::Client<moveit_msgs::srv::ServoCommandType>::SharedPtr switch_input_;
-  rclcpp::Client<std_srvs::srv::SetBool>::SharedPtr pause_servo_;
 
   std::shared_ptr<moveit_msgs::srv::ServoCommandType::Request> switch_request_;
-  std::shared_ptr<std_srvs::srv::SetBool::Request> pause_request_;
   double joint_vel_cmd_;
   std::string command_frame_id_;
 };
@@ -158,7 +180,6 @@ KeyboardServo::KeyboardServo() : joint_vel_cmd_(1.0), command_frame_id_{ "base_l
   joint_pub_ = nh_->create_publisher<control_msgs::msg::JointJog>(JOINT_TOPIC, ROS_QUEUE_SIZE);
 
   switch_input_ = nh_->create_client<moveit_msgs::srv::ServoCommandType>("servo_node/switch_command_type");
-  pause_servo_ = nh_->create_client<std_srvs::srv::SetBool>("servo_node/pause_servo");
 
 }
 
@@ -199,6 +220,8 @@ int KeyboardServo::keyLoop()
   char c;
   bool publish_twist = false;
   bool publish_joint = false;
+  bool twist_moving = false;
+  bool joint_moving = false;
 
   std::thread{ [this]() { return spin(); } }.detach();
 
@@ -243,45 +266,53 @@ int KeyboardServo::keyLoop()
         RCLCPP_DEBUG(nh_->get_logger(), "LEFT");
         twist_msg->twist.linear.x = -0.5;
         publish_twist = true;
+        twist_moving = true;
         break;
       case KEYCODE_RIGHT:
         RCLCPP_DEBUG(nh_->get_logger(), "RIGHT");
         twist_msg->twist.linear.x = 0.5;
         publish_twist = true;
+        twist_moving = true;
         break;
       case KEYCODE_UP:
         RCLCPP_DEBUG(nh_->get_logger(), "UP");
         twist_msg->twist.linear.z = 0.5;
         publish_twist = true;
+        twist_moving = true;
         break;
       case KEYCODE_DOWN:
         RCLCPP_DEBUG(nh_->get_logger(), "DOWN");
         twist_msg->twist.linear.z = -0.5;
         publish_twist = true;
+        twist_moving = true;
         break;
       case KEYCODE_1:
         RCLCPP_DEBUG(nh_->get_logger(), "1");
         joint_msg->velocities[0] = -joint_vel_cmd_;
         joint_msg->velocities[2] = joint_vel_cmd_;
         publish_joint = true;
+        joint_moving = true;
         break;
       case KEYCODE_2:
         RCLCPP_DEBUG(nh_->get_logger(), "2");
         joint_msg->velocities[0] = joint_vel_cmd_;
         joint_msg->velocities[2] = -joint_vel_cmd_;
         publish_joint = true;
+        joint_moving = true;
         break;
       case KEYCODE_3:
         RCLCPP_DEBUG(nh_->get_logger(), "3");
         joint_msg->velocities[1] = -joint_vel_cmd_;
         joint_msg->velocities[2] = joint_vel_cmd_;
         publish_joint = true;
+        joint_moving = true;
         break;
       case KEYCODE_4:
         RCLCPP_DEBUG(nh_->get_logger(), "4");
         joint_msg->velocities[1] = joint_vel_cmd_;
         joint_msg->velocities[2] = -joint_vel_cmd_;
         publish_joint = true;
+        joint_moving = true;
         break;
       case KEYCODE_J:
         RCLCPP_DEBUG(nh_->get_logger(), "j");
@@ -332,6 +363,24 @@ int KeyboardServo::keyLoop()
         return 0;
     }
 
+    if (twist_moving && !publish_twist)
+    {
+      RCLCPP_DEBUG(nh_->get_logger(), "Stopping Twist");
+      twist_msg->twist.linear.z = 0;
+      twist_msg->twist.linear.x = 0;
+      publish_twist = true;
+      twist_moving = false;
+    }
+    else if (joint_moving && !publish_joint)
+    {
+      RCLCPP_DEBUG(nh_->get_logger(), "Stopping Joint");
+      joint_msg->velocities[0] = 0;
+      joint_msg->velocities[1] = 0;
+      joint_msg->velocities[2] = 0;
+      publish_joint = true;
+      joint_moving = false;
+    }
+
     // If a key requiring a publish was pressed, publish the message now
     if (publish_twist)
     {
@@ -342,6 +391,7 @@ int KeyboardServo::keyLoop()
     }
     else if (publish_joint)
     {
+
       joint_msg->header.stamp = nh_->now();
       joint_msg->header.frame_id = PLANNING_FRAME_ID;
       joint_pub_->publish(std::move(joint_msg));

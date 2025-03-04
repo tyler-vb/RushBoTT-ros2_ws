@@ -16,7 +16,7 @@
   "runArgs": [
     "--network=host",
     "--device=/dev/dxg",
-    // "--device=/dev/ttyACM0"
+    "--device=/dev/ttyACM0"
   ],
   "workspaceMount": "source=${localWorkspaceFolder},target=/home/ttpidelta/${localWorkspaceFolderBasename},type=bind",
   "workspaceFolder": "/home/ttpidelta/${localWorkspaceFolderBasename}",

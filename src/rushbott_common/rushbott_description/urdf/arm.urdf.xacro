@@ -2,7 +2,7 @@
 <robot xmlns:xacro='http://www.ros.org/wiki/xacro'>
 
     <!--Arm Link-->
-    <xacro:macro name='arm_link' params='name parent_link length width offset mass mesh *origin *limit'>
+    <xacro:macro name='arm_link' params='name is_fake parent_link length width offset mass mesh *origin *limit'>
 
         <xacro:property name='arm_joint_name' value='${name}_joint'/>
 
@@ -45,7 +45,19 @@
                 </joint>
             </ros2_control>
         </xacro:if>
-        
+
+        <xacro:if value="${is_fake == True and is_sim == False}">
+            <ros2_control name='${arm_joint_name}' type='system'>
+                <hardware>
+                    <plugin>mock_components/GenericSystem</plugin>
+                </hardware>
+                <joint name='${arm_joint_name}'>
+                    <command_interface name='position'/>
+                    <state_interface name='position'/>
+                </joint>
+            </ros2_control>
+        </xacro:if> 
+
     </xacro:macro> 
 
     <!--Arm Link Mimic-->

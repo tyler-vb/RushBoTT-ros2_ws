@@ -5,6 +5,8 @@ Panels:
     Property Tree Widget:
       Expanded:
         - /Global Options1
+        - /Status1
+        - /RobotModel1
         - /RobotModel1/Description Topic1
         - /TF1
         - /TF1/Frames1
@@ -182,29 +184,29 @@ Visualization Manager:
         front_left_servo:
           Value: false
         front_left_wheel:
-          Value: false
+          Value: true
         front_right_servo:
           Value: false
         front_right_wheel:
-          Value: false
+          Value: true
         lidar:
           Value: false
         lower_arm:
           Value: true
         mid_left_wheel:
-          Value: false
+          Value: true
         mid_right_wheel:
-          Value: false
+          Value: true
         odom:
           Value: true
         rear_left_servo:
           Value: false
         rear_left_wheel:
-          Value: false
+          Value: true
         rear_right_servo:
           Value: false
         rear_right_wheel:
-          Value: false
+          Value: true
         suction_base:
           Value: true
         suction_head:
@@ -221,35 +223,36 @@ Visualization Manager:
       Show Axes: true
       Show Names: false
       Tree:
-        odom:
-          base_footprint:
-            base_link:
-              front_left_servo:
-                front_left_wheel:
-                  {}
-              front_right_servo:
-                front_right_wheel:
-                  {}
-              lidar:
+        base_footprint:
+          base_link:
+            front_left_servo:
+              front_left_wheel:
                 {}
-              lower_arm:
-                upper_arm:
-                  suction_base:
-                    suction_head:
-                      {}
-                upper_control:
-                  upper_link:
+            front_right_servo:
+              front_right_wheel:
+                {}
+            lidar:
+              {}
+            lower_arm:
+              upper_arm:
+                suction_base:
+                  suction_head:
                     {}
-              mid_left_wheel:
-                {}
-              mid_right_wheel:
-                {}
-              rear_left_servo:
-                rear_left_wheel:
+              upper_control:
+                upper_link:
                   {}
-              rear_right_servo:
-                rear_right_wheel:
-                  {}
+            mid_left_wheel:
+              {}
+            mid_right_wheel:
+              {}
+            rear_left_servo:
+              rear_left_wheel:
+                {}
+            rear_right_servo:
+              rear_right_wheel:
+                {}
+        odom:
+          {}
       Update Interval: 0
       Value: true
     - Alpha: 1
@@ -452,5 +455,5 @@ Window Geometry:
   Views:
     collapsed: false
   Width: 958
-  X: 283
-  Y: -27
+  X: 475
+  Y: -29

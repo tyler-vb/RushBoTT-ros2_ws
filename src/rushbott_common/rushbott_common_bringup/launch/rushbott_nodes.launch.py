@@ -23,17 +23,20 @@ def generate_launch_description():
         [pkg_rushbott_common_bringup, 'launch', 'robot_description.launch.py'])
     control_launch = PathJoinSubstitution(
         [pkg_rushbott_control, 'launch', 'control.launch.py'])
+    teleop_launch = PathJoinSubstitution(
+        [pkg_rushbott_control, 'launch', 'teleop.launch.py'])
     moveit2_launch = PathJoinSubstitution(
         [pkg_rushbott_moveit_config, 'launch', 'servo.launch.py'])
 
     robot_description = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(robot_description_launch)
     )
-    
     controllers = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(control_launch)
     )
-    
+    teleop = IncludeLaunchDescription(
+        PythonLaunchDescriptionSource(teleop_launch)
+    )
     moveit2_interface = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(moveit2_launch)
     )
@@ -63,34 +66,11 @@ def generate_launch_description():
         ]
     )
 
-    # Teleop
-    rover_teleop = Node(
-        package='teleop_twist_keyboard',
-        executable='teleop_twist_keyboard',
-        output='screen',
-        emulate_tty=True,
-        prefix='xterm -hold -e',
-        parameters=[{
-            'stamped': True,
-        }],
-        remappings=[(
-            '/cmd_vel', '/rover_controller/cmd_vel'
-        )])   
-    
-    arm_teleop = Node(
-        package='rushbott_moveit_config',
-        executable='servo_keyboard_input',
-        output='screen',
-        emulate_tty=True,
-        prefix='xterm -hold -e',
-        )   
-
     # Create launch description and add actions
     ld = LaunchDescription()
-    ld.add_action(rover_teleop)
-    ld.add_action(arm_teleop)
     ld.add_action(robot_description)
     ld.add_action(controllers)
+    ld.add_action(teleop)
     ld.add_action(moveit2_interface)
     ld.add_action(rviz)
 

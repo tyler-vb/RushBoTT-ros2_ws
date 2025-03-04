@@ -110,7 +110,7 @@ public:
         break;
     }
 
-    if (response == f)
+    if (response == "f")
     {
       std::cerr << "[WARNING] Msg returned an error" << std::endl;
     }
@@ -118,7 +118,6 @@ public:
     {
       std::cerr << "[WARNING] Msg was empty" << std::endl;
     }
-
     if (print_output)
     {
       std::cout << "Sent: " << msg_to_send << " Recv: " << response << std::endl;
@@ -133,33 +132,57 @@ public:
     std::string response = send_msg("");
   }
 
-  std::vector<int> read_encoder_values()
+  std::vector<int> read_encoder_values(int num_motors)
   {
-    std::string response = send_msg("e\n", true);
+    std::string response = send_msg("e\n");
 
     std::vector<int> values;
     std::stringstream ss(response);
     std::string token;
 
-    // Split response by spaces and convert to integers
-    while (std::getline(ss, token, ' '))
-    {
-      values.push_back(std::atoi(token.c_str()));  // Convert token to int and add to vector
+    int count = 0;
+    int check = 0;
+    int sum = 0;
 
+    // Split response by spaces and convert to integers
+    while (std::getline(ss, token, ' ') && count <= num_motors)
+    {
+      if (count == 0)
+      {
+        check = std::atoi(token.c_str());
+      }
+      else
+      {
+        values.push_back(std::atoi(token.c_str()));  // Convert token to int and add to vector
+        sum += values[count-1];
+      }
     }
 
-    return values;  // Return vector of encoder values
+    if (sum != check || count < num_motors)
+    {
+      return {};
+    }
+    else
+    {
+      return values;  // Return vector of encoder values
+    }
   }
 
-  void set_motor_values(std::vector<int> cmd_values, int check_sum)
+  void set_motor_values(std::vector<int> cmd_values)
   {
 
+    int sum = 0;
+    for (const auto &val : cmd_values)
+    {
+      sum += val;
+    }
+
     std::stringstream ss;
-    ss << "m" << check_sum;
+    ss << "m" << sum;
 
     for (const auto &val : cmd_values)
     {
-        ss << " " << val;
+      ss << " " << val;
     }
 
     ss << "\n";

@@ -31,7 +31,7 @@
 #include "rclcpp_lifecycle/state.hpp"
 
 #include "rushbott_hardware/arduino_comms.hpp"
-#include "rushbott_hardware/motor.hpp"
+#include "rushbott_hardware/stepper.hpp"
 
 namespace rushbott_hardware
 {
@@ -45,6 +45,9 @@ struct Config
     int baud_rate = 0;
     int msg_attempts = 0;
     int timeout_ms = 0;
+    double stepper_lower_initial = 0;
+    double stepper_upper_initial = 0;
+    int stepper_gear_ratio = 0;
     int stepper_enc_per_rev = 0;
     int stepper_step_per_rev = 0;
     int bldc_enc_per_rev = 0;
@@ -82,7 +85,7 @@ private:
         
     ArduinoComms comms_;
     Config cfg_;
-    std::vector<Motor> motors_;
+    std::vector<Stepper> steppers_;
 
 };
 

@@ -31,7 +31,7 @@
 #include "rclcpp_lifecycle/state.hpp"
 
 #include "rushbott_hardware/arduino_comms.hpp"
-#include "rushbott_hardware/stepper.hpp"
+#include "rushbott_hardware/motor_packet.hpp"
 
 namespace rushbott_hardware
 {
@@ -40,14 +40,13 @@ class RoverSystemHardware : public hardware_interface::SystemInterface
 
 struct Config
 {
-    float loop_rate = 0.0;
+    double loop_rate = 0.0;
     std::string device = "";
     int baud_rate = 0;
     int msg_attempts = 0;
     int timeout_ms = 0;
-    double stepper_lower_initial = 0;
-    double stepper_upper_initial = 0;
-    int stepper_gear_ratio = 0;
+    std::vector<double> stepper_initial_values = {};
+    double stepper_gear_ratio = 0.0;
     int stepper_enc_per_rev = 0;
     int stepper_step_per_rev = 0;
     int bldc_enc_per_rev = 0;
@@ -81,12 +80,15 @@ public:
     hardware_interface::return_type write(
         const rclcpp::Time & time, const rclcpp::Duration & period) override;
 
+    MotorPacket encoder_packet;
+    MotorPacket motor_packet;
+
 private:
         
     ArduinoComms comms_;
     Config cfg_;
-    std::vector<Stepper> steppers_;
-
+    std::vector<double> stepper_positions_;
+    std::vector<double> stepper_commands_;
 };
 
 }  // namespace rushbott_hardware

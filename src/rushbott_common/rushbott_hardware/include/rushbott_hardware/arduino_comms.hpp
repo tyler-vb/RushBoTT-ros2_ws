@@ -1,11 +1,13 @@
 #ifndef RUSHBOTT_HARDWARE_ARDUINO_COMMS_HPP
 #define RUSHBOTT_HARDWARE_ARDUINO_COMMS_HPP
 
-// #include <cstring>
-#include <sstream>
-// #include <cstdlib>
 #include <libserial/SerialPort.h>
+#include <sstream>
 #include <iostream>
+#include <cstring>
+#include <vector>
+
+#include "rushbott_hardware/motor_packet.hpp"
 
 
 LibSerial::BaudRate convert_baud_rate(int baud_rate)
@@ -36,45 +38,33 @@ public:
 
   ArduinoComms() = default;
 
-  void connect(const std::string &serial_device, int32_t baud_rate, int32_t msg_attempts, int32_t timeout_ms)
+  void connect(const std::string &serial_device, int32_t baud_rate, int8_t msg_attempts, int16_t timeout_ms)
   {  
     msg_attempts_ = msg_attempts;
     timeout_ms_ = timeout_ms;
     serial_conn_.Open(serial_device);
     serial_conn_.SetBaudRate(convert_baud_rate(baud_rate));
-
-    std::string response;
     
-    for (int attempt = 0; attempt < 10; attempt++)  // Retry up to 10 times
+    for (int attempt = 0; attempt < msg_attempts; attempt++)  // Retry up to 10 times
     {
-        serial_conn_.FlushIOBuffers();
-        serial_conn_.Write("h\n");  // Send handshake request
-        std::cout << "Waiting for Arduino to respond..." << std::endl;
+        // Create an empty message of the right size (filled with zeros)
+        MotorPacket handshake_request;
+        handshake_request.header = MotorPacket::HEY;
 
-        try
-        {
-          serial_conn_.ReadLine(response, '\n', timeout_ms*3);
-          response.erase(std::remove(response.begin(), response.end(), '\r'), response.end());
-          response.erase(std::remove(response.begin(), response.end(), '\n'), response.end());
+        MotorPacket handshake_response;
 
-          if (response == "h")
-          {
-            std::cout << "Handshake successful! Arduino is ready." << std::endl;
-              return;
-          }
-          else {
-            std::cerr << "[WARNING] Invalid response: " << response << std::endl;
-          }
-        } 
-        catch (const LibSerial::ReadTimeout&)
+        if (send_packet(handshake_request, handshake_response))
         {
-          std::cerr << "[WARNING] Handshake attempt timed out. Retrying..." << std::endl;
+          std::cout << "Handshake successful! Arduino is ready." << std::endl;
+          return;
+        }
+        else
+        {
+          continue;
         }
     }
-
     std::cerr << "[ERROR] Handshake failed! Could not establish connection with Arduino." << std::endl;
     serial_conn_.Close(); // Close connection if handshake fails
-
   }
 
   void disconnect()
@@ -88,107 +78,60 @@ public:
   }
 
 
-  std::string send_msg(const std::string &msg_to_send, bool print_output = false)
+  bool send_packet(MotorPacket const &msg_packet, MotorPacket &response_packet)
   {
+    serial_conn_.FlushIOBuffers();
 
-    std::string response;
+    msg_packet.calculate_checksum();
 
-    for (int attempt = 1; attempt < msg_attempts_; attempt++)
+    // serialize packet
+    LibSerial::DataBuffer msg(sizeof(MotorPacket));
+    std::memcpy(msg.data(), &msg_packet, sizeof(MotorPacket));
+    serial_conn_.Write(msg);
+
+    LibSerial::DataBuffer response_buffer(sizeof(MotorPacket));
+    try
     {
-        serial_conn_.FlushIOBuffers();
-        serial_conn_.Write(msg_to_send); 
-
-        try
-        {
-          serial_conn_.ReadLine(response, '\n', timeout_ms_);
-        } 
-        catch (const LibSerial::ReadTimeout&)
-        {
-          std::cerr << "[WARNING] Msg timed out, retrying... (attempt " << attempt << ")" << std::endl;
-          continue;
-        }
-        break;
+      serial_conn_.Read(response_buffer, msg.size(), timeout_ms_);
+    }
+    catch (const LibSerial::ReadTimeout&)
+    {
+      std::cerr << "[ERROR] Msg timed out" << std::endl;
+      return false;
     }
 
-    if (response == "f")
+    MotorPacket temp_packet;
+    std::memcpy(&temp_packet, response_buffer.data(), sizeof(MotorPacket));
+    uint8_t recieved_checksum = temp_packet.calculate_checksum();
+
+    if (recieved_checksum != temp_packet.checksum)
     {
-      std::cerr << "[WARNING] Msg returned an error" << std::endl;
-    }
-    else if (response == "")
-    {
-      std::cerr << "[WARNING] Msg was empty" << std::endl;
-    }
-    if (print_output)
-    {
-      std::cout << "Sent: " << msg_to_send << " Recv: " << response << std::endl;
+        std::cerr << "[ERROR] Checksum mismatch!" << std::endl;
+        return false;
     }
 
-    return response;
+    // Check for NACK response
+    if (temp_packet.header == MotorPacket::NACK)
+    {
+        std::cerr << "[ERROR] NACK received!" << std::endl;
+        return false;
+    }
+
+    response_packet = temp_packet;
+    return true;
   }
 
-
-  void send_empty_msg()
+  void read_encoders(MotorPacket &encoder_packet)
   {
-    std::string response = send_msg("");
+    MotorPacket request_packet;
+    request_packet.header = MotorPacket::ENC;
+    send_packet(request_packet, encoder_packet);
   }
 
-  std::vector<int> read_encoder_values(int num_motors)
+  void set_motors(MotorPacket const &motor_packet)
   {
-    std::string response = send_msg("e\n");
-
-    std::vector<int> values;
-    std::stringstream ss(response);
-    std::string token;
-
-    int count = 0;
-    int check = 0;
-    int sum = 0;
-
-    // Split response by spaces and convert to integers
-    while (std::getline(ss, token, ' ') && count <= num_motors)
-    {
-      if (count == 0)
-      {
-        check = std::atoi(token.c_str());
-      }
-      else
-      {
-        values.push_back(std::atoi(token.c_str()));  // Convert token to int and add to vector
-        sum += values[count-1];
-      }
-    }
-
-    if (sum != check || count < num_motors)
-    {
-      return {};
-    }
-    else
-    {
-      return values;  // Return vector of encoder values
-    }
-  }
-
-  void set_motor_values(std::vector<int> cmd_values)
-  {
-
-    int sum = 0;
-    for (const auto &val : cmd_values)
-    {
-      sum += val;
-    }
-
-    std::stringstream ss;
-    ss << "m" << sum;
-
-    for (const auto &val : cmd_values)
-    {
-      ss << " " << val;
-    }
-
-    ss << "\n";
-
-    send_msg(ss.str(), true);
-    
+    MotorPacket response_packet;
+    send_packet(motor_packet, response_packet);
   }
 
 private:

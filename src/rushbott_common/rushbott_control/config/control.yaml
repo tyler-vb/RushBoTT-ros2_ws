@@ -39,7 +39,7 @@ arm_controller:
       - lower_arm_joint
       - upper_arm_joint
       - suction_base_joint
-    open_loop_control: false
+    open_loop_control: true
     command_interfaces:
       - position
     state_interfaces:

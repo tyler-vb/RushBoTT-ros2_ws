@@ -8,7 +8,7 @@
     <xacro:include filename='lidar.urdf.xacro'/>
 
     <!-- Simulation Check-->
-    <xacro:property name='is_sim'               value='True' />
+    <xacro:property name='is_sim'               value='False' />
 
     <!-- Body Properties -->
     <xacro:property name='body_mass'               value='2.300' />
@@ -128,13 +128,13 @@
     <!-- Arm --> 
     <xacro:arm_link name='lower_arm' is_fake='false' parent_link='base_link' length='${lower_arm_length}' width='${lower_arm_width}' mass='${lower_arm_mass}' offset='0' mesh='${lower_arm_mesh}'>
         <origin xyz='${arm_x_position} 0 ${arm_z_position}' rpy='0 0 0'/>
-        <limit lower='${26 * pi / 180}' upper='${pi-0.3}' effort='10' velocity='10'/>
+        <limit lower='${-100 * 26 * pi / 180}' upper='${100 * pi-0.3}' effort='10' velocity='10'/>
     </xacro:arm_link>
 
     <xacro:arm_link name='upper_arm' is_fake='false' parent_link='lower_arm' length='${upper_arm_length}' width='${upper_arm_width}' mass='${upper_arm_mass}' offset='${upper_control_length}' mesh='${upper_arm_mesh}'>
         <origin xyz='${-lower_arm_length} 0 0' rpy='0 0 0'/>
-        <limit lower='${-pi+(21 * pi / 180)}' upper='${-(21 * pi / 180)}' effort='10' velocity='10'/>
-    </xacro:arm_link>w
+        <limit lower='${-pi+(21 * pi / 180) * -100}' upper='${-(21 * pi / 180) * -100}' effort='10' velocity='10'/>
+    </xacro:arm_link>
 
     <xacro:arm_link_mimic name='upper_control' parent_link='lower_arm' length='${upper_control_length}' width='${upper_control_width}' mass='${upper_control_mass}' mesh='${upper_control_mesh}'>
         <origin xyz='0 0 0' rpy='0 0 0'/>
@@ -168,23 +168,24 @@
                 <param name="device">/dev/ttyACM0</param>
                 <param name="baud_rate">9600</param>
                 <param name="msg_attempts">6</param>
-                <param name="timeout_ms">300</param>
+                <param name="timeout_ms">1000</param>
 
-                <param name="stepper_lower_initial">28</param>
-                <param name="stepper_upper_initial">-28</param>
                 <param name="stepper_gear_ratio">3</param>
                 <param name="stepper_enc_per_rev">400</param>
                 <param name="stepper_step_per_rev">400</param>
 
                 <param name="bldc_enc_per_rev">0</param>
+
             </hardware>
             <joint name="lower_arm_joint">
                 <command_interface name="position"/>
                 <state_interface name="position"/>
+                <param name="initial_value">-28</param>
             </joint>
             <joint name="upper_arm_joint">
                 <command_interface name="position"/>
                 <state_interface name="position"/>
+                <param name="initial_value">-28</param>
             </joint>
         </ros2_control>
     </xacro:if>

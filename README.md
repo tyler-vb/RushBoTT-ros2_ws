@@ -59,15 +59,6 @@ ros2 launch rushbott_gz_bringup rushbott_gz.launch.py
 . ~/RushBoTT-ros2_ws/install/setup.sh
 ros2 launch rushbott_moveit2 move_group.launch.py
 
-sudo chmod 777 /dev/dri/renderD128
-sudo add-apt-repository ppa:kisak/kisak-mesa
-sudo apt update
-
-. ~/RushBoTT-ros2_ws/install/setup.sh
-ros2 launch rushbott_control control.launch.py
-
-. ~/RushBoTT-ros2_ws/install/setup.sh
-ros2 launch moveit_setup_assistant setup_assistant.launch.py
-
+# REAL ROBOT
 . ~/RushBoTT-ros2_ws/install/setup.sh
 ros2 launch rushbott_common_bringup rushbott_nodes.launch.py

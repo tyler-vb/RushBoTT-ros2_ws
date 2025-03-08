@@ -80,9 +80,6 @@ public:
     hardware_interface::return_type write(
         const rclcpp::Time & time, const rclcpp::Duration & period) override;
 
-    MotorPacket encoder_packet;
-    MotorPacket motor_packet;
-
 private:
         
     ArduinoComms comms_;

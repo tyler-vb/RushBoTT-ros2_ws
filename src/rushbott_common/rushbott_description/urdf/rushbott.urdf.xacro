@@ -92,46 +92,48 @@
             <origin xyz='0 0 ${body_height/2}'/>
         </xacro:inertial_cuboid_with_pose>
     </link>
-
-    <!-- Wheels with servos -->
-    <xacro:wheel_with_servo name='front_left' parent_link='base_link'>
-        <origin xyz='${wheelbase/2} ${track_width/2} ${-wheel_depth+servo_height}' rpy='0 0 0'/>
-        <axis xyz='0 0 1'/>
-    </xacro:wheel_with_servo>
-
-    <xacro:wheel_with_servo name='front_right' parent_link='base_link'>
-        <origin xyz='${wheelbase/2} ${-track_width/2} ${-wheel_depth+servo_height}' rpy='0 0 ${pi}'/>
-        <axis xyz='0 0 -1'/>
-    </xacro:wheel_with_servo>
-
-    <xacro:wheel_with_servo name='rear_left' parent_link='base_link'>
-        <origin xyz='${-wheelbase/2} ${track_width/2} ${-wheel_depth+servo_height}' rpy='0 0 0'/>
-        <axis xyz='0 0 1'/>
-    </xacro:wheel_with_servo>
-
-    <xacro:wheel_with_servo name='rear_right' parent_link='base_link'>
-        <origin xyz='${-wheelbase/2} ${-track_width/2} ${-wheel_depth+servo_height}' rpy='0 0 ${pi}'/>
-        <axis xyz='0 0 -1'/>
-    </xacro:wheel_with_servo>
     
-    <!-- Wheels -->
-    <xacro:wheel name='mid_left' parent_link='base_link'>
-        <origin xyz='0 ${track_width/2} ${-wheel_depth}' rpy='${-pi/2} 0 0'/>
-        <axis xyz='0 0 1'/>
-    </xacro:wheel>
+    <xacro:if value="${is_sim == True}">
+        <!-- Wheels with servos -->
+        <xacro:wheel_with_servo name='front_left' parent_link='base_link'>
+            <origin xyz='${wheelbase/2} ${track_width/2} ${-wheel_depth+servo_height}' rpy='0 0 0'/>
+            <axis xyz='0 0 1'/>
+        </xacro:wheel_with_servo>
 
-    <xacro:wheel name='mid_right' parent_link='base_link'>
-        <origin xyz='0 ${-track_width/2} ${-wheel_depth}' rpy='${-pi/2} 0 ${pi}'/>
-        <axis xyz='0 0 -1'/>
-    </xacro:wheel>
+        <xacro:wheel_with_servo name='front_right' parent_link='base_link'>
+            <origin xyz='${wheelbase/2} ${-track_width/2} ${-wheel_depth+servo_height}' rpy='0 0 ${pi}'/>
+            <axis xyz='0 0 -1'/>
+        </xacro:wheel_with_servo>
+
+        <xacro:wheel_with_servo name='rear_left' parent_link='base_link'>
+            <origin xyz='${-wheelbase/2} ${track_width/2} ${-wheel_depth+servo_height}' rpy='0 0 0'/>
+            <axis xyz='0 0 1'/>
+        </xacro:wheel_with_servo>
+
+        <xacro:wheel_with_servo name='rear_right' parent_link='base_link'>
+            <origin xyz='${-wheelbase/2} ${-track_width/2} ${-wheel_depth+servo_height}' rpy='0 0 ${pi}'/>
+            <axis xyz='0 0 -1'/>
+        </xacro:wheel_with_servo>
+        
+        <!-- Wheels -->
+        <xacro:wheel name='mid_left' parent_link='base_link'>
+            <origin xyz='0 ${track_width/2} ${-wheel_depth}' rpy='${-pi/2} 0 0'/>
+            <axis xyz='0 0 1'/>
+        </xacro:wheel>
+
+        <xacro:wheel name='mid_right' parent_link='base_link'>
+            <origin xyz='0 ${-track_width/2} ${-wheel_depth}' rpy='${-pi/2} 0 ${pi}'/>
+            <axis xyz='0 0 -1'/>
+        </xacro:wheel>
+    </xacro:if>
 
     <!-- Arm --> 
-    <xacro:arm_link name='lower_arm' is_fake='false' parent_link='base_link' length='${lower_arm_length}' width='${lower_arm_width}' mass='${lower_arm_mass}' offset='0' mesh='${lower_arm_mesh}'>
+    <xacro:arm_link name='lower_arm' is_fake='true' parent_link='base_link' length='${lower_arm_length}' width='${lower_arm_width}' mass='${lower_arm_mass}' offset='0' mesh='${lower_arm_mesh}'>
         <origin xyz='${arm_x_position} 0 ${arm_z_position}' rpy='0 0 0'/>
         <limit lower='${-100 * 26 * pi / 180}' upper='${100 * pi-0.3}' effort='10' velocity='10'/>
     </xacro:arm_link>
 
-    <xacro:arm_link name='upper_arm' is_fake='false' parent_link='lower_arm' length='${upper_arm_length}' width='${upper_arm_width}' mass='${upper_arm_mass}' offset='${upper_control_length}' mesh='${upper_arm_mesh}'>
+    <xacro:arm_link name='upper_arm' is_fake='true' parent_link='lower_arm' length='${upper_arm_length}' width='${upper_arm_width}' mass='${upper_arm_mass}' offset='${upper_control_length}' mesh='${upper_arm_mesh}'>
         <origin xyz='${-lower_arm_length} 0 0' rpy='0 0 0'/>
         <limit lower='${-pi+(21 * pi / 180) * -100}' upper='${-(21 * pi / 180) * -100}' effort='10' velocity='10'/>
     </xacro:arm_link>
@@ -146,7 +148,7 @@
         <mimic joint='upper_control_joint' multiplier='-1.0'/>
     </xacro:arm_link_mimic>
 
-    <xacro:arm_link name='suction_base' is_fake='false' parent_link='upper_arm' length='${suction_base_length}' width='${suction_base_width}' mass='${suction_base_mass}' offset='0' mesh='${suction_base_mesh}'>
+    <xacro:arm_link name='suction_base' is_fake='true' parent_link='upper_arm' length='${suction_base_length}' width='${suction_base_width}' mass='${suction_base_mass}' offset='0' mesh='${suction_base_mesh}'>
         <origin xyz='${-upper_control_length+upper_arm_length} 0 0' rpy='0 0 0'/>
         <limit lower='${-2*pi}' upper='${2*pi}' effort='10' velocity='10'/>
     </xacro:arm_link>
@@ -159,7 +161,7 @@
     <xacro:lidar parent_link="base_link">
         <origin xyz="0.122 0 ${body_height}" rpy="0 0 0"/>
     </xacro:lidar>
-
+    <!-- 
     <xacro:if value="${is_sim == False}">
         <ros2_control name="rushbott_control" type="system">
             <hardware>
@@ -167,8 +169,8 @@
                 <param name="loop_rate">30</param>
                 <param name="device">/dev/ttyACM0</param>
                 <param name="baud_rate">9600</param>
-                <param name="msg_attempts">6</param>
-                <param name="timeout_ms">1000</param>
+                <param name="msg_attempts">10</param>
+                <param name="timeout_ms">600</param>
 
                 <param name="stepper_gear_ratio">3</param>
                 <param name="stepper_enc_per_rev">400</param>
@@ -180,15 +182,15 @@
             <joint name="lower_arm_joint">
                 <command_interface name="position"/>
                 <state_interface name="position"/>
-                <param name="initial_value">-28</param>
+                <param name="initial_value">0.3</param>
             </joint>
             <joint name="upper_arm_joint">
                 <command_interface name="position"/>
                 <state_interface name="position"/>
-                <param name="initial_value">-28</param>
+                <param name="initial_value">-0.3</param>
             </joint>
         </ros2_control>
-    </xacro:if>
+    </xacro:if> -->
 
         <!-- Gazebo (make this conditional later on) -->
     <xacro:if value="${is_sim == True}">

@@ -71,7 +71,7 @@ hardware_interface::CallbackReturn RoverSystemHardware::on_init(
             joint.state_interfaces[0].name == hardware_interface::HW_IF_POSITION &&
             joint.command_interfaces[0].name == hardware_interface::HW_IF_POSITION)
         {
-            stepper_count += 1;
+            stepper_count++;
             cfg_.stepper_initial_values.emplace_back(std::stod(joint.parameters.at("initial_value")));
         }
         else if (joint.name.find("wheel") != std::string::npos &&
@@ -79,13 +79,13 @@ hardware_interface::CallbackReturn RoverSystemHardware::on_init(
             joint.state_interfaces[0].name == hardware_interface::HW_IF_POSITION &&
             joint.command_interfaces[0].name == hardware_interface::HW_IF_VELOCITY)
         {
-            bldc_count += 1;
+            bldc_count++;
         }
         else if (joint.name.find("servo") != std::string::npos &&
             joint.state_interfaces.size() == 0 &&
             joint.command_interfaces[0].name == hardware_interface::HW_IF_POSITION)
         {
-            servo_count += 1;
+            servo_count++;
         }
         else
         {
@@ -112,10 +112,12 @@ std::vector<hardware_interface::StateInterface> RoverSystemHardware::export_stat
 
     for (auto i = 0u; i < info_.joints.size(); i++)
     {
-        if (info_.joints[i].name.find("stepper") != std::string::npos)
-        state_interfaces.emplace_back(hardware_interface::StateInterface(
-            info_.joints[i].name, hardware_interface::HW_IF_POSITION, &stepper_positions_[stepper_index]));
-        stepper_index++;
+        if (info_.joints[i].name.find("arm") != std::string::npos)
+        {
+            state_interfaces.emplace_back(hardware_interface::StateInterface(
+                info_.joints[i].name, hardware_interface::HW_IF_POSITION, &stepper_positions_[stepper_index]));
+            stepper_index++;
+        }
     }
 
     return state_interfaces;
@@ -132,9 +134,11 @@ std::vector<hardware_interface::CommandInterface> RoverSystemHardware::export_co
     for (auto i = 0u; i < info_.joints.size(); i++)
     {
         if (info_.joints[i].name.find("stepper") != std::string::npos)
-        command_interfaces.emplace_back(hardware_interface::CommandInterface(
-            info_.joints[i].name, hardware_interface::HW_IF_POSITION, &stepper_positions_[stepper_index]));
-        stepper_index++;
+        {
+            command_interfaces.emplace_back(hardware_interface::CommandInterface(
+                info_.joints[i].name, hardware_interface::HW_IF_POSITION, &stepper_positions_[stepper_index]));
+            stepper_index++;
+        }
     }
 
     return command_interfaces;
@@ -189,10 +193,7 @@ hardware_interface::CallbackReturn RoverSystemHardware::on_activate(
 
     for (auto i = 0u; i < stepper_positions_.size(); i++)
     {
-        if (std::isnan(stepper_positions_[i]))
-        {
-            stepper_positions_[i] = stepper_commands_[i];
-        }
+        stepper_positions_[i] = stepper_commands_[i];
     }
 
     return hardware_interface::CallbackReturn::SUCCESS;
@@ -215,10 +216,17 @@ hardware_interface::return_type RoverSystemHardware::read(
         return hardware_interface::return_type::ERROR;
     }
 
-    comms_.read_encoders(encoder_packet);
+    // MotorPacket encoder_packet = {};
 
-    encoder_packet.export_states(
-        MotorPacket::STEPPER, stepper_positions_, (2*M_PI)/(cfg_.stepper_enc_per_rev*cfg_.stepper_gear_ratio), cfg_.stepper_initial_values);
+    // if (comms_.read_encoders(encoder_packet))
+    // {
+    //     encoder_packet.export_states(
+    //     MotorPacket::STEPPER, stepper_positions_, (2*M_PI)/(cfg_.stepper_enc_per_rev*cfg_.stepper_gear_ratio), cfg_.stepper_initial_values);
+    // }
+    for (auto i = 0u; i < stepper_positions_.size(); i++)
+    {
+        stepper_positions_[i] = stepper_commands_[i];
+    }
 
   return hardware_interface::return_type::OK;
 }
@@ -231,11 +239,16 @@ hardware_interface::return_type rushbott_hardware::RoverSystemHardware::write(
         return hardware_interface::return_type::ERROR;
     }
 
-    motor_packet.import_commands(
-        MotorPacket::STEPPER, stepper_commands_, (cfg_.stepper_enc_per_rev*cfg_.stepper_gear_ratio)/(2*M_PI), cfg_.stepper_initial_values);
+    // MotorPacket motor_packet = {};
 
+    // motor_packet.import_commands(
+    //     MotorPacket::STEPPER, stepper_commands_, (cfg_.stepper_enc_per_rev*cfg_.stepper_gear_ratio)/(2*M_PI), cfg_.stepper_initial_values);
 
-    comms_.set_motors(motor_packet);
+    // motor_packet.print_packet("Sent Motors: ");
+
+    // comms_.set_motors(motor_packet);
+
+    // motor_packet.print_packet("Received Motors: ");
 
     return hardware_interface::return_type::OK;
 }

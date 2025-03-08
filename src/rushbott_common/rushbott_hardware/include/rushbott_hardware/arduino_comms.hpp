@@ -45,15 +45,13 @@ public:
     serial_conn_.Open(serial_device);
     serial_conn_.SetBaudRate(convert_baud_rate(baud_rate));
     
-    for (int attempt = 0; attempt < msg_attempts; attempt++)  // Retry up to 10 times
+    for (int attempt = 0; attempt < msg_attempts; attempt++) 
     {
         // Create an empty message of the right size (filled with zeros)
-        MotorPacket handshake_request;
-        handshake_request.header = MotorPacket::HEY;
+        MotorPacket handshake_packet = {};
+        handshake_packet.flag = MotorPacket::HEY;
 
-        MotorPacket handshake_response;
-
-        if (send_packet(handshake_request, handshake_response))
+        if (send_packet(handshake_packet, 2000))
         {
           std::cout << "Handshake successful! Arduino is ready." << std::endl;
           return;
@@ -78,21 +76,25 @@ public:
   }
 
 
-  bool send_packet(MotorPacket const &msg_packet, MotorPacket &response_packet)
+  bool send_packet(MotorPacket &packet, int timeout = 0)
   {
+    if (timeout == 0)
+    {
+      timeout = timeout_ms_;
+    }
+
     serial_conn_.FlushIOBuffers();
 
-    msg_packet.calculate_checksum();
+    packet.checksum = packet.calculate_checksum();
 
     // serialize packet
-    LibSerial::DataBuffer msg(sizeof(MotorPacket));
-    std::memcpy(msg.data(), &msg_packet, sizeof(MotorPacket));
-    serial_conn_.Write(msg);
+    LibSerial::DataBuffer buffer(sizeof(MotorPacket));
+    std::memcpy(buffer.data(), &packet, sizeof(MotorPacket));
+    serial_conn_.Write(buffer);
 
-    LibSerial::DataBuffer response_buffer(sizeof(MotorPacket));
     try
     {
-      serial_conn_.Read(response_buffer, msg.size(), timeout_ms_);
+      serial_conn_.Read(buffer, buffer.size(), timeout);
     }
     catch (const LibSerial::ReadTimeout&)
     {
@@ -100,38 +102,34 @@ public:
       return false;
     }
 
-    MotorPacket temp_packet;
-    std::memcpy(&temp_packet, response_buffer.data(), sizeof(MotorPacket));
-    uint8_t recieved_checksum = temp_packet.calculate_checksum();
+    std::memcpy(&packet, buffer.data(), sizeof(MotorPacket));
 
-    if (recieved_checksum != temp_packet.checksum)
+    if (packet.calculate_checksum() != packet.checksum)
     {
         std::cerr << "[ERROR] Checksum mismatch!" << std::endl;
         return false;
     }
 
     // Check for NACK response
-    if (temp_packet.header == MotorPacket::NACK)
+    if (packet.flag == MotorPacket::NACK)
     {
         std::cerr << "[ERROR] NACK received!" << std::endl;
         return false;
     }
 
-    response_packet = temp_packet;
     return true;
   }
 
-  void read_encoders(MotorPacket &encoder_packet)
+  bool read_encoders(MotorPacket &encoder_packet)
   {
-    MotorPacket request_packet;
-    request_packet.header = MotorPacket::ENC;
-    send_packet(request_packet, encoder_packet);
+    encoder_packet.flag = MotorPacket::ENC;
+    return send_packet(encoder_packet);
   }
 
-  void set_motors(MotorPacket const &motor_packet)
+  bool set_motors(MotorPacket &motor_packet)
   {
-    MotorPacket response_packet;
-    send_packet(motor_packet, response_packet);
+    motor_packet.flag = MotorPacket::MOT;
+    return send_packet(motor_packet);
   }
 
 private:

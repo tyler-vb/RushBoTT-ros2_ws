@@ -212,6 +212,8 @@ void KeyboardServo::spin()
   while (rclcpp::ok())
   {
     rclcpp::spin_some(nh_);
+    // Sleep to prevent 100% CPU usage
+    std::this_thread::sleep_for(std::chrono::milliseconds(10));  // Sleep for 10ms to reduce CPU usage
   }
 }
 
@@ -235,6 +237,7 @@ int KeyboardServo::keyLoop()
   puts("Use 'w' and 'e' to switch between sending command in planning frame or end effector frame");
   puts("'Q' to quit.");
 
+  rclcpp::Rate rate(10);
   for (;;)
   {
     // get the next event from the keyboard
@@ -398,6 +401,6 @@ int KeyboardServo::keyLoop()
       publish_joint = false;
     }
   }
-
+  rate.sleep();
   return 0;
 }

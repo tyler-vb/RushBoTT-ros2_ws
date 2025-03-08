@@ -128,12 +128,12 @@
     </xacro:if>
 
     <!-- Arm --> 
-    <xacro:arm_link name='lower_arm' is_fake='true' parent_link='base_link' length='${lower_arm_length}' width='${lower_arm_width}' mass='${lower_arm_mass}' offset='0' mesh='${lower_arm_mesh}'>
+    <xacro:arm_link name='lower_arm' is_fake='True' parent_link='base_link' length='${lower_arm_length}' width='${lower_arm_width}' mass='${lower_arm_mass}' offset='0' mesh='${lower_arm_mesh}'>
         <origin xyz='${arm_x_position} 0 ${arm_z_position}' rpy='0 0 0'/>
         <limit lower='${-100 * 26 * pi / 180}' upper='${100 * pi-0.3}' effort='10' velocity='10'/>
     </xacro:arm_link>
 
-    <xacro:arm_link name='upper_arm' is_fake='true' parent_link='lower_arm' length='${upper_arm_length}' width='${upper_arm_width}' mass='${upper_arm_mass}' offset='${upper_control_length}' mesh='${upper_arm_mesh}'>
+    <xacro:arm_link name='upper_arm' is_fake='True' parent_link='lower_arm' length='${upper_arm_length}' width='${upper_arm_width}' mass='${upper_arm_mass}' offset='${upper_control_length}' mesh='${upper_arm_mesh}'>
         <origin xyz='${-lower_arm_length} 0 0' rpy='0 0 0'/>
         <limit lower='${-pi+(21 * pi / 180) * -100}' upper='${-(21 * pi / 180) * -100}' effort='10' velocity='10'/>
     </xacro:arm_link>
@@ -148,7 +148,7 @@
         <mimic joint='upper_control_joint' multiplier='-1.0'/>
     </xacro:arm_link_mimic>
 
-    <xacro:arm_link name='suction_base' is_fake='true' parent_link='upper_arm' length='${suction_base_length}' width='${suction_base_width}' mass='${suction_base_mass}' offset='0' mesh='${suction_base_mesh}'>
+    <xacro:arm_link name='suction_base' is_fake='True' parent_link='upper_arm' length='${suction_base_length}' width='${suction_base_width}' mass='${suction_base_mass}' offset='0' mesh='${suction_base_mesh}'>
         <origin xyz='${-upper_control_length+upper_arm_length} 0 0' rpy='0 0 0'/>
         <limit lower='${-2*pi}' upper='${2*pi}' effort='10' velocity='10'/>
     </xacro:arm_link>

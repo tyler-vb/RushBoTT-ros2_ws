@@ -45,7 +45,7 @@ public:
     serial_conn_.Open(serial_device);
     serial_conn_.SetBaudRate(convert_baud_rate(baud_rate));
 
-    std::cout << "Trying to connect to Arduino..." << std::endl;
+    std::cout << get_timestamp() << "Trying to connect to Arduino..." << std::endl;
     
     for (int attempt = 0; attempt < msg_attempts; attempt++) 
     {
@@ -53,9 +53,9 @@ public:
         MotorPacket handshake_packet = {};
         handshake_packet.flag = MotorPacket::HEY;
 
-        if (send_packet(handshake_packet, 2000))
+        if (send_packet(handshake_packet, true, 2000))
         {
-          std::cout << "Handshake successful! Arduino is ready." << std::endl;
+          std::cout << get_timestamp() << "Handshake successful! Arduino is ready." << std::endl;
           return true;
         }
         else
@@ -63,7 +63,7 @@ public:
           continue;
         }
     }
-    std::cerr << "[ERROR] Handshake failed! Could not establish connection with Arduino." << std::endl;
+    std::cerr << get_timestamp() << "[ERROR] Handshake failed! Could not establish connection with Arduino." << std::endl;
     serial_conn_.Close(); // Close connection if handshake fails
     return false;
   }
@@ -79,12 +79,14 @@ public:
   }
 
 
-  bool send_packet(MotorPacket &packet, int timeout = 0)
+  bool send_packet(MotorPacket &packet, bool print_error = false, int timeout = 0)
   {
     if (timeout == 0)
     {
       timeout = timeout_ms_;
     }
+
+    std::string error = "";
 
     serial_conn_.FlushIOBuffers();
 
@@ -93,34 +95,74 @@ public:
     // serialize packet
     LibSerial::DataBuffer buffer(sizeof(MotorPacket));
     std::memcpy(buffer.data(), &packet, sizeof(MotorPacket));
+
     serial_conn_.Write(buffer);
 
-    try
+    int byte_count = 0;
+
+    buffer.clear();
+    buffer.resize(sizeof(MotorPacket));
+
+    auto start_time = std::chrono::steady_clock::now();
+
+    while (byte_count < buffer.size())
     {
-      serial_conn_.Read(buffer, buffer.size(), timeout);
-    }
-    catch (const LibSerial::ReadTimeout&)
-    {
-      std::cerr << "[ERROR] Msg timed out" << std::endl;
-      return false;
+      auto elapsed_time = std::chrono::duration_cast<std::chrono::milliseconds>(
+        std::chrono::steady_clock::now() - start_time
+      ).count();
+
+      if (elapsed_time >= timeout)
+      {
+        break;
+      }
+
+      try
+      {
+        serial_conn_.ReadByte(buffer[byte_count], 10);
+      }
+      catch (const LibSerial::ReadTimeout &)
+      {
+        continue;
+      }
+
+      if (byte_count > 0 || buffer[0] == 0x64)
+      {
+          byte_count++;
+      }
     }
 
     std::memcpy(&packet, buffer.data(), sizeof(MotorPacket));
 
-    if (packet.calculate_checksum() != packet.checksum)
+    if (byte_count < buffer.size())
     {
-        std::cerr << "[ERROR] Checksum mismatch!" << std::endl;
-        return false;
+      error = "[ERROR] Message timed out";
     }
 
-    // Check for NACK response
-    if (packet.flag == MotorPacket::NACK)
+    else if (packet.calculate_checksum() != packet.checksum)
     {
-        std::cerr << "[ERROR] NACK received!" << std::endl;
-        return false;
+      error = "[ERROR] Checksum mismatch!";
     }
 
-    return true;
+    else if (packet.flag == MotorPacket::NACK)
+    {
+      error = "[ERROR] NACK received!";
+    }
+    else
+    {
+      return true;
+    }
+
+    if (print_error == true)
+    {
+      std::cerr << get_timestamp() << error << " [";
+      for (uint8_t byte : buffer)
+      {
+        std::cerr << std::hex << std::setw(2) << std::setfill('0') << static_cast<int>(byte) << std::dec << " ";
+      }
+      std::cerr << "]" << std::endl;
+    }
+
+    return false;
   }
 
   bool read_encoders(MotorPacket &encoder_packet)
@@ -132,7 +174,19 @@ public:
   bool set_motors(MotorPacket &motor_packet)
   {
     motor_packet.flag = MotorPacket::MOT;
-    return send_packet(motor_packet);
+    return send_packet(motor_packet, true);
+  }
+
+  std::string get_timestamp()
+  {
+    auto now = std::chrono::system_clock::now();
+    auto ms = std::chrono::duration_cast<std::chrono::milliseconds>(now.time_since_epoch()) % 1000;
+    auto time_t_now = std::chrono::system_clock::to_time_t(now);
+    std::tm bt = *std::localtime(&time_t_now);
+
+    std::ostringstream oss;
+    oss << "[" << std::put_time(&bt, "%H:%M:%S") << "." << std::setw(3) << std::setfill('0') << ms.count() << "] ";
+    return oss.str();
   }
 
 private:

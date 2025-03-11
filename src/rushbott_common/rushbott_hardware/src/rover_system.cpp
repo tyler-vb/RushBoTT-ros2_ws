@@ -231,7 +231,7 @@ hardware_interface::return_type RoverSystemHardware::read(
 
     }
 
-  return hardware_interface::return_type::OK;
+    return hardware_interface::return_type::OK;
 }
 
 hardware_interface::return_type rushbott_hardware::RoverSystemHardware::write(

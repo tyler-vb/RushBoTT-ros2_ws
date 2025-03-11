@@ -29,9 +29,21 @@ def generate_launch_description():
             {'use_sim_time': LaunchConfiguration('use_sim_time')},
             {'robot_description': Command(['xacro', ' ', xacro_file])}],
     )
+    
+    jsp = Node(
+        package='joint_state_publisher',
+        executable='joint_state_publisher',
+        name='joint_state_publisher',
+        output='screen',
+        parameters=[
+            {'use_sim_time': LaunchConfiguration('use_sim_time')},
+            {'robot_description': Command(['xacro', ' ', xacro_file])}
+        ]
+    )
                     
     # Define LaunchDescription variable
     ld = LaunchDescription(ARGUMENTS)
     # Add nodes to LaunchDescription
     ld.add_action(robot_state_publisher)
+
     return ld

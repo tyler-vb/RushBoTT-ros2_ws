@@ -11,8 +11,8 @@ def generate_launch_description():
     moveit_config = (
         MoveItConfigsBuilder(robot_name='rushbott', package_name='rushbott_moveit_config')
         .planning_pipelines(
-            pipelines=["ompl", "pilz_industrial_motion_planner"],
-            default_planning_pipeline="ompl"
+            pipelines=["ompl", "pilz_industrial_motion_planner", "stomp"],
+            default_planning_pipeline="stomp"
         )
         .to_moveit_configs()
     )
@@ -34,7 +34,6 @@ def generate_launch_description():
             servo_params,
             acceleration_filter_update_period,
             planning_group_name,
-            moveit_config.robot_description,
             moveit_config.robot_description_semantic,
             moveit_config.robot_description_kinematics,
             moveit_config.joint_limits,

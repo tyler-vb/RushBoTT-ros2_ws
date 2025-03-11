@@ -1,4 +1,4 @@
-ARG BASE_IMAGE=osrf/ros:jazzy-desktop
+ARG BASE_IMAGE=osrf/ros:jazzy-desktop-full
 FROM $BASE_IMAGE
 
 ARG DEBIAN_FRONTEND=noninteractive

@@ -38,12 +38,14 @@ public:
 
   ArduinoComms() = default;
 
-  void connect(const std::string &serial_device, int32_t baud_rate, int8_t msg_attempts, int16_t timeout_ms)
+  bool connect(const std::string &serial_device, int32_t baud_rate, int8_t msg_attempts, int16_t timeout_ms)
   {  
     msg_attempts_ = msg_attempts;
     timeout_ms_ = timeout_ms;
     serial_conn_.Open(serial_device);
     serial_conn_.SetBaudRate(convert_baud_rate(baud_rate));
+
+    std::cout << "Trying to connect to Arduino..." << std::endl;
     
     for (int attempt = 0; attempt < msg_attempts; attempt++) 
     {
@@ -54,7 +56,7 @@ public:
         if (send_packet(handshake_packet, 2000))
         {
           std::cout << "Handshake successful! Arduino is ready." << std::endl;
-          return;
+          return true;
         }
         else
         {
@@ -63,6 +65,7 @@ public:
     }
     std::cerr << "[ERROR] Handshake failed! Could not establish connection with Arduino." << std::endl;
     serial_conn_.Close(); // Close connection if handshake fails
+    return false;
   }
 
   void disconnect()

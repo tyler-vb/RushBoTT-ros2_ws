@@ -43,14 +43,7 @@ def generate_launch_description():
     
     # Rviz
     rviz_config = PathJoinSubstitution([pkg_rushbott_common_bringup, 'rviz', 'rushbott.rviz']) 
-    moveit_config = (
-        MoveItConfigsBuilder(robot_name='rushbott', package_name='rushbott_moveit_config')
-        .planning_pipelines(
-            pipelines=["ompl", "pilz_industrial_motion_planner", "stomp"],
-            default_planning_pipeline="pilz_industrial_motion_planner"
-        )
-        .to_moveit_configs()
-    )
+
     rviz = Node(
         package='rviz2',
         executable='rviz2',
@@ -58,11 +51,6 @@ def generate_launch_description():
             '-d', rviz_config],
         parameters=[
             {'use_sim_time': LaunchConfiguration('use_sim_time')},
-            moveit_config.robot_description,
-            moveit_config.robot_description_semantic,
-            moveit_config.planning_pipelines,
-            moveit_config.robot_description_kinematics,
-            moveit_config.joint_limits
         ]
     )
 

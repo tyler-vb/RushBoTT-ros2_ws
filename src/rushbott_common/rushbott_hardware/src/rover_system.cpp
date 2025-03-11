@@ -133,10 +133,10 @@ std::vector<hardware_interface::CommandInterface> RoverSystemHardware::export_co
 
     for (auto i = 0u; i < info_.joints.size(); i++)
     {
-        if (info_.joints[i].name.find("stepper") != std::string::npos)
+        if (info_.joints[i].name.find("arm") != std::string::npos)
         {
             command_interfaces.emplace_back(hardware_interface::CommandInterface(
-                info_.joints[i].name, hardware_interface::HW_IF_POSITION, &stepper_positions_[stepper_index]));
+                info_.joints[i].name, hardware_interface::HW_IF_POSITION, &stepper_commands_[stepper_index]));
             stepper_index++;
         }
     }
@@ -153,7 +153,11 @@ hardware_interface::CallbackReturn RoverSystemHardware::on_configure(
     {
         comms_.disconnect();
     }
-    comms_.connect(cfg_.device, cfg_.baud_rate, cfg_.msg_attempts, cfg_.timeout_ms);
+
+    if (!comms_.connect(cfg_.device, cfg_.baud_rate, cfg_.msg_attempts, cfg_.timeout_ms))
+    {
+        return hardware_interface::CallbackReturn::FAILURE;
+    }
 
     for (auto i = 0u; i < stepper_positions_.size(); i++)
     {
@@ -216,16 +220,15 @@ hardware_interface::return_type RoverSystemHardware::read(
         return hardware_interface::return_type::ERROR;
     }
 
-    // MotorPacket encoder_packet = {};
+    MotorPacket encoder_packet = {};
 
-    // if (comms_.read_encoders(encoder_packet))
-    // {
-    //     encoder_packet.export_states(
-    //     MotorPacket::STEPPER, stepper_positions_, (2*M_PI)/(cfg_.stepper_enc_per_rev*cfg_.stepper_gear_ratio), cfg_.stepper_initial_values);
-    // }
-    for (auto i = 0u; i < stepper_positions_.size(); i++)
+    if (comms_.read_encoders(encoder_packet))
     {
-        stepper_positions_[i] = stepper_commands_[i];
+        double conversion = (2*M_PI)/(cfg_.stepper_enc_per_rev*cfg_.stepper_gear_ratio);
+        encoder_packet.export_states(MotorPacket::STEPPER, stepper_positions_, conversion);
+
+        // encoder_packet.print_packet("Received Encoders: ");
+
     }
 
   return hardware_interface::return_type::OK;
@@ -239,16 +242,13 @@ hardware_interface::return_type rushbott_hardware::RoverSystemHardware::write(
         return hardware_interface::return_type::ERROR;
     }
 
-    // MotorPacket motor_packet = {};
-
-    // motor_packet.import_commands(
-    //     MotorPacket::STEPPER, stepper_commands_, (cfg_.stepper_enc_per_rev*cfg_.stepper_gear_ratio)/(2*M_PI), cfg_.stepper_initial_values);
+    MotorPacket motor_packet = {};
+    
+    double conversion = (cfg_.stepper_step_per_rev*cfg_.stepper_gear_ratio)/(2*M_PI);
+    motor_packet.import_commands(MotorPacket::STEPPER, stepper_commands_, conversion);
 
     // motor_packet.print_packet("Sent Motors: ");
-
-    // comms_.set_motors(motor_packet);
-
-    // motor_packet.print_packet("Received Motors: ");
+    comms_.set_motors(motor_packet);
 
     return hardware_interface::return_type::OK;
 }

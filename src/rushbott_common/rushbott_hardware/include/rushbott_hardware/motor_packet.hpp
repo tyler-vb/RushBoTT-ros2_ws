@@ -36,7 +36,7 @@ struct __attribute__((packed)) MotorPacket
     return sum;
   }
 
-  void import_commands(MotorType type, const std::vector<double> &values, double conversion, std::vector<double> &offsets) 
+  void import_commands(MotorType type, const std::vector<double> &values, double conversion) 
   {
     size_t count = 0;
 
@@ -60,15 +60,14 @@ struct __attribute__((packed)) MotorPacket
         count = std::min<size_t>(std::size(stepper), values.size());
         for (size_t i = 0; i < count; i++)
         {
-            stepper[i] = static_cast<int16_t>((values[i] - offsets[i]) * conversion);
-            
+            stepper[i] = static_cast<int16_t>(values[i] * conversion);
         }
         break;
       default: return;
     }
   }
 
-  void export_states(MotorType type, std::vector<double> &values, double conversion, std::vector<double> &offsets) 
+  void export_states(MotorType type, std::vector<double> &values, double conversion) 
   {
     size_t count = 0;
 
@@ -92,7 +91,7 @@ struct __attribute__((packed)) MotorPacket
         count = std::min<size_t>(std::size(stepper), values.size());
         for (size_t i = 0; i < count; i++)
         {
-            values[i] = (stepper[i] * conversion + offsets[i]);
+            values[i] = (stepper[i] * conversion);
         }
         break;
       default: return;

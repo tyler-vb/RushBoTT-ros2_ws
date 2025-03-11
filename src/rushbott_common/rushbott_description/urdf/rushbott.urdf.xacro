@@ -128,14 +128,14 @@
     </xacro:if>
 
     <!-- Arm --> 
-    <xacro:arm_link name='lower_arm' is_fake='True' parent_link='base_link' length='${lower_arm_length}' width='${lower_arm_width}' mass='${lower_arm_mass}' offset='0' mesh='${lower_arm_mesh}'>
+    <xacro:arm_link name='lower_arm' is_fake='False' parent_link='base_link' length='${lower_arm_length}' width='${lower_arm_width}' mass='${lower_arm_mass}' offset='0' mesh='${lower_arm_mesh}'>
         <origin xyz='${arm_x_position} 0 ${arm_z_position}' rpy='0 0 0'/>
-        <limit lower='${-100 * 26 * pi / 180}' upper='${100 * pi-0.3}' effort='10' velocity='10'/>
+        <limit lower='${26 * pi / 180}' upper='${pi-0.3}' effort='10' velocity='10'/>
     </xacro:arm_link>
 
-    <xacro:arm_link name='upper_arm' is_fake='True' parent_link='lower_arm' length='${upper_arm_length}' width='${upper_arm_width}' mass='${upper_arm_mass}' offset='${upper_control_length}' mesh='${upper_arm_mesh}'>
+    <xacro:arm_link name='upper_arm' is_fake='False' parent_link='lower_arm' length='${upper_arm_length}' width='${upper_arm_width}' mass='${upper_arm_mass}' offset='${upper_control_length}' mesh='${upper_arm_mesh}'>
         <origin xyz='${-lower_arm_length} 0 0' rpy='0 0 0'/>
-        <limit lower='${-pi+(21 * pi / 180) * -100}' upper='${-(21 * pi / 180) * -100}' effort='10' velocity='10'/>
+        <limit lower='${-pi+(21 * pi / 180)}' upper='${-(21 * pi / 180)}' effort='10' velocity='10'/>
     </xacro:arm_link>
 
     <xacro:arm_link_mimic name='upper_control' parent_link='lower_arm' length='${upper_control_length}' width='${upper_control_width}' mass='${upper_control_mass}' mesh='${upper_control_mesh}'>
@@ -161,7 +161,7 @@
     <xacro:lidar parent_link="base_link">
         <origin xyz="0.122 0 ${body_height}" rpy="0 0 0"/>
     </xacro:lidar>
-    <!-- 
+    
     <xacro:if value="${is_sim == False}">
         <ros2_control name="rushbott_control" type="system">
             <hardware>
@@ -190,7 +190,7 @@
                 <param name="initial_value">-0.3</param>
             </joint>
         </ros2_control>
-    </xacro:if> -->
+    </xacro:if>
 
         <!-- Gazebo (make this conditional later on) -->
     <xacro:if value="${is_sim == True}">

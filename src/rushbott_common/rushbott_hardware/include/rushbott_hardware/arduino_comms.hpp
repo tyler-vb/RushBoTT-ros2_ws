@@ -88,8 +88,6 @@ public:
 
     std::string error = "";
 
-    serial_conn_.FlushIOBuffers();
-
     packet.checksum = packet.calculate_checksum();
 
     // serialize packet
@@ -154,7 +152,7 @@ public:
 
     if (print_error == true)
     {
-      std::cerr << get_timestamp() << error << " [";
+      std::cerr << get_timestamp() << error << " [ ";
       for (uint8_t byte : buffer)
       {
         std::cerr << std::hex << std::setw(2) << std::setfill('0') << static_cast<int>(byte) << std::dec << " ";
@@ -168,7 +166,7 @@ public:
   bool read_encoders(MotorPacket &encoder_packet)
   {
     encoder_packet.flag = MotorPacket::ENC;
-    return send_packet(encoder_packet);
+    return send_packet(encoder_packet, true);
   }
 
   bool set_motors(MotorPacket &motor_packet)

@@ -24,7 +24,7 @@ def generate_launch_description():
         .to_dict()
     }
 
-    acceleration_filter_update_period = {"update_period": 0.01}
+    acceleration_filter_update_period = {"update_period": 0.05}
     planning_group_name = {"planning_group_name": "arm"}
 
     servo_node = Node(

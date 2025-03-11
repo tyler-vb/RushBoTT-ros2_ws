@@ -173,8 +173,8 @@
                 <param name="timeout_ms">600</param>
 
                 <param name="stepper_gear_ratio">3</param>
-                <param name="stepper_enc_per_rev">400</param>
-                <param name="stepper_step_per_rev">400</param>
+                <param name="stepper_enc_per_rev">1600</param>
+                <param name="stepper_step_per_rev">1600</param>
 
                 <param name="bldc_enc_per_rev">0</param>
 

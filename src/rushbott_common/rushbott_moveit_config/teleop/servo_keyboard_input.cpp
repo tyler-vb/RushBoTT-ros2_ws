@@ -93,9 +93,10 @@ public:
 #ifndef WIN32
     // Get the console in raw mode
     tcgetattr(file_descriptor_, &cooked_);
-    struct termios raw;
-    memcpy(&raw, &cooked_, sizeof(struct termios));
-    raw.c_lflag &= ~(ICANON | ECHO);
+    struct termios raw = cooked_;  // Copy original settings
+    raw.c_lflag &= ~(ICANON | ECHO);  // Disable canonical mode & echo
+    raw.c_cc[VMIN] = 1;  // Ensure we wait for *at least* one character
+    raw.c_cc[VTIME] = 0; // No delay
     tcsetattr(file_descriptor_, TCSANOW, &raw);
 #endif
   }
@@ -105,7 +106,7 @@ public:
 #ifndef WIN32
     struct timeval timeout;
     timeout.tv_sec = 0;
-    timeout.tv_usec = 50000; // 50ms timeout
+    timeout.tv_usec = 25000; // 50ms timeout
 
     fd_set read_fds;
     FD_ZERO(&read_fds);
@@ -213,7 +214,7 @@ void KeyboardServo::spin()
   {
     rclcpp::spin_some(nh_);
     // Sleep to prevent 100% CPU usage
-    std::this_thread::sleep_for(std::chrono::milliseconds(10));  // Sleep for 10ms to reduce CPU usage
+    std::this_thread::sleep_for(std::chrono::milliseconds(1));  // Sleep for 10ms to reduce CPU usage
   }
 }
 
@@ -237,10 +238,13 @@ int KeyboardServo::keyLoop()
   puts("Use 'w' and 'e' to switch between sending command in planning frame or end effector frame");
   puts("'Q' to quit.");
 
-  rclcpp::Rate rate(10);
+  rclcpp::Rate rate(50);
+  char current_key = '\0';
+  auto last_press_time = std::chrono::steady_clock::now();
+
   for (;;)
   {
-    // get the next event from the keyboard
+
     try
     {
       input.readOne(&c);
@@ -251,7 +255,21 @@ int KeyboardServo::keyLoop()
       return -1;
     }
 
-    RCLCPP_DEBUG(nh_->get_logger(), "value: 0x%02X\n", c);
+    if (c != '\0') 
+    {
+      current_key = c;
+      last_press_time = std::chrono::steady_clock::now();
+    }
+    else if (current_key != '\0')
+    {
+      auto now = std::chrono::steady_clock::now();
+      auto elapsed_ms = std::chrono::duration_cast<std::chrono::milliseconds>(now - last_press_time).count();
+      
+      if (elapsed_ms > 300) 
+      {
+        current_key = '\0';
+      }
+    }
 
     // // Create the messages we might publish
     auto twist_msg = std::make_unique<geometry_msgs::msg::TwistStamped>();
@@ -263,7 +281,7 @@ int KeyboardServo::keyLoop()
     joint_msg->velocities.resize(3);
     std::fill(joint_msg->velocities.begin(), joint_msg->velocities.end(), 0.0);
     // Use read key-press
-    switch (c)
+    switch (current_key)
     {
       case KEYCODE_LEFT:
         RCLCPP_DEBUG(nh_->get_logger(), "LEFT");

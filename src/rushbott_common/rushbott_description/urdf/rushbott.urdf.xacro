@@ -170,7 +170,7 @@
                 <param name="device">/dev/ttyACM0</param>
                 <param name="baud_rate">9600</param>
                 <param name="msg_attempts">10</param>
-                <param name="timeout_ms">600</param>
+                <param name="timeout_ms">200</param>
 
                 <param name="stepper_gear_ratio">3</param>
                 <param name="stepper_enc_per_rev">1600</param>
@@ -181,12 +181,16 @@
             </hardware>
             <joint name="lower_arm_joint">
                 <command_interface name="position"/>
+                <command_interface name="velocity"/>
                 <state_interface name="position"/>
+                <state_interface name="velocity"/>
                 <param name="initial_value">0.3</param>
             </joint>
             <joint name="upper_arm_joint">
                 <command_interface name="position"/>
+                <command_interface name="velocity"/>
                 <state_interface name="position"/>
+                <state_interface name="velocity"/>
                 <param name="initial_value">-0.3</param>
             </joint>
         </ros2_control>

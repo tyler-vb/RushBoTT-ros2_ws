@@ -38,7 +38,7 @@ public:
 
   ArduinoComms() = default;
 
-  bool connect(const std::string &serial_device, int32_t baud_rate, int8_t msg_attempts, int16_t timeout_ms)
+  bool connect(MotorPacket &config_packet, const std::string &serial_device, int32_t baud_rate, int8_t msg_attempts, int16_t timeout_ms)
   {  
     msg_attempts_ = msg_attempts;
     timeout_ms_ = timeout_ms;
@@ -46,14 +46,12 @@ public:
     serial_conn_.SetBaudRate(convert_baud_rate(baud_rate));
 
     std::cout << get_timestamp() << "Trying to connect to Arduino..." << std::endl;
+
+    config_packet.flag = MotorPacket::HEY;
     
     for (int attempt = 0; attempt < msg_attempts; attempt++) 
     {
-        // Create an empty message of the right size (filled with zeros)
-        MotorPacket handshake_packet = {};
-        handshake_packet.flag = MotorPacket::HEY;
-
-        if (send_packet(handshake_packet, true, 2000))
+        if (send_packet(config_packet, false, true, 2000))
         {
           std::cout << get_timestamp() << "Handshake successful! Arduino is ready." << std::endl;
           return true;
@@ -79,7 +77,7 @@ public:
   }
 
 
-  bool send_packet(MotorPacket &packet, bool print_error = false, int timeout = 0)
+  bool send_packet(MotorPacket &packet, bool overwrite, bool print_error = false, int timeout = 0)
   {
     if (timeout == 0)
     {
@@ -96,7 +94,7 @@ public:
 
     serial_conn_.Write(buffer);
 
-    int byte_count = 0;
+    size_t byte_count = 0;
 
     buffer.clear();
     buffer.resize(sizeof(MotorPacket));
@@ -105,6 +103,16 @@ public:
 
     while (byte_count < buffer.size())
     {
+      if (serial_conn_.IsDataAvailable())
+      {
+        serial_conn_.ReadByte(buffer[byte_count], 10);
+
+        if (byte_count > 0 || buffer[0] == 0x64)
+        {
+            byte_count++;
+        }
+      }
+
       auto elapsed_time = std::chrono::duration_cast<std::chrono::milliseconds>(
         std::chrono::steady_clock::now() - start_time
       ).count();
@@ -113,40 +121,31 @@ public:
       {
         break;
       }
-
-      try
-      {
-        serial_conn_.ReadByte(buffer[byte_count], 10);
-      }
-      catch (const LibSerial::ReadTimeout &)
-      {
-        continue;
-      }
-
-      if (byte_count > 0 || buffer[0] == 0x64)
-      {
-          byte_count++;
-      }
     }
 
-    std::memcpy(&packet, buffer.data(), sizeof(MotorPacket));
+    MotorPacket received_packet = {};
+    std::memcpy(&received_packet, buffer.data(), sizeof(MotorPacket));
 
     if (byte_count < buffer.size())
     {
       error = "[ERROR] Message timed out";
     }
 
-    else if (packet.calculate_checksum() != packet.checksum)
+    else if (received_packet.calculate_checksum() != received_packet.checksum)
     {
       error = "[ERROR] Checksum mismatch!";
     }
 
-    else if (packet.flag == MotorPacket::NACK)
+    else if (received_packet.flag == MotorPacket::NACK)
     {
       error = "[ERROR] NACK received!";
     }
     else
     {
+      if (overwrite)
+      {
+        packet = received_packet;
+      }
       return true;
     }
 
@@ -166,13 +165,14 @@ public:
   bool read_encoders(MotorPacket &encoder_packet)
   {
     encoder_packet.flag = MotorPacket::ENC;
-    return send_packet(encoder_packet, true);
+    return send_packet(encoder_packet, true, true);
   }
 
   bool set_motors(MotorPacket &motor_packet)
   {
     motor_packet.flag = MotorPacket::MOT;
-    return send_packet(motor_packet, true);
+    motor_packet.print_packet("sent motor packet: ");
+    return send_packet(motor_packet, false, true);
   }
 
   std::string get_timestamp()

@@ -84,8 +84,10 @@ private:
         
     ArduinoComms comms_;
     Config cfg_;
-    std::vector<double> stepper_positions_;
-    std::vector<double> stepper_commands_;
+    std::vector<double> stepper_state_positions_;
+    std::vector<double> stepper_state_velocities_;
+    std::vector<double> stepper_cmd_positions_;
+    std::vector<double> stepper_cmd_velocities_;
 };
 
 }  // namespace rushbott_hardware

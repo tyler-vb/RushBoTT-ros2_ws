@@ -24,7 +24,7 @@ def generate_launch_description():
         .to_dict()
     }
 
-    acceleration_filter_update_period = {"update_period": 0.05}
+    filter_update_period = {"update_period": 0.02}
     planning_group_name = {"planning_group_name": "arm"}
 
     servo_node = Node(
@@ -32,7 +32,7 @@ def generate_launch_description():
         executable="servo_node",
         parameters=[
             servo_params,
-            acceleration_filter_update_period,
+            filter_update_period,
             planning_group_name,
             moveit_config.robot_description_semantic,
             moveit_config.robot_description_kinematics,

@@ -10,22 +10,16 @@ default_acceleration_scaling_factor: 1.0
 joint_limits:
   lower_arm_joint:
     has_velocity_limits: true
-    max_velocity: .7
+    max_velocity: 0.7
     has_acceleration_limits: true
-    max_acceleration: 2.0
-    has_jerk_limits: true
-    max_jerk: 2.0
+    max_acceleration: 1.2
   suction_base_joint:
     has_velocity_limits: true
-    max_velocity: .7
+    max_velocity: 0.7
     has_acceleration_limits: true
-    max_acceleration: 2.0
-    has_jerk_limits: true
-    max_jerk: 2.0
+    max_acceleration: 1.2
   upper_arm_joint:
     has_velocity_limits: true
-    max_velocity: .7
+    max_velocity: 0.7
     has_acceleration_limits: true
-    max_acceleration: 2.0
-    has_jerk_limits: true
-    max_jerk: 2.0
+    max_acceleration: 1.2

@@ -39,6 +39,7 @@ RUN apt-get update && apt-get install --no-install-recommends -y -o Dpkg::Option
     ros-jazzy-ros2-controllers \
     ros-jazzy-gz-ros2-control \
     ros-jazzy-joint-state-publisher-gui \
+    ros-jazzy-rqt-joint-trajectory-controller \
     libserial-dev \
     # slam_toolbox
     ros-jazzy-slam-toolbox \
@@ -52,6 +53,7 @@ RUN apt-get update && apt-get install --no-install-recommends -y -o Dpkg::Option
     nano \
     less \
     xterm \
+    x11-xserver-utils \
     libdrm-dev \
     screen \
     mesa-utils &&\

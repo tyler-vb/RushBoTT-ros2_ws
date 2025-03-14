@@ -239,8 +239,6 @@ int KeyboardServo::keyLoop()
   puts("'Q' to quit.");
 
   rclcpp::Rate rate(50);
-  char current_key = '\0';
-  auto last_press_time = std::chrono::steady_clock::now();
 
   for (;;)
   {
@@ -255,22 +253,6 @@ int KeyboardServo::keyLoop()
       return -1;
     }
 
-    if (c != '\0') 
-    {
-      current_key = c;
-      last_press_time = std::chrono::steady_clock::now();
-    }
-    else if (current_key != '\0')
-    {
-      auto now = std::chrono::steady_clock::now();
-      auto elapsed_ms = std::chrono::duration_cast<std::chrono::milliseconds>(now - last_press_time).count();
-      
-      if (elapsed_ms > 300) 
-      {
-        current_key = '\0';
-      }
-    }
-
     // // Create the messages we might publish
     auto twist_msg = std::make_unique<geometry_msgs::msg::TwistStamped>();
     auto joint_msg = std::make_unique<control_msgs::msg::JointJog>();
@@ -281,7 +263,7 @@ int KeyboardServo::keyLoop()
     joint_msg->velocities.resize(3);
     std::fill(joint_msg->velocities.begin(), joint_msg->velocities.end(), 0.0);
     // Use read key-press
-    switch (current_key)
+    switch (c)
     {
       case KEYCODE_LEFT:
         RCLCPP_DEBUG(nh_->get_logger(), "LEFT");

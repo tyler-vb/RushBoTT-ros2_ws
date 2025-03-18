@@ -42,68 +42,6 @@ struct __attribute__((packed)) MotorPacket
     return sum;
   }
 
-  // void import_commands(MotorType type, const std::vector<double> &values, double conversion) 
-  // {
-  //   size_t count = 0;
-
-  //   switch (type)
-  //   {
-  //     case BLDC: 
-  //       count = std::min<size_t>(std::size(bldc), values.size());
-  //       for (size_t i = 0; i < count; i++)
-  //       {
-  //           bldc[i] = static_cast<int8_t>(values[i] * conversion);
-  //       }
-  //       break;
-  //     case SERVO: 
-  //       count = std::min<size_t>(std::size(servo), values.size());
-  //       for (size_t i = 0; i < count; i++)
-  //       {
-  //           servo[i] = static_cast<int16_t>(values[i] * conversion);
-  //       }
-  //       break;
-  //     case STEPPER: 
-  //       count = std::min<size_t>(std::size(stepper), values.size());
-  //       for (size_t i = 0; i < count; i++)
-  //       {
-  //           stepper[i] = static_cast<int16_t>(values[i] * conversion);
-  //       }
-  //       break;
-  //     default: return;
-  //   }
-  // }
-
-  // void export_states(MotorType type, double conversion, std::vector<double> &values) 
-  // {
-  //   size_t count = 0;
-
-  //   switch (type)
-  //   {
-  //     case BLDC: 
-  //       count = std::min<size_t>(std::size(bldc), values.size());
-  //       for (size_t i = 0; i < count; i++)
-  //       {
-  //           values[i] = (bldc[i] * conversion);
-  //       }
-  //       break;
-  //     case SERVO: 
-  //       count = std::min<size_t>(std::size(servo), values.size());
-  //       for (size_t i = 0; i < count; i++)
-  //       {
-  //           values[i] = (servo[i] * conversion);
-  //       }
-  //       break;
-  //     case STEPPER: 
-  //       count = std::min<size_t>(std::size(stepper), values.size());
-  //       for (size_t i = 0; i < count; i++)
-  //       {
-  //           values[i] = (stepper[i] * conversion);
-  //       }
-  //       break;
-  //     default: return;
-  //   }
-  // }
-
   void print_packet(std::string title) const
   {
     std::cout << "[INFO] " << title << "\n";

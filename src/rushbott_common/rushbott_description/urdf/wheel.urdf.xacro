@@ -1,7 +1,7 @@
 <?xml version='1.0'?>
 <robot xmlns:xacro='http://www.ros.org/wiki/xacro'>
 
-<xacro:macro name='wheel' params='name parent_link *origin *axis'>
+<xacro:macro name='wheel' params='name is_fake parent_link *origin *axis'>
 
     <xacro:property name='wheel_link_name'  value='${name}_wheel'/>
     <xacro:property name='wheel_joint_name' value='${wheel_link_name}_joint'/>
@@ -35,7 +35,21 @@
         <xacro:inertial_cylinder mass='${wheel_mass}' radius='${wheel_radius}' length='${wheel_width}'/>
     </link>
 
-    <xacro:if value="${is_sim == True}">
+    <xacro:if value="${is_fake == True}">
+        <xacro:unless value="$(arg is_sim)">
+            <ros2_control name='${wheel_joint_name}' type='system'>
+                <hardware>
+                    <plugin>mock_components/GenericSystem</plugin>
+                </hardware>
+                <joint name='${wheel_joint_name}'>
+                    <command_interface name='velocity'/>
+                    <state_interface name='position'/>
+                </joint>
+            </ros2_control>
+        </xacro:unless>
+    </xacro:if> 
+
+    <xacro:if value="$(arg is_sim)">
         <ros2_control name='${wheel_joint_name}' type='system'>
             <hardware>
                 <plugin>gz_ros2_control/GazeboSimSystem</plugin>

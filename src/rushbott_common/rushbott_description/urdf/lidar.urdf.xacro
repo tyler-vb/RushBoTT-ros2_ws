@@ -30,7 +30,7 @@
         </xacro:inertial_cylinder_with_pose>
     </link>
 
-    <xacro:if value="${is_sim == True}">
+    <xacro:if value="$(arg is_sim)">
         <gazebo reference="lidar">
             <sensor name="lidar" type="gpu_lidar">
                 <gz_frame_id>lidar</gz_frame_id>

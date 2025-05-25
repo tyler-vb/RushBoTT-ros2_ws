@@ -31,7 +31,7 @@ def generate_launch_description():
         package="controller_manager",
         executable="spawner",
         arguments=[
-            # 'rover_controller',
+            'rover_controller',
             'arm_controller',
             '--controller-manager-timeout',
             '30'

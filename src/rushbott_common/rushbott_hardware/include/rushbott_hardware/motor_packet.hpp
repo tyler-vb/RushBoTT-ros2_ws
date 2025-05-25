@@ -15,7 +15,7 @@ struct __attribute__((packed)) MotorPacket
 
   enum MotorType { BLDC, SERVO, STEPPER };
 
-  enum Flag { ACK = 0xA1, NACK = 0xA2, ENC = 0xB1, MOT = 0xB2, HEY = 0xC1 };
+  enum Flag { ACK = 0xA1, NACK = 0xA2, ENC = 0xB1, MOT = 0xB2, HEY = 0xC1, CAL = 0xD1 };
 
   uint8_t calculate_checksum() const
   {

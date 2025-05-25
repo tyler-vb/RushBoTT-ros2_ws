@@ -1,0 +1,35 @@
+<?xml version='1.0'?>
+<robot xmlns:xacro='http://www.ros.org/wiki/xacro'>
+    <xacro:macro name='ros2_control'>
+        <ros2_control name="rushbott_control" type="system">
+            <hardware>
+                <plugin>rushbott_hardware/RoverSystemHardware</plugin>
+                <param name="loop_rate">30</param>
+                <param name="device">/dev/ttyACM0</param>
+                <param name="baud_rate">115200</param>
+                <param name="timeout_ms">10</param>
+
+                <param name="stepper_gear_ratio">-5.785714</param>
+                <param name="stepper_enc_per_rev">6400</param>
+                <param name="stepper_step_per_rev">6400</param>
+
+                <param name="bldc_enc_per_rev">0</param>
+
+            </hardware>
+            <joint name="lower_arm_joint">
+                <command_interface name="position"/>
+                <!-- <command_interface name="velocity"/> -->
+                <state_interface name="position"/>
+                <!-- <state_interface name="velocity"/> -->
+                <param name="initial_value">0.5</param>
+            </joint>
+            <joint name="upper_arm_joint">
+                <command_interface name="position"/>
+                <!-- <command_interface name="velocity"/> -->
+                <state_interface name="position"/>
+                <!-- <state_interface name="velocity"/> -->
+                <param name="initial_value">-0.5</param>
+            </joint>
+        </ros2_control>
+    </xacro:macro>
+</robot>

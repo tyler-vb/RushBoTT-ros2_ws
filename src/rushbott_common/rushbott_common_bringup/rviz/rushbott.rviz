@@ -8,6 +8,7 @@ Panels:
         - /Status1
         - /RobotModel1
         - /RobotModel1/Description Topic1
+        - /RobotModel1/Links1
         - /TF1
         - /TF1/Frames1
         - /TF1/Tree1
@@ -63,7 +64,7 @@ Visualization Manager:
         Value: robot_description
       Enabled: true
       Links:
-        All Links Enabled: true
+        All Links Enabled: false
         Expand Joint Details: false
         Expand Link Details: false
         Expand Tree: false
@@ -76,27 +77,77 @@ Visualization Manager:
           Alpha: 1
           Show Axes: false
           Show Trail: false
-          Value: true
+          Value: false
+        front_left_servo:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: false
+        front_left_wheel:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: false
+        front_right_servo:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: false
+        front_right_wheel:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: false
         lidar:
           Alpha: 1
           Show Axes: false
           Show Trail: false
-          Value: true
+          Value: false
         lower_arm:
           Alpha: 1
           Show Axes: false
           Show Trail: false
           Value: true
+        mid_left_wheel:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: false
+        mid_right_wheel:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: false
+        rear_left_servo:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: false
+        rear_left_wheel:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: false
+        rear_right_servo:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: false
+        rear_right_wheel:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: false
         suction_base:
           Alpha: 1
           Show Axes: false
           Show Trail: false
-          Value: true
+          Value: false
         suction_head:
           Alpha: 1
           Show Axes: false
           Show Trail: false
-          Value: true
+          Value: false
         upper_arm:
           Alpha: 1
           Show Axes: false
@@ -106,12 +157,12 @@ Visualization Manager:
           Alpha: 1
           Show Axes: false
           Show Trail: false
-          Value: true
+          Value: false
         upper_link:
           Alpha: 1
           Show Axes: false
           Show Trail: false
-          Value: true
+          Value: false
       Mass Properties:
         Inertia: false
         Mass: false
@@ -131,20 +182,42 @@ Visualization Manager:
           Value: false
         base_link:
           Value: false
+        front_left_servo:
+          Value: false
+        front_left_wheel:
+          Value: false
+        front_right_servo:
+          Value: false
+        front_right_wheel:
+          Value: false
         lidar:
           Value: false
         lower_arm:
           Value: true
+        mid_left_wheel:
+          Value: false
+        mid_right_wheel:
+          Value: false
+        odom:
+          Value: false
+        rear_left_servo:
+          Value: false
+        rear_left_wheel:
+          Value: false
+        rear_right_servo:
+          Value: false
+        rear_right_wheel:
+          Value: false
         suction_base:
-          Value: true
+          Value: false
         suction_head:
           Value: false
         upper_arm:
           Value: true
         upper_control:
-          Value: true
+          Value: false
         upper_link:
-          Value: true
+          Value: false
       Marker Scale: 1
       Name: TF
       Show Arrows: true
@@ -153,6 +226,12 @@ Visualization Manager:
       Tree:
         base_footprint:
           base_link:
+            front_left_servo:
+              front_left_wheel:
+                {}
+            front_right_servo:
+              front_right_wheel:
+                {}
             lidar:
               {}
             lower_arm:
@@ -163,6 +242,18 @@ Visualization Manager:
               upper_control:
                 upper_link:
                   {}
+            mid_left_wheel:
+              {}
+            mid_right_wheel:
+              {}
+            rear_left_servo:
+              rear_left_wheel:
+                {}
+            rear_right_servo:
+              rear_right_wheel:
+                {}
+        odom:
+          {}
       Update Interval: 0
       Value: true
     - Alpha: 1
@@ -327,7 +418,7 @@ Visualization Manager:
   Views:
     Current:
       Class: rviz_default_plugins/Orbit
-      Distance: 3.099402904510498
+      Distance: 1.3194053173065186
       Enable Stereo Rendering:
         Stereo Eye Separation: 0.05999999865889549
         Stereo Focal Distance: 1
@@ -342,10 +433,10 @@ Visualization Manager:
       Invert Z Axis: false
       Name: Current View
       Near Clip Distance: 0.009999999776482582
-      Pitch: 0.029128458350896835
+      Pitch: 0.5141284465789795
       Target Frame: <Fixed Frame>
       Value: Orbit (rviz)
-      Yaw: 4.69135856628418
+      Yaw: 4.95136022567749
     Saved: ~
 Window Geometry:
   Displays:
@@ -365,5 +456,5 @@ Window Geometry:
   Views:
     collapsed: false
   Width: 958
-  X: 666
-  Y: -15
+  X: 650
+  Y: 4

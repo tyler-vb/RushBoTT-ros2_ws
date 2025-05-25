@@ -38,55 +38,38 @@ public:
 
   ArduinoComms() = default;
 
-  bool connect(MotorPacket &config_packet, const std::string &serial_device, int32_t baud_rate, int8_t msg_attempts, int16_t timeout_ms)
+  bool connect(MotorPacket &config_packet, const std::string &serial_device, int32_t baud_rate, int16_t timeout_ms)
   {  
-    msg_attempts_ = msg_attempts;
     timeout_ms_ = timeout_ms;
     serial_conn_.Open(serial_device);
     serial_conn_.SetBaudRate(convert_baud_rate(baud_rate));
 
-    std::cout << get_timestamp() << "Trying to connect to Arduino..." << std::endl;
+    std::this_thread::sleep_for(std::chrono::seconds(2));
 
     config_packet.flag = MotorPacket::HEY;
-    
-    for (int attempt = 0; attempt < msg_attempts; attempt++) 
+
+    if (send_packet(config_packet, false))
     {
-        if (send_packet(config_packet, false, true, 2000))
-        {
-          std::cout << get_timestamp() << "Handshake successful! Arduino is ready." << std::endl;
-          return true;
-        }
-        else
-        {
-          continue;
-        }
+      std::cout << get_timestamp() << "Connected to Arduino" << std::endl;
+      return true;
     }
-    std::cerr << get_timestamp() << "[ERROR] Handshake failed! Could not establish connection with Arduino." << std::endl;
-    serial_conn_.Close(); // Close connection if handshake fails
+
+    std::cerr << get_timestamp() << "[ERROR] Could not establish connection with Arduino." << std::endl;
+    serial_conn_.Close(); 
     return false;
   }
 
-  void disconnect()
+  bool send_packet(MotorPacket &packet, bool print_error = false, bool print_packets = false)
   {
-    serial_conn_.Close();
-  }
-
-  bool connected() const
-  {
-    return serial_conn_.IsOpen();
-  }
-
-
-  bool send_packet(MotorPacket &packet, bool overwrite, bool print_error = false, int timeout = 0)
-  {
-    if (timeout == 0)
-    {
-      timeout = timeout_ms_;
-    }
-
     std::string error = "";
 
     packet.checksum = packet.calculate_checksum();
+
+    if (print_packets)
+    {
+      packet.print_packet("Sending packet: ");
+    }
+    
 
     // serialize packet
     LibSerial::DataBuffer buffer(sizeof(MotorPacket));
@@ -105,7 +88,7 @@ public:
     {
       if (serial_conn_.IsDataAvailable())
       {
-        serial_conn_.ReadByte(buffer[byte_count], 10);
+        serial_conn_.ReadByte(buffer[byte_count], 1);
 
         if (byte_count > 0 || buffer[0] == 0x64)
         {
@@ -117,7 +100,7 @@ public:
         std::chrono::steady_clock::now() - start_time
       ).count();
 
-      if (elapsed_time >= timeout)
+      if (timeout_ms_ > 0 && elapsed_time >= timeout_ms_)
       {
         break;
       }
@@ -125,6 +108,11 @@ public:
 
     MotorPacket received_packet = {};
     std::memcpy(&received_packet, buffer.data(), sizeof(MotorPacket));
+
+    if (print_packets)
+    {
+      received_packet.print_packet("Recieving packet: ");
+    }
 
     if (byte_count < buffer.size())
     {
@@ -142,10 +130,7 @@ public:
     }
     else
     {
-      if (overwrite)
-      {
-        packet = received_packet;
-      }
+      packet = received_packet;
       return true;
     }
 
@@ -162,17 +147,43 @@ public:
     return false;
   }
 
+  void disconnect()
+  {
+    serial_conn_.Close();
+  }
+
+  bool connected() const
+  {
+    return serial_conn_.IsOpen();
+  }
+
+
   bool read_encoders(MotorPacket &encoder_packet)
   {
     encoder_packet.flag = MotorPacket::ENC;
-    return send_packet(encoder_packet, true, true);
+    return send_packet(encoder_packet, true);
   }
 
-  bool set_motors(MotorPacket &motor_packet)
+  bool set_motors(MotorPacket &motor_packet, bool &is_calibrating)
   {
-    motor_packet.flag = MotorPacket::MOT;
-    motor_packet.print_packet("sent motor packet: ");
-    return send_packet(motor_packet, false, true);
+    if (is_calibrating)
+    {
+      motor_packet.flag = MotorPacket::CAL;
+    }
+    else
+    {
+      motor_packet.flag = MotorPacket::MOT;
+    }
+
+    if (!send_packet(motor_packet, true, true))
+    {
+      return false;
+    }
+    else if (motor_packet.flag == MotorPacket::CAL)
+    {
+      is_calibrating = false;
+    }
+    return true;
   }
 
   std::string get_timestamp()
@@ -186,6 +197,37 @@ public:
     oss << "[" << std::put_time(&bt, "%H:%M:%S") << "." << std::setw(3) << std::setfill('0') << ms.count() << "] ";
     return oss.str();
   }
+
+    // bool send_with_retries(MotorPacket &packet, int timeout_ms)
+  // {
+  //   uint8_t initial_flag = packet.flag;
+  //   auto start_time = std::chrono::steady_clock::now();
+
+  //   while (true)
+  //   {
+  //     if (send_packet(packet, true))
+  //     {
+  //       if (packet.flag == MotorPacket::ACK)
+  //       {
+  //         packet.flag = initial_flag;
+  //       }
+  //       else
+  //       {
+  //         return true;
+  //       }
+
+  //       auto elapsed_time = std::chrono::duration_cast<std::chrono::milliseconds>(
+  //         std::chrono::steady_clock::now() - start_time
+  //       ).count();
+    
+  //       if (timeout_ms > 0 && elapsed_time >= timeout_ms)
+  //       {
+  //         break;
+  //       }
+  //     }
+  //   }
+  //   return false; 
+  // }
 
 private:
     LibSerial::SerialPort serial_conn_;

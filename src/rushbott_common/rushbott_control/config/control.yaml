@@ -1,6 +1,6 @@
 controller_manager:
   ros__parameters:
-    update_rate: 200
+    update_rate: 50
 
     joint_state_broadcaster:
       type: joint_state_broadcaster/JointStateBroadcaster
@@ -42,10 +42,8 @@ arm_controller:
 
     command_interfaces:
       - position
-      - velocity
     state_interfaces:
       - position
-      - velocity
     allow_integration_in_goal_trajectories: true
     allow_nonzero_velocity_at_trajectory_end: true
     interpolate_from_desired_state: true

@@ -14,9 +14,14 @@
     "LD_LIBRARY_PATH": "/usr/lib/wsl/lib"
   },
   "runArgs": [
+    "-it",
     "--network=host",
     "--device=/dev/dxg",
-    "--device=/dev/ttyACM0"
+    "--device=/dev/ttyUSB0",
+    "--cap-add=sys_nice",
+    "--ulimit=rtprio=99",
+    "--ulimit=memlock=-1"
+
   ],
   "workspaceMount": "source=${localWorkspaceFolder},target=/home/ttpidelta/${localWorkspaceFolderBasename},type=bind",
   "workspaceFolder": "/home/ttpidelta/${localWorkspaceFolderBasename}",

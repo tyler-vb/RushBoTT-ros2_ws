@@ -5,7 +5,7 @@
             <hardware>
                 <plugin>rushbott_hardware/RoverSystemHardware</plugin>
                 <param name="loop_rate">30</param>
-                <param name="device">/dev/ttyACM0</param>
+                <param name="device">/dev/ttyUSB0</param>
                 <param name="baud_rate">115200</param>
                 <param name="timeout_ms">10</param>
 

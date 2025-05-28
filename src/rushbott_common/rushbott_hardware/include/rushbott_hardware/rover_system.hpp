@@ -88,6 +88,7 @@ private:
     Config cfg_;
     JointGroup joint_group_;
     bool calibrating_;
+    MotorPacket packet_;
 };
 
 }  // namespace rushbott_hardware

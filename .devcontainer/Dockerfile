@@ -56,7 +56,8 @@ RUN apt-get update && apt-get install --no-install-recommends -y -o Dpkg::Option
     x11-xserver-utils \
     libdrm-dev \
     screen \
-    mesa-utils &&\
+    linux-lowlatency \
+    mesa-utils && \
     rm -rf /var/lib/apt/lists/*
     
 # Bashrc scripts

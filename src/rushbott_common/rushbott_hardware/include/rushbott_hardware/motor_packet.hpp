@@ -6,11 +6,11 @@
 struct __attribute__((packed)) MotorPacket
 {
   uint8_t header = 0x64;
+  uint8_t id = 0x00;
   uint8_t flag;
-  int8_t bldc[6];
-  int16_t servo[4];
-  int16_t stepper_pos[2]; 
-  int16_t stepper_vel[2];
+  int8_t bldc[1];
+  int8_t servo[1];
+  int16_t stepper[2]; 
   uint8_t checksum;
 
   enum MotorType { BLDC, SERVO, STEPPER };
@@ -19,7 +19,7 @@ struct __attribute__((packed)) MotorPacket
 
   uint8_t calculate_checksum() const
   {
-    uint8_t sum = header + flag;
+    uint8_t sum = header + id + flag;
     for (size_t i = 0; i < sizeof(bldc) / sizeof(bldc[0]); ++i)
     {
       sum += static_cast<uint8_t>(bldc[i]);
@@ -29,15 +29,10 @@ struct __attribute__((packed)) MotorPacket
       sum += static_cast<uint8_t>(servo[i] & 0xFF);     
       sum += static_cast<uint8_t>((servo[i] >> 8) & 0xFF);
     }
-    for (size_t i = 0; i < sizeof(stepper_pos) / sizeof(stepper_pos[0]); ++i) 
+    for (size_t i = 0; i < sizeof(stepper) / sizeof(stepper[0]); ++i) 
     {
-      sum += static_cast<uint8_t>(stepper_pos[i] & 0xFF);      
-      sum += static_cast<uint8_t>((stepper_pos[i] >> 8) & 0xFF);
-    }
-    for (size_t i = 0; i < sizeof(stepper_vel) / sizeof(stepper_vel[0]); ++i) 
-    {
-      sum += static_cast<uint8_t>(stepper_vel[i] & 0xFF);      
-      sum += static_cast<uint8_t>((stepper_vel[i] >> 8) & 0xFF);
+      sum += static_cast<uint8_t>(stepper[i] & 0xFF);      
+      sum += static_cast<uint8_t>((stepper[i] >> 8) & 0xFF);
     }
     return sum;
   }
@@ -63,19 +58,13 @@ struct __attribute__((packed)) MotorPacket
     }
     std::cout << "\n";
 
-    std::cout << "  Stepper Pos: ";
-    for (size_t i = 0; i < std::size(stepper_pos); i++)
+    std::cout << "  Stepper: ";
+    for (size_t i = 0; i < std::size(stepper); i++)
     {
-        std::cout << stepper_pos[i] << " ";
+        std::cout << stepper[i] << " ";
     }
     std::cout << "\n";
 
-    std::cout << "  Stepper Vel: ";
-    for (size_t i = 0; i < std::size(stepper_vel); i++)
-    {
-        std::cout << stepper_vel[i] << " ";
-    }
-    std::cout << "\n";
 
     std::cout << "  Checksum: 0x" << std::hex << static_cast<int>(checksum) << std::dec << "\n";
   }

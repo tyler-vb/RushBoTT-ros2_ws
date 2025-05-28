@@ -8,6 +8,7 @@
 #include <vector>
 
 #include "rushbott_hardware/motor_packet.hpp"
+#include "joint_group.hpp"
 
 
 LibSerial::BaudRate convert_baud_rate(int baud_rate)
@@ -26,7 +27,7 @@ LibSerial::BaudRate convert_baud_rate(int baud_rate)
     case 115200: return LibSerial::BaudRate::BAUD_115200;
     case 230400: return LibSerial::BaudRate::BAUD_230400;
     default:
-      std::cout << "Error! Baud rate " << baud_rate << " not supported! Default to 57600" << std::endl;
+      std::cerr << "Error! Baud rate " << baud_rate << " not supported! Default to 57600" << std::endl;
       return LibSerial::BaudRate::BAUD_57600;
   }
 }
@@ -48,7 +49,7 @@ public:
 
     config_packet.flag = MotorPacket::HEY;
 
-    if (send_packet(config_packet, false))
+    if (send_packet(config_packet, 10, true))
     {
       std::cout << get_timestamp() << "Connected to Arduino" << std::endl;
       return true;
@@ -59,7 +60,7 @@ public:
     return false;
   }
 
-  bool send_packet(MotorPacket &packet, bool print_error = false, bool print_packets = false)
+  bool send_packet(MotorPacket &packet, int timeout_ms, bool print_error= false, bool print_packets = false)
   {
     std::string error = "";
 
@@ -70,29 +71,52 @@ public:
       packet.print_packet("Sending packet: ");
     }
     
-
     // serialize packet
     LibSerial::DataBuffer buffer(sizeof(MotorPacket));
     std::memcpy(buffer.data(), &packet, sizeof(MotorPacket));
 
+    std::stringstream ss;
+
+    // ss << get_timestamp() << "Sending Bytes: " << "[ ";
+    // for (uint8_t byte : buffer)
+    // {
+    //   ss << std::hex << std::setw(2) << std::setfill('0') << static_cast<int>(byte) << std::dec << " ";
+    // }
+    // ss << "]" << std::endl;
+
     serial_conn_.Write(buffer);
 
-    size_t byte_count = 0;
+    // ss << get_timestamp() << "Bytes Sent" << std::endl;
+
+    size_t byte_index = 0;
 
     buffer.clear();
     buffer.resize(sizeof(MotorPacket));
 
     auto start_time = std::chrono::steady_clock::now();
 
-    while (byte_count < buffer.size())
+    uint8_t byte = 0x00;
+
+    while (byte_index < buffer.size())
     {
       if (serial_conn_.IsDataAvailable())
       {
-        serial_conn_.ReadByte(buffer[byte_count], 1);
+        serial_conn_.ReadByte(byte, 0.01);
 
-        if (byte_count > 0 || buffer[0] == 0x64)
+        if (byte_index > 1 || byte_index == 0 && byte == 0x64 || byte_index == 1 && byte == packet.id)
         {
-            byte_count++;
+          // ss << get_timestamp() << "Recieved Byte " << byte_index+1;
+          // ss << " [" << std::hex << std::setw(2) << std::setfill('0') << static_cast<int>(byte) << std::dec << "]" << std::endl;
+          buffer[byte_index] = byte;
+          byte_index++;
+        }
+        else
+        {
+          // ss << get_timestamp() << "Recieved Invalid Byte " << byte_index+1;
+          // ss << " [" << std::hex << std::setw(2) << std::setfill('0') << static_cast<int>(byte) << std::dec << "]" << std::endl;
+          byte_index = 0;
+          buffer[0] = 0x00;
+          buffer[1] = 0x00;
         }
       }
 
@@ -100,37 +124,43 @@ public:
         std::chrono::steady_clock::now() - start_time
       ).count();
 
-      if (timeout_ms_ > 0 && elapsed_time >= timeout_ms_)
+      if (timeout_ms > 0 && elapsed_time >= timeout_ms)
       {
         break;
       }
     }
 
-    MotorPacket received_packet = {};
-    std::memcpy(&received_packet, buffer.data(), sizeof(MotorPacket));
+    // std::cout << ss.str() << get_timestamp() << "Packet handeling finished" << std::endl;
+
+    std::memcpy(&incoming_packet_, buffer.data(), sizeof(MotorPacket));
+    
+    // uint32_t seconds = packet.time / 1'000'000;
+    // uint32_t micros  = packet.time % 1'000'000;
+    // std::cout << get_timestamp() << "Packet " << packet.id << "took " << seconds << '.' << std::setw(6) << std::setfill('0') << micros << std::endl;
 
     if (print_packets)
     {
-      received_packet.print_packet("Recieving packet: ");
+      incoming_packet_.print_packet("Recieving packet: ");
     }
 
-    if (byte_count < buffer.size())
+    if (byte_index < buffer.size())
     {
       error = "[ERROR] Message timed out";
     }
 
-    else if (received_packet.calculate_checksum() != received_packet.checksum)
+    else if (incoming_packet_.calculate_checksum() != incoming_packet_.checksum)
     {
       error = "[ERROR] Checksum mismatch!";
     }
 
-    else if (received_packet.flag == MotorPacket::NACK)
+    else if (incoming_packet_.flag == MotorPacket::NACK)
     {
       error = "[ERROR] NACK received!";
     }
     else
     {
-      packet = received_packet;
+      packet = incoming_packet_;
+      packet.id++;
       return true;
     }
 
@@ -144,6 +174,7 @@ public:
       std::cerr << "]" << std::endl;
     }
 
+    packet.id++;
     return false;
   }
 
@@ -161,7 +192,7 @@ public:
   bool read_encoders(MotorPacket &encoder_packet)
   {
     encoder_packet.flag = MotorPacket::ENC;
-    return send_packet(encoder_packet, true);
+    return send_packet(encoder_packet, timeout_ms_, true);
   }
 
   bool set_motors(MotorPacket &motor_packet, bool &is_calibrating)
@@ -175,7 +206,7 @@ public:
       motor_packet.flag = MotorPacket::MOT;
     }
 
-    if (!send_packet(motor_packet, true, true))
+    if (!send_packet(motor_packet, timeout_ms_, true))
     {
       return false;
     }
@@ -188,16 +219,24 @@ public:
 
   std::string get_timestamp()
   {
+    // Get current time since epoch in microseconds
     auto now = std::chrono::system_clock::now();
-    auto ms = std::chrono::duration_cast<std::chrono::milliseconds>(now.time_since_epoch()) % 1000;
-    auto time_t_now = std::chrono::system_clock::to_time_t(now);
-    std::tm bt = *std::localtime(&time_t_now);
+    auto us_since_epoch = std::chrono::duration_cast<std::chrono::microseconds>(
+                            now.time_since_epoch()
+                          ).count();
 
+    // Split into seconds and microsecond remainder
+    uint64_t seconds = us_since_epoch / 1'000'000;
+    uint64_t micros  = us_since_epoch % 1'000'000;
+
+    // Format as "seconds.microseconds"
     std::ostringstream oss;
-    oss << "[" << std::put_time(&bt, "%H:%M:%S") << "." << std::setw(3) << std::setfill('0') << ms.count() << "] ";
+    oss << "[" << seconds
+        << '.'
+        << std::setw(6) << std::setfill('0')
+        << micros << "] ";
     return oss.str();
   }
-
     // bool send_with_retries(MotorPacket &packet, int timeout_ms)
   // {
   //   uint8_t initial_flag = packet.flag;
@@ -233,6 +272,7 @@ private:
     LibSerial::SerialPort serial_conn_;
     int timeout_ms_;
     int msg_attempts_;
+    MotorPacket incoming_packet_ = {};
 };
 
 #endif // RUSHBOTT_HARDWARE_ARDUINO_COMMS_HPP

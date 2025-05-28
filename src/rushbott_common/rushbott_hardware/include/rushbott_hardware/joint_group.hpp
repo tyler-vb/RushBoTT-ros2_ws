@@ -3,6 +3,7 @@
 
 #include <vector>
 #include <string>
+#include <cmath>
 #include "rushbott_hardware/motor_packet.hpp"
 
 struct Joint
@@ -60,20 +61,20 @@ public:
     void import_joint_states(const MotorPacket& packet, double delta_seconds)
     {
         double last_position = steppers_[0].state_pos;
-        steppers_[0].state_pos = packet.stepper_pos[0] * stepper_state_conversion_;
+        steppers_[0].state_pos = packet.stepper[0] * stepper_state_conversion_;
         steppers_[0].state_vel = (steppers_[0].state_pos - last_position) / delta_seconds;
         last_position = steppers_[1].state_pos;
-        steppers_[1].state_pos = (packet.stepper_pos[1] - packet.stepper_pos[0]) * stepper_state_conversion_;
+        steppers_[1].state_pos = (packet.stepper[1] - packet.stepper[0]) * stepper_state_conversion_;
         steppers_[1].state_vel = (steppers_[1].state_pos - last_position) / delta_seconds;
 
     }
     
     void export_joint_commands(MotorPacket& packet)
     {
-        packet.stepper_pos[0] = static_cast<int16_t>(steppers_[0].cmd_pos * stepper_cmd_conversion_);
-        packet.stepper_vel[0] = static_cast<int16_t>(steppers_[0].cmd_vel * stepper_cmd_conversion_);
-        packet.stepper_pos[1] = static_cast<int16_t>((steppers_[1].cmd_pos + steppers_[0].cmd_pos) * stepper_cmd_conversion_);
-        packet.stepper_vel[1] = static_cast<int16_t>((steppers_[1].cmd_vel + steppers_[0].cmd_vel) * stepper_cmd_conversion_);
+        packet.stepper[0] = static_cast<int16_t>(steppers_[0].cmd_pos * stepper_cmd_conversion_);
+        packet.stepper[0] = static_cast<int16_t>(steppers_[0].cmd_vel * stepper_cmd_conversion_);
+        packet.stepper[1] = static_cast<int16_t>((steppers_[1].cmd_pos + steppers_[0].cmd_pos) * stepper_cmd_conversion_);
+        packet.stepper[1] = static_cast<int16_t>((steppers_[1].cmd_vel + steppers_[0].cmd_vel) * stepper_cmd_conversion_);
     }
 
     void update_conversion(const std::string type, const double gear_ratio, const double enc_per_rev, const double step_per_rev)

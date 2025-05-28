@@ -15,7 +15,6 @@
 #include "rushbott_hardware/rover_system.hpp"
 
 #include <chrono>
-#include <cmath>
 #include <cstddef>
 #include <iomanip>
 #include <limits>
@@ -69,8 +68,6 @@ hardware_interface::CallbackReturn RoverSystemHardware::on_init(
             // joint.command_interfaces[1].name == hardware_interface::HW_IF_VELOCITY
         )
         {
-            state_conversion = (2*M_PI)/(cfg_.stepper_enc_per_rev*cfg_.stepper_gear_ratio);
-            cmd_conversion = (cfg_.stepper_enc_per_rev*cfg_.stepper_gear_ratio)/(2*M_PI);
             initial_value = std::stod(joint.parameters.at("initial_value"));
             type = "stepper";
         }
@@ -141,9 +138,7 @@ hardware_interface::CallbackReturn RoverSystemHardware::on_configure(
         comms_.disconnect();
     }
 
-    MotorPacket config_packet = {};
-
-    if (!comms_.connect(config_packet, cfg_.device, cfg_.baud_rate, cfg_.timeout_ms))
+    if (!comms_.connect(packet_, cfg_.device, cfg_.baud_rate, cfg_.timeout_ms))
     {
         return hardware_interface::CallbackReturn::FAILURE;
     }
@@ -176,9 +171,9 @@ hardware_interface::CallbackReturn RoverSystemHardware::on_activate(
 
     RCLCPP_INFO(get_logger(), "Successfully activated!");
 
-    return hardware_interface::CallbackReturn::SUCCESS;
-
     calibrating_ = true;
+
+    return hardware_interface::CallbackReturn::SUCCESS;
 }
 
 hardware_interface::CallbackReturn RoverSystemHardware::on_deactivate(
@@ -200,11 +195,9 @@ hardware_interface::return_type RoverSystemHardware::read(
 
     double delta_seconds = period.seconds();
 
-    MotorPacket encoder_packet = {};
-
-    if (comms_.read_encoders(encoder_packet))
+    if (comms_.read_encoders(packet_))
     {
-        joint_group_.import_joint_states(encoder_packet, delta_seconds);
+        joint_group_.import_joint_states(packet_, delta_seconds);
     }
 
     return hardware_interface::return_type::OK;
@@ -218,11 +211,9 @@ hardware_interface::return_type rushbott_hardware::RoverSystemHardware::write(
         return hardware_interface::return_type::ERROR;
     }
 
-    MotorPacket motor_packet = {};
-
-    joint_group_.export_joint_commands(motor_packet);
+    joint_group_.export_joint_commands(packet_);
     
-    comms_.set_motors(motor_packet, calibrating_);
+    comms_.set_motors(packet_, calibrating_);
 
     return hardware_interface::return_type::OK;
 }
